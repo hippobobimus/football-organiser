@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import { BrowserRouter } from 'react-router-dom';
+import RouteSwitch from './RouteSwitch';
+
+const rootElement = document.getElementById('root');
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <RouteSwitch />
+    </BrowserRouter>
   </React.StrictMode>,
-  document.getElementById('root')
+  rootElement
 );
