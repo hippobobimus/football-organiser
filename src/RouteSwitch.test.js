@@ -1,19 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Navbar } from './components';
-import Faq from './routes/Faq';
-import Home from './routes/Home';
-import MatchLineup from './routes/MatchLineup';
-import MatchLocation from './routes/MatchLocation';
-import MatchWeather from './routes/MatchWeather';
+import { Faq, Home, MatchLineup, MatchLocation, MatchWeather, PageNotFound } from './routes';
 import RouteSwitch from './RouteSwitch';
 
 jest.mock('./components');
-jest.mock('./routes/Faq');
-jest.mock('./routes/Home');
-jest.mock('./routes/MatchLineup');
-jest.mock('./routes/MatchLocation');
-jest.mock('./routes/MatchWeather');
+jest.mock('./routes');
 
 describe('RouteSwitch', () => {
   beforeEach(() => {
@@ -33,7 +25,7 @@ describe('RouteSwitch', () => {
 
   test('should render navbar and home page on \'/\' route', () => {
     const testString = 'HomeMock';
-    Home.mockImplementation(() => <div>HomeMock</div>);
+    Home.mockImplementation(() => <div>{testString}</div>);
     checkCorrectRendering('/', testString);
   });
 
@@ -62,6 +54,8 @@ describe('RouteSwitch', () => {
   });
 
   test('sends bad routes to the page not found landing page', () => {
-    checkCorrectRendering('/not/a/valid/path', /page not found/i);
+    const testString = 'Not a valid path';
+    PageNotFound.mockImplementation(() => <div>{testString}</div>);
+    checkCorrectRendering('/not/a/valid/path', testString);
   });
 });

@@ -1,11 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import App from './App';
-import Faq from './routes/Faq';
-import Home from './routes/Home';
-import MatchLineup from './routes/MatchLineup';
-import MatchLocation from './routes/MatchLocation';
-import MatchWeather from './routes/MatchWeather';
-import PageNotFound from './routes/PageNotFound';
+import { Faq, Home, MatchLineup, MatchLocation, MatchWeather, PageNotFound } from './routes';
 
 function RouteSwitch() {
   return (
