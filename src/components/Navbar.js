@@ -30,7 +30,7 @@ function Navbar({ title, menuItems }) {
         {(screenWidth < widthThreshold) &&
           <MenuToggle imageSrc={MenuImg} onClickHandler={toggleMenu} />
         }
-        <Title text={title} />
+        <Title>{title}</Title>
       </div>
       {(menuIsVisible || screenWidth > widthThreshold) &&
         <Menu items={menuItems} />

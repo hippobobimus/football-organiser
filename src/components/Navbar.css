@@ -12,9 +12,6 @@
 }
 
 .title-container {
-  font-family: 'Londrina Sketch', cursive;
-  font-size: 1.3rem;
-  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 10px;
