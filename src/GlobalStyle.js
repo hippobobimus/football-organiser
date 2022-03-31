@@ -8,14 +8,14 @@ const GlobalStyle = createGlobalStyle`
   }
   
   html, body {
-    background-color: var(--main-bg-clr);
+    background-color: ${(props) => props.theme.bgClr};
     height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
-    color: var(--font-clr);
+    font-family: ${(props) => props.theme.font};
+    color: ${(props) => props.theme.textClr};
   }
   
   a {
-    color: var(--font-clr);
+    color: ${(props) => props.theme.textClr};
     text-decoration: none;
   }
 `;

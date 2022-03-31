@@ -9,7 +9,7 @@ const theme = {
   textClr: 'black',
   titleFont: '\'Londrina Sketch\', cursive',
   subtitleFont: '\'Londrina Sketch\', cursive',
-  mainFont: 'Arial, Helvetica, sans-serif',
+  font: 'Arial, Helvetica, sans-serif',
 }
 
 export default theme;
