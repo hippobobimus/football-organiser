@@ -4,7 +4,9 @@ import Navbar from './Navbar';
 
 describe('Navbar component', () => {
   const menuItems = [
-    { text: 'Test123', path: '/test-path' },
+    { uid: 0, text: 'Test123', path: '/test-path-0' },
+    { uid: 1, text: 'Test456', path: '/test-path-1' },
+    { uid: 2, text: 'Test789', path: '/test-path-2' },
   ];
 
   test('Renders correct menu items', () => {

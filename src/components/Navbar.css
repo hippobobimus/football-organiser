@@ -1,0 +1,54 @@
+@import '../colours.css';
+
+.navbar {
+  background-color: var(--navbar-bg-clr);
+  color: var(--navbar-txt-clr);
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.title-container {
+  font-family: 'Londrina Sketch', cursive;
+  font-size: 1.3rem;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-container img {
+  position: absolute;
+  left: 20px;
+  height: 2rem;
+}
+
+.navbar ul {
+  background-color: var(--navbar-bg-clr);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  list-style: none;
+}
+
+.navbar li {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 1.5rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar a.active {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 800px) {
+  .navbar,
+  .navbar ul {
+    flex-direction: column;
+  }
+}

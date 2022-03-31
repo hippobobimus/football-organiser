@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div>
-      <Navbar menuItems={menuItems}/>
+      <Navbar title='Bib Game Players' menuItems={menuItems}/>
       <Outlet />
     </div>
   );
