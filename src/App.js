@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
 import uniqid from 'uniqid';
 import Navbar from './components/Navbar';
+import theme from './theme.js';
 
 function App() {
   const menuItems = [
@@ -12,10 +14,12 @@ function App() {
   ];
 
   return (
-    <div>
-      <Navbar title='Bib Game Players' menuItems={menuItems}/>
-      <Outlet />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div>
+        <Navbar title='Bib Game Players' menuItems={menuItems}/>
+        <Outlet />
+      </div>
+    </ThemeProvider>
   );
 }
 
