@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import { Navbar } from './components';
 import Faq from './routes/Faq';
 import Home from './routes/Home';
 import MatchLineup from './routes/MatchLineup';
@@ -8,7 +8,7 @@ import MatchLocation from './routes/MatchLocation';
 import MatchWeather from './routes/MatchWeather';
 import RouteSwitch from './RouteSwitch';
 
-jest.mock('./components/Navbar');
+jest.mock('./components');
 jest.mock('./routes/Faq');
 jest.mock('./routes/Home');
 jest.mock('./routes/MatchLineup');

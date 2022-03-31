@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import './Navbar.css';
-import MenuImg from '../assets/menu.svg';
+//import './Navbar.css';
+import MenuImg from './assets/menu.svg';
 import Menu from './Menu';
 import MenuToggle from './MenuToggle';
-import Title from './Title';
+import Title from '../Title';
 
 function Navbar({ title, menuItems }) {
   // menu switches to a dropdown at this threshold.

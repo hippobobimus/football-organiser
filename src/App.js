@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from './GlobalStyle';
-import Navbar from './components/Navbar';
+import { Navbar } from './components';
 import globals from './globals.js';
 import theme from './theme.js';
 
