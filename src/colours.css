@@ -1,0 +1,11 @@
+:root {
+  /* colour scheme */
+  --green: #16ffbd;
+  --pink: #f070a1;
+
+  /* component colours */
+  --main-bg-clr: white;
+  --font-clr: black;
+  --navbar-bg-clr: var(--pink);
+  --navbar-txt-clr: black;
+}
