@@ -1,5 +1,22 @@
 import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+const rotateX = keyframes`
+  0% {
+    opacity: 0;
+    transform: rotateX(-90deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotateX(0deg);
+  }
+`;
+
+const animationMixin = css`
+  animation: ${rotateX} 700ms ease-in-out forwards;
+  transform-origin: top center;
+`;
 
 const ListItem = styled.li`
   display: flex;
@@ -17,6 +34,8 @@ const MenuList = styled.ul`
   gap: 15px;
 
   list-style: none;
+
+  ${(props) => props.isRow ? null : animationMixin};
 `;
 
 const MenuNavLink = styled(NavLink)`
