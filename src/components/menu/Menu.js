@@ -1,12 +1,11 @@
-import { NavLink } from 'react-router-dom';
 import * as Styled from './Menu.styles';
 
 function Menu({ items, isRow }) {
   const elements = items.map((item) =>
     <Styled.ListItem key={item.uid}>
-      <NavLink className={({ isActive }) => isActive ? 'active' : ''} to={item.path}>
+      <Styled.MenuNavLink to={item.path}>
         {item.text}
-      </NavLink>
+      </Styled.MenuNavLink>
     </Styled.ListItem>
   );
 

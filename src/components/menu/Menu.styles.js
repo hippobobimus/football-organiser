@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const ListItem = styled.li`
@@ -18,4 +19,11 @@ const MenuList = styled.ul`
   list-style: none;
 `;
 
-export { ListItem, MenuList };
+const MenuNavLink = styled(NavLink)`
+  
+  &.active {
+    text-decoration: underline;
+  }
+`
+
+export { ListItem, MenuList, MenuNavLink };
