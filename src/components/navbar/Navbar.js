@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-//import './Navbar.css';
+import './Navbar.css';
+import * as Styled from './Navbar.styles';
 import MenuImg from './assets/menu.svg';
 import Menu from './Menu';
 import MenuToggle from './MenuToggle';
 import Title from '../Title';
 
-function Navbar({ title, menuItems }) {
-  // menu switches to a dropdown at this threshold.
-  const widthThreshold = 800;
-
+function Navbar({ title, menuItems, widthThreshold }) {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
@@ -25,7 +23,7 @@ function Navbar({ title, menuItems }) {
   };
 
   return (
-    <div className='navbar'>
+    <Styled.Nav>
       <div className='title-container'>
         {(screenWidth < widthThreshold) &&
           <MenuToggle imageSrc={MenuImg} onClickHandler={toggleMenu} />
@@ -35,7 +33,7 @@ function Navbar({ title, menuItems }) {
       {(menuIsVisible || screenWidth > widthThreshold) &&
         <Menu items={menuItems} />
       }
-    </div>
+    </Styled.Nav>
   );
 }
 
