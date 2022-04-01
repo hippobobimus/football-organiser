@@ -12,7 +12,7 @@ describe('Navbar component', () => {
   test('Renders correct menu items', () => {
     const { getByText } = render(
       <MemoryRouter>
-        <Navbar menuItems={menuItems}/>
+        <Navbar title='test-title' menuItems={menuItems} widthThreshold={800}/>
       </MemoryRouter>
     );
 

@@ -9,6 +9,9 @@ const globals = {
     { uid: uniqid(), text: 'Location', path: '/location' },
     { uid: uniqid(), text: 'FAQ', path: '/faq' },
   ],
+  responsive: {
+    widthThreshold: 800,
+  }
 };
 
 export default globals;
