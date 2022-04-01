@@ -10,7 +10,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <div>
-        <Navbar title={globals.title} menuItems={globals.menuItems} widthThreshold={globals.responsive.widthThreshold}/>
+        <Navbar title={globals.title} menuItems={globals.menuItems} widthBreakpoint={globals.responsiveBreakpoint.width}/>
         <Outlet />
       </div>
     </ThemeProvider>

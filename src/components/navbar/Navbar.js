@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import './Navbar.css';
 import * as Styled from './Navbar.styles';
+import { Container } from '../styles';
 import MenuImg from './assets/menu.svg';
-import Menu from './Menu';
-import MenuToggle from './MenuToggle';
-import Title from '../Title';
+import Menu from '../menu/Menu';
 
-function Navbar({ title, menuItems, widthThreshold }) {
+function Navbar({ title, menuItems, widthBreakpoint }) {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     const updateWidth = () => setScreenWidth(window.innerWidth);
@@ -18,20 +17,31 @@ function Navbar({ title, menuItems, widthThreshold }) {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
+  useEffect(() => {
+    setIsMobile(screenWidth < widthBreakpoint);
+  }, [screenWidth]);
+
+  useEffect(() => {
+    // ensure menu is initially hidden when switching to mobile view.
+    if (isMobile) {
+      setMenuIsVisible(false);
+    }
+  }, [isMobile]);
+
   const toggleMenu = () => {
     setMenuIsVisible(!menuIsVisible);
   };
 
   return (
-    <Styled.Nav>
-      <div className='title-container'>
-        {(screenWidth < widthThreshold) &&
-          <MenuToggle imageSrc={MenuImg} onClickHandler={toggleMenu} />
+    <Styled.Nav isMobile={isMobile}>
+      <Container>
+        {(isMobile) &&
+          <Styled.MenuToggle src={MenuImg} onClick={toggleMenu} />
         }
-        <Title>{title}</Title>
-      </div>
-      {(menuIsVisible || screenWidth > widthThreshold) &&
-        <Menu items={menuItems} />
+        <Styled.NavTitle>{title}</Styled.NavTitle>
+      </Container>
+      {(menuIsVisible || !isMobile) &&
+        <Menu isRow={!isMobile} items={menuItems} />
       }
     </Styled.Nav>
   );

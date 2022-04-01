@@ -8,7 +8,7 @@ const theme = {
   fgClr: colours.green,
   textClr: 'black',
   titleFont: '\'Londrina Sketch\', cursive',
-  subtitleFont: '\'Londrina Sketch\', cursive',
+  subtitleFont: '\'Permanent Marker\', cursive',
   font: 'Arial, Helvetica, sans-serif',
 }
 
