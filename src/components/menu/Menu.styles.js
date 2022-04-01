@@ -21,8 +21,15 @@ const MenuList = styled.ul`
 
 const MenuNavLink = styled(NavLink)`
   
-  &.active {
-    text-decoration: underline;
+  &.active,
+  &:hover {
+    text-shadow: 0px 5px 2px ${(props) => props.theme.textShadowClr};
+    transform: translate(-0px, -3px);
+  }
+
+  &:active {
+    text-shadow: none;
+    transform: none;
   }
 `
 
