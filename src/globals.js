@@ -10,7 +10,7 @@ const globals = {
     { uid: uniqid(), text: 'FAQ', path: '/faq' },
   ],
   responsiveBreakpoint: {
-    width: 800,
+    width: 900,
   }
 };
 
