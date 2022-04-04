@@ -9,10 +9,8 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <div>
         <Navbar title={globals.title} menuItems={globals.menuItems} widthBreakpoint={globals.responsiveBreakpoint.width}/>
         <Outlet />
-      </div>
     </ThemeProvider>
   );
 }
