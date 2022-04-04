@@ -3,12 +3,10 @@ import styled, { css, keyframes } from 'styled-components';
 
 const rotateX = keyframes`
   0% {
-    opacity: 0;
     transform: rotateX(-90deg);
   }
 
   100% {
-    opacity: 1;
     transform: rotateX(0deg);
   }
 `;
@@ -16,6 +14,19 @@ const rotateX = keyframes`
 const animationMixin = css`
   animation: ${rotateX} 700ms ease-in-out forwards;
   transform-origin: top center;
+`;
+
+const columnMixin = css`
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    height: calc(100vh - 100%);
+
+    flex-direction: column;
+
+    padding: 20px;
+
+    ${animationMixin}
 `;
 
 const ListItem = styled.li`
@@ -33,9 +44,10 @@ const MenuList = styled.ul`
   align-items: center;
   gap: 15px;
 
+  background-color: ${(props) => props.theme.bgClr};
   list-style: none;
 
-  ${(props) => props.isRow ? null : animationMixin};
+  ${(props) => !props.isRow && columnMixin};
 `;
 
 const MenuNavLink = styled(NavLink)`
