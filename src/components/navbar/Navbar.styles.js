@@ -2,12 +2,17 @@ import styled from 'styled-components';
 import { Icon, Title } from '../styles';
 
 const Nav = styled.nav`
+  position: relative;
+
   display: flex;
   flex-direction: ${(props) => props.isMobile ? 'column' : 'row' };
-  justify-content: space-around;
+  justify-content: ${(props) => props.isMobile ? 'flex-start' : 'space-around'};
   align-items: center;
   gap: 20px;
+
   padding: 20px;
+
+  background-color: ${(props) => props.theme.bgClr};
 `;
 
 const MenuToggle = styled(Icon)`
