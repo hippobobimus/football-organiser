@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import * as Styled from './Navbar.styles';
 import { Container } from '../styles';
 import MenuImg from './assets/menu.svg';
@@ -8,6 +9,7 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [isMobile, setIsMobile] = useState(false)
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const updateWidth = () => setScreenWidth(window.innerWidth);
@@ -27,6 +29,11 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
       setMenuIsVisible(false);
     }
   }, [isMobile]);
+
+  useEffect(() => {
+    // close menu on path change.
+    setMenuIsVisible(false);
+  }, [pathname]);
 
   const toggleMenu = () => {
     setMenuIsVisible(!menuIsVisible);
