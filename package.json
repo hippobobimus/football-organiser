@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "packageManager": "yarn@3.2.0",
   "workspaces": [
-    "frontend"
+    "frontend",
+    "backend"
   ],
   "scripts": {
     "client": "yarn workspace frontend start"

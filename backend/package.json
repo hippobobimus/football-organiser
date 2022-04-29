@@ -1,0 +1,56 @@
+{
+  "name": "backend",
+  "packageManager": "yarn@3.2.0",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "17.9.0"
+  },
+  "scripts": {
+    "start": "node --experimental-specifier-resolution=node ./bin/www",
+    "devstart": "nodemon --exec 'node --experimental-specifier-resolution=node -r dotenv/config ./bin/www'",
+    "serverstart": "DEBUG=backend:\\* yarn devstart"
+  },
+  "type": "module",
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
+    "extends": [
+      "airbnb-base/legacy",
+      "prettier"
+    ],
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-console": "off",
+      "no-param-reassign": [
+        2,
+        {
+          "props": false
+        }
+      ],
+      "no-underscore-dangle": "off"
+    }
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "express": "^4.18.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.6.2"
+  }
+}
