@@ -1,12 +1,10 @@
 import express from 'express';
-import httpErrors from 'http-errors';
+import createError from 'http-errors';
 import morgan from 'morgan';
 
 import db from './config/db';
 import { errorHandler } from './middleware/errorMiddleware';
 import { eventsRouter, usersRouter } from './routes';
-
-const { createError } = httpErrors;
 
 const app = express();
 
