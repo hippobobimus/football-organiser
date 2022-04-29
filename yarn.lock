@@ -3826,6 +3826,7 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.26.0
     express: ^4.18.0
+    http-errors: ^2.0.0
     morgan: ^1.10.0
     nodemon: ^2.0.15
     prettier: ^2.6.2
@@ -6903,7 +6904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:2.0.0":
+"http-errors@npm:2.0.0, http-errors@npm:^2.0.0":
   version: 2.0.0
   resolution: "http-errors@npm:2.0.0"
   dependencies:
