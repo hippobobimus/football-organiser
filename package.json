@@ -7,6 +7,11 @@
     "backend"
   ],
   "scripts": {
-    "client": "yarn workspace frontend start"
+    "client": "yarn workspace frontend start",
+    "server": "yarn workspace backend devdebug",
+    "dev": "concurrently \"yarn run server\" \"yarn run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.1.0"
   }
 }

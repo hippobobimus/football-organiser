@@ -8,8 +8,8 @@
   },
   "scripts": {
     "start": "node --experimental-specifier-resolution=node ./bin/www",
-    "devstart": "nodemon --exec 'node --experimental-specifier-resolution=node -r dotenv/config ./bin/www'",
-    "serverstart": "DEBUG=backend:\\* yarn devstart"
+    "dev": "nodemon --exec 'node --experimental-specifier-resolution=node -r dotenv/config ./bin/www'",
+    "devdebug": "DEBUG=backend:\\* yarn run dev"
   },
   "type": "module",
   "eslintConfig": {
