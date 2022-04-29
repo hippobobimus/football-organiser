@@ -1,6 +1,8 @@
 import express from 'express';
 import morgan from 'morgan';
 
+import { eventsRouter } from './routes';
+
 const app = express();
 
 /*
@@ -18,6 +20,6 @@ app.use(express.urlencoded({ extended: false }));
  * Routing
  */
 
-app.get('/', (_, res) => res.send('Hello world'));
+app.use('/api/events', eventsRouter);
 
 export default app;
