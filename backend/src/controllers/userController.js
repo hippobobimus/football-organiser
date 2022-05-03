@@ -1,15 +1,28 @@
+import { User } from '../models';
 // @desc    Get users
 // @route   GET /api/users
 // @access  Private
-const readUsers = (req, res, next) => {
-  res.status(200).json({ message: 'Get all users' });
+const readUsers = async (req, res) => {
+  const users = await User.find();
+
+  res.status(200).json(users);
 };
 
 // @desc    Create user
 // @route   POST /api/users
 // @access  Private
-const createUser = (req, res, next) => {
-  res.status(200).json({ message: 'Create a user' });
+const createUser = async (req, res, next) => {
+  if (!req.body.firstName || !req.body.lastName) {
+    res.status(400);
+    throw new Error('Please enter a first and last name');
+  }
+
+  const user = await User.create({
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+  });
+
+  res.status(200).json(user);
 };
 
 // @desc    Get a user
