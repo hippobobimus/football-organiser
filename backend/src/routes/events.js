@@ -15,4 +15,12 @@ router
   .put(eventController.updateEvent)
   .delete(eventController.deleteEvent);
 
+router
+  .route('/:id/join')
+  .put(eventController.joinEvent);
+
+router
+  .route('/:id/leave')
+  .put(eventController.leaveEvent);
+
 export default router;
