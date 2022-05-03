@@ -21,7 +21,7 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
 
   useEffect(() => {
     setIsMobile(screenWidth < widthBreakpoint);
-  }, [screenWidth]);
+  }, [screenWidth, widthBreakpoint]);
 
   useEffect(() => {
     // ensure menu is initially hidden when switching to mobile view.
