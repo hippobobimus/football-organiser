@@ -3,8 +3,14 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema(
   {
-    firstName: { type: String, required: true, maxlength: 100 },
-    lastName: { type: String, required: true, maxlength: 100 },
+    firstName: { type: String, maxlength: 100, required: true },
+    lastName: { type: String, maxlength: 100, required: true },
+    email: { type: String, maxlength: 100, required: true, unique: true },
+    password: {
+      hash: { type: String, required: true },
+      salt: { type: String, required: true },
+    },
+    role: { type: String, required: true, default: 'user' },
   },
   {
     timestamps: true,
