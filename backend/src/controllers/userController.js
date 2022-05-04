@@ -1,27 +1,100 @@
-import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import createError from 'http-errors';
 
 import { User } from '../models';
+import validate from '../middleware/validation';
+import {
+  authenticatePassword,
+  generatePassword,
+  issueJWT,
+} from '../utils/password';
 
-const validateAndSanitiseInput = [
-  body('firstName')
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .escape()
-    .withMessage('First name must be specified.')
-    .isAlphanumeric('en-GB', { ignore: "'-" })
-    .withMessage(
-      'First name has invalid characters (a-z, capitalisation, hyphenation and apostrophes only).'
-    ),
-  body('lastName')
-    .trim()
-    .isLength({ min: 1, max: 100 })
-    .escape()
-    .withMessage('Last name must be specified.')
-    .isAlphanumeric('en-GB', { ignore: "'-" })
-    .withMessage(
-      'Last name has invalid characters (a-z, capitalisation, hyphenation and apostrophes only).'
-    ),
+// @desc    Create user
+// @route   POST /api/users
+// @access  Public
+const createUser = [
+  validate.firstName,
+  validate.lastName,
+  validate.email,
+  validate.strongPassword,
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return next(
+        createError(400, 'Field validation failed.', {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    const { hash, salt } = generatePassword(req.body.password);
+
+    try {
+      const user = await User.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: { hash, salt },
+      });
+      return res.status(200).json(user);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
+
+// @desc    Login a user
+// @route   POST /api/users/:id/login
+// @access  Public
+const loginUser = [
+  validate.email,
+  validate.strongPassword,
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return next(
+        createError(400, 'Field validation failed.', {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    let user;
+    try {
+      user = await User.findOne({ email: req.body.email });
+    } catch (err) {
+      return next(err);
+    }
+
+    if (!user) {
+      return next(createError(401, 'Invalid email or password'));
+    }
+
+    const authenticated = authenticatePassword(
+      req.body.password,
+      user.password.hash,
+      user.password.salt
+    );
+
+    if (!authenticated) {
+      return next(createError(401, 'Invalid email or password'));
+    }
+
+    const jwt = issueJWT(user);
+
+    return res
+      .status(200)
+      .json({
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+        },
+        jwt,
+      });
+  },
 ];
 
 // @desc    Get users
@@ -35,34 +108,6 @@ const readUsers = async (req, res, next) => {
     return next(err);
   }
 };
-
-// @desc    Create user
-// @route   POST /api/users
-// @access  Private
-const createUser = [
-  validateAndSanitiseInput,
-  async (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return next(
-        createError(400, 'Field validation failed.', {
-          fieldValidationErrors: errors.errors,
-        })
-      );
-    }
-
-    try {
-      const user = await User.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-      });
-      return res.status(200).json(user);
-    } catch (err) {
-      return next(err);
-    }
-  },
-];
 
 // @desc    Get a user
 // @route   GET /api/users/:id
@@ -80,7 +125,10 @@ const readUser = async (req, res, next) => {
 // @route   PUT /api/users/:id
 // @access  Private
 const updateUser = [
-  validateAndSanitiseInput.map((m) => m.optional({ nullable: true })),
+  validate.firstName.optional({ nullable: true }),
+  validate.lastName.optional({ nullable: true }),
+  validate.email.optional({ nullable: true }),
+  validate.strongPassword.optional({ nullable: true }),
   async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -111,4 +159,11 @@ const deleteUser = (req, res, next) => {
   res.status(200).json({ message: `Delete user; id=${req.params.id}` });
 };
 
-export default { readUsers, createUser, readUser, updateUser, deleteUser };
+export default {
+  createUser,
+  loginUser,
+  readUsers,
+  readUser,
+  updateUser,
+  deleteUser,
+};
