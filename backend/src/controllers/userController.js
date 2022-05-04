@@ -28,6 +28,15 @@ const createUser = [
       );
     }
 
+    try {
+      const foundUser = await User.findOne({ email: req.body.email });
+      if (foundUser) {
+        return next(createError(400, 'User already exists.'))
+      }
+    } catch (err) {
+      return next(err);
+    }
+
     const { hash, salt } = generatePassword(req.body.password);
 
     try {
@@ -37,7 +46,15 @@ const createUser = [
         email: req.body.email,
         password: { hash, salt },
       });
-      return res.status(200).json(user);
+
+      return res.status(200).json({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        jwt: issueJWT(user),
+      });
     } catch (err) {
       return next(err);
     }
