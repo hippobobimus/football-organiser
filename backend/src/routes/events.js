@@ -1,12 +1,13 @@
 import express from 'express';
 
 import eventController from '../controllers/eventController';
+import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(eventController.readEvents)
+  .get(protect, eventController.readEvents)
   .post(eventController.createEvent);
 
 router
