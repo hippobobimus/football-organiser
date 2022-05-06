@@ -1,13 +1,35 @@
 import styled from 'styled-components';
 
+const Button = styled.button`
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
+  font-family: ${(props) => props.theme.buttonFont};
+  font-size: 1rem;
+  background-color: ${(props) => props.theme.buttonClr};
+  color: ${(props) => props.theme.buttonTextClr};
+  padding: 10px 20px;
+
+  &:hover, &:active {
+    background-color: ${(props) => props.theme.buttonHoverClr};
+  }
+
+  &:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+`;
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `;
 
 const Card = styled(Container)`
-  flex-direction: column;
+  gap: 10px;
 
   background: repeating-linear-gradient(
     45deg,
@@ -18,7 +40,7 @@ const Card = styled(Container)`
   );
   border-radius: 25px;
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
-  padding: 20px;
+  padding: 30px;
 
   min-width: 100%;
   min-height: 90%;
@@ -58,4 +80,4 @@ const Subtitle = styled.h2`
   align-text: center;
 `;
 
-export { Card, Container, Content, Icon, Subtitle, Title };
+export { Button, Card, Container, Content, Icon, Subtitle, Title };
