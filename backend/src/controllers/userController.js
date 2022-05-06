@@ -47,13 +47,10 @@ const createUser = [
         password: { hash, salt },
       });
 
+      const { token } = issueJWT(user.id);
+
       return res.status(200).json({
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-        jwt: issueJWT(user),
+        user: token,
       });
     } catch (err) {
       return next(err);

@@ -23,11 +23,11 @@ function authenticatePassword(password, storedHash, salt) {
   return hash === storedHash;
 }
 
-function issueJWT(user) {
+function issueJWT(userId) {
   const expiresIn = '1d';
 
   const payload = {
-    sub: user.id,
+    sub: userId,
     iat: Date.now(),
   };
 
