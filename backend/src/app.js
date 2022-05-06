@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import createError from 'http-errors';
 import morgan from 'morgan';
 
@@ -17,6 +18,8 @@ db.connect();
 /*
  * Middleware
  */
+
+app.use(cors());
 
 // logging
 app.use(morgan('dev'));
