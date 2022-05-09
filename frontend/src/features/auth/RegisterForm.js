@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import Form from '../../components/form/Form';
+import Spinner from '../../components/spinner/Spinner';
 import { Button, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
 
-function RegisterForm({title}) {
+function RegisterForm({ title }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [fields, setFields] = useState({
@@ -112,7 +113,7 @@ function RegisterForm({title}) {
       confirmPassword: '',
     });
     dispatch(reset());
-  }
+  };
 
   if (isSuccess || user) {
     return (
@@ -134,7 +135,7 @@ function RegisterForm({title}) {
   }
 
   if (isLoading) {
-    return <h1>Loading...</h1>;
+    return <Spinner />;
   }
 
   return (
