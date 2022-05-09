@@ -24,6 +24,8 @@ const theme = {
   buttonTextClr: colours.black,
   inputBorderClr: colours.grey,
   inputErrorBorderClr: colours.red,
+  spinnerBgClr: colours.white,
+  spinnerFgClr: colours.darkPink,
   titleFont: '\'Londrina Sketch\', cursive',
   subtitleFont: '\'Permanent Marker\', cursive',
   buttonFont: '\'Permanent Marker\', cursive',
