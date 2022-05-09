@@ -3,6 +3,7 @@ import App from './App';
 import {
   Faq,
   Home,
+  Login,
   MatchLineup,
   MatchLocation,
   MatchWeather,
@@ -16,6 +17,7 @@ function RouteSwitch() {
       <Route path='/' element={<App />}>
         <Route index element={<Home />} />
         <Route path='register' element={<Register />} />
+        <Route path='login' element={<Login />} />
         <Route path='lineup' element={<MatchLineup />} />
         <Route path='weather' element={<MatchWeather />} />
         <Route path='location' element={<MatchLocation />} />
