@@ -2,7 +2,6 @@
 const API_URL = 'http://localhost:5000/api/users/';
 
 const register = async (userData) => {
-  // does not reject on http error status codes, must be handled separately.
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -14,6 +13,7 @@ const register = async (userData) => {
 
   const data = await response.json();
 
+  // fetch does not reject on http error status codes, must be handled separately.
   if (!response.ok) {
     throw new Error(data.message);
   }
@@ -23,7 +23,6 @@ const register = async (userData) => {
 };
 
 const login = async (userData) => {
-  // does not reject on http error status codes, must be handled separately.
   const response = await fetch(API_URL + 'login', {
     method: 'POST',
     headers: {
@@ -35,6 +34,7 @@ const login = async (userData) => {
 
   const data = await response.json();
 
+  // fetch does not reject on http error status codes, must be handled separately.
   if (!response.ok) {
     throw new Error(data.message);
   }
