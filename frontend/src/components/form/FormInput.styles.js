@@ -27,13 +27,17 @@ const Input = styled.input`
   padding: 5px;
   width: 100%;
 
-  &:invalid {
-    border: 2px solid ${(props) => props.theme.inputErrorBorderClr};
-  }
+  ${(props) =>
+    props.visited &&
+    `
+    &:invalid {
+      border: 2px solid ${props.theme.inputErrorBorderClr};
+    }
 
-  &:invalid + ${ErrorMessage} {
-    display: block;
-  }
+    &:invalid + ${ErrorMessage} {
+      display: block;
+    }
+  `}
 `;
 
 export { ErrorMessage, FormLabel, Input, InputContainer };
