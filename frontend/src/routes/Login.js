@@ -1,6 +1,11 @@
+import { Card } from '../components/styles';
+import LoginForm from '../features/auth/LoginForm';
+
 const Login = () => {
   return (
-    <p>Login page...</p>
+    <Card>
+      <LoginForm title='Login'/>
+    </Card>
   );
 }
 
