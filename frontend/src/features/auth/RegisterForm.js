@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import Form from '../../components/form/Form';
+import { Button, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
 
-function RegisterForm() {
+function RegisterForm({title}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [fields, setFields] = useState({
@@ -91,21 +92,6 @@ function RegisterForm() {
     input.onChange = handleInputChange;
   });
 
-  useEffect(() => {
-    if (isError) {
-      // TODO
-      console.log(message);
-    }
-
-    if (isSuccess || user) {
-      // TODO
-      console.log('Success!')
-      //navigate('/');
-    }
-
-    dispatch(reset());
-  });
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -119,17 +105,48 @@ function RegisterForm() {
     );
   };
 
+  const handleBack = () => {
+    setFields({
+      ...fields,
+      password: '',
+      confirmPassword: '',
+    });
+    dispatch(reset());
+  }
+
+  if (isSuccess || user) {
+    return (
+      <>
+        <Subtitle>Welcome!</Subtitle>
+        <Button onClick={() => navigate('/')}>Get Started</Button>
+      </>
+    );
+  }
+
+  if (isError) {
+    return (
+      <>
+        <Subtitle>Oops...</Subtitle>
+        <p>{message}</p>
+        <Button onClick={handleBack}>Back</Button>
+      </>
+    );
+  }
+
   if (isLoading) {
     return <h1>Loading...</h1>;
   }
 
   return (
-    <Form
-      fields={fields}
-      inputs={inputs}
-      onInputChange={handleInputChange}
-      onSubmit={handleSubmit}
-    />
+    <>
+      <Subtitle>{title}</Subtitle>
+      <Form
+        fields={fields}
+        inputs={inputs}
+        onInputChange={handleInputChange}
+        onSubmit={handleSubmit}
+      />
+    </>
   );
 }
 

@@ -1,11 +1,10 @@
-import { Card, Subtitle } from '../components/styles';
+import { Card } from '../components/styles';
 import RegisterForm from '../features/auth/RegisterForm';
 
 function Register() {
   return (
     <Card>
-      <Subtitle>Create an account</Subtitle>
-      <RegisterForm />
+      <RegisterForm title='Create an Account'/>
     </Card>
   );
 }
