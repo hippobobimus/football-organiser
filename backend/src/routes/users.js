@@ -16,7 +16,7 @@ router
   .delete(userController.deleteUser);
 
 router
-  .route('/:id/login')
+  .route('/login')
   .post(userController.loginUser);
 
 export default router;

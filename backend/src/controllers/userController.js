@@ -59,7 +59,7 @@ const createUser = [
 ];
 
 // @desc    Login a user
-// @route   POST /api/users/:id/login
+// @route   POST /api/users/login
 // @access  Public
 const loginUser = [
   validate.email,
