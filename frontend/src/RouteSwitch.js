@@ -8,6 +8,7 @@ import {
   MatchLocation,
   MatchWeather,
   PageNotFound,
+  Profile,
   Register,
 } from './routes';
 
@@ -18,6 +19,7 @@ function RouteSwitch() {
         <Route index element={<Home />} />
         <Route path='register' element={<Register />} />
         <Route path='login' element={<Login />} />
+        <Route path='profile' element={<Profile />} />
         <Route path='lineup' element={<MatchLineup />} />
         <Route path='weather' element={<MatchWeather />} />
         <Route path='location' element={<MatchLocation />} />
