@@ -50,7 +50,7 @@ const createUser = [
       const { token } = issueJWT(user.id);
 
       return res.status(200).json({
-        user: token,
+        token,
       });
     } catch (err) {
       return next(err);
@@ -96,20 +96,29 @@ const loginUser = [
       return next(createError(401, 'Invalid email or password'));
     }
 
-    const jwt = issueJWT(user);
+    const { token } = issueJWT(user);
 
     return res
       .status(200)
       .json({
-        user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-        },
-        jwt,
+        token,
       });
   },
 ];
+
+// @desc    Get current user
+// @route   GET /api/users/me
+// @access  Private
+const readCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    return res.status(200).json(user);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// TODO following currently unused.
 
 // @desc    Get users
 // @route   GET /api/users
@@ -176,6 +185,7 @@ const deleteUser = (req, res, next) => {
 export default {
   createUser,
   loginUser,
+  readCurrentUser,
   readUsers,
   readUser,
   updateUser,
