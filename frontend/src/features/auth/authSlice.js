@@ -2,10 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import authService from './authService';
 
-const user = JSON.parse(localStorage.getItem('user')) || null;
+const token = JSON.parse(localStorage.getItem('token')) || null;
+const isLoggedIn = Boolean(token);
 
 const initialState = {
-  user,
+  token,
+  isLoggedIn,
   isLoading: false,
   isSuccess: false,
   isError: false,
@@ -58,13 +60,14 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
+        state.token = action.payload.token;
+        state.isLoggedIn = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.user = null;
+        state.token = null;
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -72,16 +75,18 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
+        state.token = action.payload.token;
+        state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-        state.user = null;
+        state.token = null;
       })
       .addCase(logout.fulfilled, (state) => {
-        state.user = null;
+        state.token = null;
+        state.isLoggedIn = false;
       });
   },
 });

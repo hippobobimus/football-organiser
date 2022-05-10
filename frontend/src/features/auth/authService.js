@@ -18,7 +18,7 @@ const register = async (userData) => {
     throw new Error(data.message);
   }
 
-  localStorage.setItem('user', JSON.stringify(data.user));
+  localStorage.setItem('token', JSON.stringify(data.token));
   return data;
 };
 
@@ -39,12 +39,12 @@ const login = async (userData) => {
     throw new Error(data.message);
   }
 
-  localStorage.setItem('user', JSON.stringify(data.user));
+  localStorage.setItem('token', JSON.stringify(data.token));
   return data;
 };
 
 const logout = async () => {
-  localStorage.removeItem('user');
+  localStorage.removeItem('token');
 };
 
 const authService = { register, login, logout };
