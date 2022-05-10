@@ -20,7 +20,7 @@ function RegisterForm({ title }) {
 
   const { firstName, lastName, email, password } = fields;
 
-  const { user, isLoading, isSuccess, isError, message } = useSelector(
+  const { isLoggedIn, isLoading, isSuccess, isError, message } = useSelector(
     (state) => state.auth
   );
 
@@ -115,11 +115,16 @@ function RegisterForm({ title }) {
     dispatch(reset());
   };
 
-  if (isSuccess || user) {
+  const handleDone = () => {
+    navigate('/');
+    dispatch(reset());
+  };
+
+  if (isSuccess || isLoggedIn) {
     return (
       <>
         <Subtitle>Welcome!</Subtitle>
-        <Button onClick={() => navigate('/')}>Get Started</Button>
+        <Button onClick={handleDone}>Get Started</Button>
       </>
     );
   }

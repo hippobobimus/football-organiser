@@ -15,7 +15,7 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user } = useSelector((state) => state.auth);
+  const { isLoggedIn } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const updateWidth = () => setScreenWidth(window.innerWidth);
@@ -60,7 +60,7 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
       {(menuIsVisible || !isMobile) && (
         <Styled.MenuContainer isRow={!isMobile}>
           <Menu isRow={!isMobile} items={menuItems} />
-          {user && (
+          {isLoggedIn && (
             <Styled.NavButton onClick={handleLogout}>Logout</Styled.NavButton>
           )}
         </Styled.MenuContainer>
