@@ -148,7 +148,7 @@ function Register() {
   }
 
   return (
-    <>
+    <Card>
       <Subtitle>Create an Account</Subtitle>
       <Form
         fields={fields}
@@ -156,7 +156,7 @@ function Register() {
         onInputChange={handleInputChange}
         onSubmit={handleSubmit}
       />
-    </>
+    </Card>
   );
 }
 
