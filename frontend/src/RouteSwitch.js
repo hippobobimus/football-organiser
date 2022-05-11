@@ -1,16 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
+
 import App from './App';
 import {
   Faq,
   Home,
-  Login,
   MatchLineup,
   MatchLocation,
   MatchWeather,
   PageNotFound,
-  Profile,
-  Register,
 } from './routes';
+import Login from './features/auth/Login';
+import Register from './features/auth/Register';
+import Profile from './features/currentUser/Profile';
 
 function RouteSwitch() {
   return (

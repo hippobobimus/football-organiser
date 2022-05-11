@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 import Form from '../../components/form/Form';
 import Spinner from '../../components/spinner/Spinner';
-import { Button, Subtitle } from '../../components/styles';
+import { Button, Card, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
 
-function RegisterForm({ title }) {
+function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [fields, setFields] = useState({
@@ -122,30 +122,34 @@ function RegisterForm({ title }) {
 
   if (isSuccess || isLoggedIn) {
     return (
-      <>
+      <Card>
         <Subtitle>Welcome!</Subtitle>
         <Button onClick={handleDone}>Get Started</Button>
-      </>
+      </Card>
     );
   }
 
   if (isError) {
     return (
-      <>
+      <Card>
         <Subtitle>Oops...</Subtitle>
         <p>{message}</p>
         <Button onClick={handleBack}>Back</Button>
-      </>
+      </Card>
     );
   }
 
   if (isLoading) {
-    return <Spinner />;
+    return (
+      <Card>
+        <Spinner />
+      </Card>
+    );
   }
 
   return (
     <>
-      <Subtitle>{title}</Subtitle>
+      <Subtitle>Create an Account</Subtitle>
       <Form
         fields={fields}
         inputs={inputs}
@@ -156,4 +160,4 @@ function RegisterForm({ title }) {
   );
 }
 
-export default RegisterForm;
+export default Register;
