@@ -19,6 +19,12 @@ const UserSchema = new Schema(
   }
 );
 
+// Exclude password from returned JSON.
+UserSchema.options.toJSON.transform = (doc, ret) => {
+  delete ret.password;
+  return ret;
+};
+
 UserSchema.virtual('name').get((value, virtual, doc) => {
   let fullName = '';
 
