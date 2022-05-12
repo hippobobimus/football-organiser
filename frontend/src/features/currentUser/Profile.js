@@ -1,43 +1,85 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Card, Subtitle } from '../../components/styles';
+import {
+  Button,
+  Card,
+  Subtitle,
+  SectionHeading,
+  SmallButton,
+} from '../../components/styles';
+import * as Styled from './Profile.styles';
 import Spinner from '../../components/spinner/Spinner';
-import { getCurrentUser } from './currentUserSlice';
+import { getCurrentUser, reset } from './currentUserSlice';
 
-function Profile() {
+const ProfileInfo = ({ data }) => {
   const dispatch = useDispatch();
-  const { data, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.currentUser
+  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    dispatch(reset());
+    navigate('/edit-profile');
+  };
+
+  return (
+    <section>
+      <Styled.SectionContainer>
+        <Styled.HeadingContainer>
+          <SectionHeading>Your Info</SectionHeading>
+          <SmallButton onClick={handleEditClick}>Edit</SmallButton>
+        </Styled.HeadingContainer>
+
+        <Styled.List>
+          <Styled.ListItem>
+            <span>Name:</span>
+            <span>{data.name}</span>
+          </Styled.ListItem>
+          <Styled.ListItem>
+            <span>Email:</span>
+            <span>{data.email}</span>
+          </Styled.ListItem>
+        </Styled.List>
+      </Styled.SectionContainer>
+    </section>
   );
+};
+
+const Profile = () => {
+  const dispatch = useDispatch();
+  const { data, status, message } = useSelector((state) => state.currentUser);
 
   useEffect(() => {
-    if (!isLoading && !isSuccess && !isError) {
-      console.log('dispatching');
+    if (status === 'idle') {
       dispatch(getCurrentUser());
     }
-  }, [dispatch, isLoading, isSuccess, isError]);
+  }, [dispatch, status]);
 
-  if (isError) {
-    return <p>error: {message}</p>;
+  if (status === 'error') {
+    return (
+      <Card>
+        <Subtitle>Something went wrong...</Subtitle>
+        <p>Error: {message}</p>
+      </Card>
+    );
   }
 
-  if (isLoading || !data) {
-    return <Spinner />;
+  if (status === 'loading' || status === 'idle') {
+    return (
+      <Card>
+        <Spinner />
+      </Card>
+    );
   }
 
   return (
     <Card>
       <Subtitle>Hi {data.firstName}!</Subtitle>
-      <Subtitle>Your Info</Subtitle>
-      <ul>
-        <li>
-          Email: <Button>Edit</Button>
-        </li>
-      </ul>
-      <Button>Change Password</Button>
+      <ProfileInfo data={data} />
+      <SmallButton>Change Password</SmallButton>
+      <Button>Logout</Button>
     </Card>
   );
-}
+};
 
 export default Profile;
