@@ -17,6 +17,7 @@ router
 router
   .route('/me')
   .get(protect, userController.readCurrentUser)
+  .put(protect, userController.updateCurrentUser)
 
 // TODO currently unused
 //
