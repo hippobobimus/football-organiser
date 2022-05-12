@@ -1,145 +1,74 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Formik } from 'formik';
 
-import Form from '../../components/form/Form';
+import {
+  Form,
+  FormButton,
+  FormButtonContainer,
+  TextInput,
+} from '../../components/form';
+import { userRegistrationSchema } from '../validation/userValidation';
 import Spinner from '../../components/spinner/Spinner';
 import { Button, Card, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
 
-function Register() {
+const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [fields, setFields] = useState({
+  const [userEntry, setUserEntry] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
-    confirmPassword: '',
   });
+  const { isLoggedIn, status, message } = useSelector((state) => state.auth);
 
-  const { firstName, lastName, email, password } = fields;
-
-  const { isLoggedIn, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.auth
-  );
-
-  const inputs = [
-    {
-      id: 0,
-      name: 'firstName',
-      type: 'text',
-      placeholder: 'Roberto',
-      errorMessage:
-        'Please enter a valid first name containing only upper and lower case letters a-z, hyphens and apostrophes.',
-      label: 'First Name',
-      pattern: "[A-Za-z-']{1,}",
-      required: true,
-    },
-    {
-      id: 1,
-      name: 'lastName',
-      type: 'text',
-      placeholder: 'Carlos',
-      errorMessage:
-        'Please enter a valid last name containing only upper and lower case letters a-z, hyphens and apostrophes.',
-      label: 'Last Name',
-      pattern: "[A-Za-z-']{1,}",
-      required: true,
-    },
-    {
-      id: 2,
-      name: 'email',
-      type: 'email',
-      placeholder: 'roberto@carlos.com',
-      errorMessage: 'Please enter a valid email address.',
-      label: 'Email',
-      required: true,
-    },
-    {
-      id: 3,
-      name: 'password',
-      type: 'password',
-      placeholder: 'Password',
-      errorMessage:
-        'Please enter a strong password of at least 8 characters, containing a minimum of 1 upper case character, 1 lower case character and 1 symbol.',
-      label: 'Password',
-      pattern:
-        '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&.])[A-Za-z0-9@$!%*?&.]{8,}$',
-      required: true,
-    },
-    {
-      id: 4,
-      name: 'confirmPassword',
-      type: 'password',
-      placeholder: 'Confirm password',
-      errorMessage: 'Passwords do not match.',
-      label: 'Confirm Password',
-      pattern: password,
-      required: true,
-    },
-  ];
-
-  const handleInputChange = (e) => {
-    setFields({
-      ...fields,
-      [e.target.name]: e.target.value,
+  const handleSubmit = (values) => {
+    setUserEntry({
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
     });
+    dispatch(register(values));
   };
 
-  inputs.forEach((input) => {
-    input.key = input.id;
-    input.value = fields[input.name];
-    input.onChange = handleInputChange;
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    dispatch(
-      register({
-        firstName,
-        lastName,
-        email,
-        password,
-      })
-    );
-  };
-
-  const handleBack = () => {
-    setFields({
-      ...fields,
-      password: '',
-      confirmPassword: '',
-    });
+  const handleCancel = () => {
+    navigate('/login');
     dispatch(reset());
   };
 
-  const handleDone = () => {
+  const handleBack = () => {
+    dispatch(reset());
+  };
+
+  const handleStart = () => {
     navigate('/');
     dispatch(reset());
   };
 
-  if (isSuccess || isLoggedIn) {
+  if (isLoggedIn || status === 'success') {
     return (
       <Card>
         <Subtitle>Welcome!</Subtitle>
-        <Button onClick={handleDone}>Get Started</Button>
+        <Button onClick={handleStart}>Get Started</Button>
       </Card>
     );
   }
 
-  if (isError) {
+  if (status === 'error') {
     return (
       <Card>
-        <Subtitle>Oops...</Subtitle>
+        <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button onClick={handleBack}>Back</Button>
+        <Button type='button' onClick={handleBack}>
+          Back
+        </Button>
       </Card>
     );
   }
 
-  if (isLoading) {
+  if (status === 'loading') {
     return (
       <Card>
         <Spinner />
@@ -150,14 +79,45 @@ function Register() {
   return (
     <Card>
       <Subtitle>Create an Account</Subtitle>
-      <Form
-        fields={fields}
-        inputs={inputs}
-        onInputChange={handleInputChange}
+      <Formik
+        initialValues={{
+          firstName: userEntry.firstName,
+          lastName: userEntry.lastName,
+          email: userEntry.email,
+          newPassword: '',
+          confirmPassword: '',
+        }}
+        validationSchema={userRegistrationSchema}
         onSubmit={handleSubmit}
-      />
+      >
+        {(formik) => (
+          <Form>
+            <TextInput label='First Name' name='firstName' type='text' />
+            <TextInput label='Last Name' name='lastName' type='text' />
+            <TextInput label='Email' name='email' type='email' />
+            <TextInput
+              label='Enter a strong password'
+              name='newPassword'
+              type='password'
+            />
+            <TextInput
+              label='Confirm password'
+              name='confirmPassword'
+              type='password'
+            />
+            <FormButtonContainer>
+              <FormButton type='button' onClick={handleCancel}>
+                Cancel
+              </FormButton>
+              <FormButton type='submit' disabled={formik.isSubmitting}>
+                Save
+              </FormButton>
+            </FormButtonContainer>
+          </Form>
+        )}
+      </Formik>
     </Card>
   );
-}
+};
 
 export default Register;

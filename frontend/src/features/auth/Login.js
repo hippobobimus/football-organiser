@@ -1,97 +1,57 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Formik } from 'formik';
 
-import Form from '../../components/form/Form';
+import {
+  Form,
+  FormButton,
+  FormButtonContainer,
+  TextInput,
+} from '../../components/form';
+import { loginSchema } from '../validation/userValidation';
 import Spinner from '../../components/spinner/Spinner';
-import { Button, Card, Subtitle } from '../../components/styles';
+import { Button, Card, Container, Link, Subtitle } from '../../components/styles';
 import { login, reset } from './authSlice';
 
-function Login() {
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [fields, setFields] = useState({
-    email: '',
-    password: '',
-  });
+  const [userEmail, setUserEmail] = useState('');
 
-  const { email, password } = fields;
+  const { isLoggedIn, status, message } = useSelector((state) => state.auth);
 
-  const { user, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.auth
-  );
+  useEffect(() => {
+    if (isLoggedIn || status === 'success') {
+      navigate('/');
+      dispatch(reset());
+    }
+  }, [isLoggedIn, status, dispatch, navigate]);
 
-  const inputs = [
-    {
-      id: 0,
-      name: 'email',
-      type: 'email',
-      placeholder: 'roberto@carlos.com',
-      errorMessage: 'Please enter a valid email address.',
-      label: 'Email',
-      required: true,
-    },
-    {
-      id: 1,
-      name: 'password',
-      type: 'password',
-      placeholder: 'Password',
-      errorMessage: 'Please enter your password.',
-      label: 'Password',
-      required: true,
-    },
-  ];
-
-  const handleInputChange = (e) => {
-    setFields({
-      ...fields,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  inputs.forEach((input) => {
-    input.key = input.id;
-    input.value = fields[input.name];
-    input.onChange = handleInputChange;
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    dispatch(
-      login({
-        email,
-        password,
-      })
-    );
+  const handleSubmit = (values) => {
+    // store entered email in order to prefill form if login fails and
+    // needs to be reattempted.
+    setUserEmail(values.email);
+    dispatch(login(values));
   };
 
   const handleBack = () => {
-    setFields({
-      ...fields,
-      password: '',
-    });
     dispatch(reset());
   };
 
-  useEffect(() => {
-    if (isSuccess || user) {
-      navigate('/');
-    }
-    dispatch(reset());
-  }, [user, isSuccess, dispatch, navigate]);
-
-  if (isError) {
+  if (status === 'error') {
     return (
       <Card>
-        <Subtitle>Oops...</Subtitle>
+        <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button onClick={handleBack}>Back</Button>
+        <Button type='button' onClick={handleBack}>
+          Back
+        </Button>
       </Card>
     );
   }
 
-  if (isLoading) {
+  if (status === 'loading') {
     return (
       <Card>
         <Spinner />
@@ -101,13 +61,32 @@ function Login() {
 
   return (
     <Card>
-      <Subtitle>Login</Subtitle>
-      <Form
-        fields={fields}
-        inputs={inputs}
-        onInputChange={handleInputChange}
+      <Subtitle>Please Login</Subtitle>
+      <Formik
+        initialValues={{ email: userEmail, currentPassword: '' }}
+        validationSchema={loginSchema}
         onSubmit={handleSubmit}
-      />
+      >
+        {(formik) => (
+          <Form>
+            <TextInput label='Email' name='email' type='email' />
+            <TextInput
+              label='Password'
+              name='currentPassword'
+              type='password'
+            />
+            <FormButtonContainer>
+              <FormButton type='submit' disabled={formik.isSubmitting}>
+                Login
+              </FormButton>
+            </FormButtonContainer>
+          </Form>
+        )}
+      </Formik>
+      <Container>
+        <p>Not registered yet?</p>
+        <Link to='/register'>Create an account</Link>
+      </Container>
     </Card>
   );
 }
