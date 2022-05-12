@@ -22,6 +22,7 @@ const theme = {
   buttonClr: colours.pink,
   buttonHoverClr: colours.darkPink,
   buttonTextClr: colours.black,
+  linkTextClr: colours.black,
   navButtonClr: colours.darkGreen,
   navButtonHoverClr: colours.veryDarkGreen,
   navButtonTextClr: colours.black,
