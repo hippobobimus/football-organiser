@@ -8,9 +8,7 @@ const isLoggedIn = Boolean(token);
 const initialState = {
   token,
   isLoggedIn,
-  isLoading: false,
-  isSuccess: false,
-  isError: false,
+  status: 'idle',
   message: '',
 };
 
@@ -46,41 +44,35 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = false;
+      state.status = 'idle';
       state.message = '';
     },
   },
   extraReducers(builder) {
     builder
       .addCase(register.pending, (state) => {
-        state.isLoading = true;
+        state.status = 'loading';
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
+        state.status = 'success';
         state.token = action.payload.token;
         state.isLoggedIn = true;
       })
       .addCase(register.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
+        state.status = 'error';
         state.message = action.payload;
         state.token = null;
       })
       .addCase(login.pending, (state) => {
-        state.isLoading = true;
+        state.status = 'loading';
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
+        state.status = 'success';
         state.token = action.payload.token;
         state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
+        state.status = 'error';
         state.message = action.payload;
         state.token = null;
       })
