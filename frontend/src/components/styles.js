@@ -1,6 +1,7 @@
+import { Link as ReactRouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Button = styled.button`
+export const Button = styled.button`
   cursor: pointer;
   border-radius: 5px;
   border: none;
@@ -11,7 +12,8 @@ const Button = styled.button`
   color: ${(props) => props.theme.buttonTextClr};
   padding: 10px 20px;
 
-  &:hover, &:active {
+  &:hover,
+  &:active {
     background-color: ${(props) => props.theme.buttonHoverClr};
   }
 
@@ -21,15 +23,20 @@ const Button = styled.button`
   }
 `;
 
-const Container = styled.div`
+export const SmallButton = styled(Button)`
+  padding: 0px 10px;
+`;
+
+export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 5px;
 `;
 
-const Card = styled(Container)`
-  gap: 10px;
+export const Card = styled(Container)`
+  gap: 20px;
 
   background: repeating-linear-gradient(
     45deg,
@@ -46,7 +53,7 @@ const Card = styled(Container)`
   min-height: 90%;
 `;
 
-const Content = styled(Container)`
+export const Content = styled(Container)`
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   height: 100%;
@@ -57,7 +64,7 @@ const Content = styled(Container)`
   background-color: ${(props) => props.theme.bgClr};
 `;
 
-const Icon = styled.img`
+export const Icon = styled.img`
   height: 1rem;
 
   &:hover {
@@ -65,14 +72,23 @@ const Icon = styled.img`
   }
 `;
 
-const Title = styled.h1`
+export const Link = styled(ReactRouterLink)`
+  color: ${(props) => props.theme.linkTextClr};
+  text-decoration: underline;
+
+  &:hover {
+    font-weight: bold;
+  }
+`;
+
+export const Title = styled.h1`
   color: ${(props) => props.theme.textClr};
   font-family: ${(props) => props.theme.titleFont};
   font-size: 2rem;
   white-space: nowrap;
 `;
 
-const Subtitle = styled.h2`
+export const Subtitle = styled.h2`
   color: ${(props) => props.theme.textClr};
   font-family: ${(props) => props.theme.subtitleFont};
   font-size: 1.8rem;
@@ -80,4 +96,10 @@ const Subtitle = styled.h2`
   align-text: center;
 `;
 
-export { Button, Card, Container, Content, Icon, Subtitle, Title };
+export const SectionHeading = styled.h3`
+  color: ${(props) => props.theme.textClr};
+  font-family: ${(props) => props.theme.subtitleFont};
+  font-size: 1.2rem;
+  white-space: nowrap;
+  align-text: center;
+`;
