@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 
-import { Button, Card, Subtitle } from '../../components/styles';
+import { Button, Subtitle } from '../../components/styles';
 import {
   Form,
   FormButton,
@@ -47,26 +47,22 @@ const EditProfile = () => {
 
   if (status === 'error') {
     return (
-      <Card>
+      <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
-      </Card>
+      </>
     );
   }
 
   if (status === 'loading' || status === 'idle') {
-    return (
-      <Card>
-        <Spinner />
-      </Card>
-    );
+    return <Spinner />;
   }
 
   return (
-    <Card>
+    <>
       <Subtitle>Edit Your Info</Subtitle>
 
       <Formik
@@ -95,7 +91,7 @@ const EditProfile = () => {
           </Form>
         )}
       </Formik>
-    </Card>
+    </>
   );
 };
 

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
-  Card,
   Subtitle,
   SectionHeading,
   SmallButton,
@@ -70,28 +69,24 @@ const Profile = () => {
 
   if (status === 'error') {
     return (
-      <Card>
+      <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-      </Card>
+      </>
     );
   }
 
   if (status === 'loading' || status === 'idle') {
-    return (
-      <Card>
-        <Spinner />
-      </Card>
-    );
+    return <Spinner />;
   }
 
   return (
-    <Card>
+    <>
       <Subtitle>Hi {data.firstName}!</Subtitle>
       <ProfileInfo data={data} />
       <SmallButton onClick={handleChangePassword}>Change Password</SmallButton>
       <Button onClick={handleLogout}>Logout</Button>
-    </Card>
+    </>
   );
 };
 

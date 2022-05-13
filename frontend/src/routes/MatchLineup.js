@@ -1,8 +1,6 @@
-import { Card } from '../components/styles';
-
 function Lineup() {
   return (
-    <Card>
+    <>
       <ul>
         <li>John Smith</li>
         <li>Jane Doe</li>
@@ -15,7 +13,7 @@ function Lineup() {
         <li>Bruce McCoy</li>
         <li>Phil Long</li>
       </ul>
-    </Card>
+    </>
   );
 }
 

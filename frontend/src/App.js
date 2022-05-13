@@ -3,7 +3,7 @@ import { ThemeProvider } from 'styled-components';
 
 import GlobalStyle from './GlobalStyle';
 import { Navbar } from './components';
-import { Content } from './components/styles.js';
+import { Card, Content } from './components/styles.js';
 import globals from './globals.js';
 import theme from './theme.js';
 
@@ -17,7 +17,9 @@ const App = () => {
         widthBreakpoint={globals.responsiveBreakpoint.width}
       />
       <Content>
-        <Outlet />
+        <Card>
+          <Outlet />
+        </Card>
       </Content>
     </ThemeProvider>
   );

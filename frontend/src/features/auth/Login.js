@@ -11,13 +11,7 @@ import {
 } from '../../components/form';
 import { loginSchema } from '../validation/userValidation';
 import Spinner from '../../components/spinner/Spinner';
-import {
-  Button,
-  Card,
-  Container,
-  Link,
-  Subtitle,
-} from '../../components/styles';
+import { Button, Container, Link, Subtitle } from '../../components/styles';
 import { login, reset } from './authSlice';
 
 const Login = () => {
@@ -52,26 +46,22 @@ const Login = () => {
 
   if (status === 'error') {
     return (
-      <Card>
+      <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
-      </Card>
+      </>
     );
   }
 
   if (status === 'loading') {
-    return (
-      <Card>
-        <Spinner />
-      </Card>
-    );
+    return <Spinner />;
   }
 
   return (
-    <Card>
+    <>
       <Subtitle>Please Login</Subtitle>
       <Formik
         initialValues={{ email: userEmail, currentPassword: '' }}
@@ -98,7 +88,7 @@ const Login = () => {
         <p>Not registered yet?</p>
         <Link to='/register'>Create an account</Link>
       </Container>
-    </Card>
+    </>
   );
 };
 

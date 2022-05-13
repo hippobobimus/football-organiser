@@ -11,7 +11,7 @@ import {
 } from '../../components/form';
 import { userRegistrationSchema } from '../validation/userValidation';
 import Spinner from '../../components/spinner/Spinner';
-import { Button, Card, Subtitle } from '../../components/styles';
+import { Button, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
 
 const Register = () => {
@@ -49,35 +49,35 @@ const Register = () => {
 
   if (isLoggedIn || status === 'success') {
     return (
-      <Card>
+      <>
         <Subtitle>Welcome!</Subtitle>
         <Button onClick={handleStart}>Get Started</Button>
-      </Card>
+      </>
     );
   }
 
   if (status === 'error') {
     return (
-      <Card>
+      <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
-      </Card>
+      </>
     );
   }
 
   if (status === 'loading') {
     return (
-      <Card>
+      <>
         <Spinner />
-      </Card>
+      </>
     );
   }
 
   return (
-    <Card>
+    <>
       <Subtitle>Create an Account</Subtitle>
       <Formik
         initialValues={{
@@ -116,7 +116,7 @@ const Register = () => {
           </Form>
         )}
       </Formik>
-    </Card>
+    </>
   );
 };
 
