@@ -1,8 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { store } from './app/store';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
+import { store } from './app/store';
 import RouteSwitch from './RouteSwitch';
 
 const container = document.getElementById('root');
@@ -15,6 +16,6 @@ root.render(
       <BrowserRouter>
         <RouteSwitch />
       </BrowserRouter>
-      </Provider>
-  </React.StrictMode>,
+    </Provider>
+  </React.StrictMode>
 );
