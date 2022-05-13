@@ -12,6 +12,7 @@ import {
 import * as Styled from './Profile.styles';
 import Spinner from '../../components/spinner/Spinner';
 import { getCurrentUser, reset } from './currentUserSlice';
+import { logout } from '../auth/authSlice';
 
 const ProfileInfo = ({ data }) => {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const ProfileInfo = ({ data }) => {
 
 const Profile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data, status, message } = useSelector((state) => state.currentUser);
 
   useEffect(() => {
@@ -55,11 +57,22 @@ const Profile = () => {
     }
   }, [dispatch, status]);
 
+  const handleChangePassword = () => {
+    navigate('/edit-password');
+    dispatch(reset());
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+    dispatch(reset());
+  };
+
   if (status === 'error') {
     return (
       <Card>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>Error: {message}</p>
+        <p>{message}</p>
       </Card>
     );
   }
@@ -76,8 +89,8 @@ const Profile = () => {
     <Card>
       <Subtitle>Hi {data.firstName}!</Subtitle>
       <ProfileInfo data={data} />
-      <SmallButton>Change Password</SmallButton>
-      <Button>Logout</Button>
+      <SmallButton onClick={handleChangePassword}>Change Password</SmallButton>
+      <Button onClick={handleLogout}>Logout</Button>
     </Card>
   );
 };

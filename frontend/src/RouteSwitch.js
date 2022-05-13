@@ -13,6 +13,7 @@ import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import Profile from './features/currentUser/Profile';
 import EditProfile from './features/currentUser/EditProfile';
+import EditPassword from './features/currentUser/EditPassword';
 
 function RouteSwitch() {
   return (
@@ -23,6 +24,7 @@ function RouteSwitch() {
         <Route path='login' element={<Login />} />
         <Route path='profile' element={<Profile />} />
         <Route path='edit-profile' element={<EditProfile />} />
+        <Route path='edit-password' element={<EditPassword />} />
         <Route path='lineup' element={<MatchLineup />} />
         <Route path='weather' element={<MatchWeather />} />
         <Route path='location' element={<MatchLocation />} />
