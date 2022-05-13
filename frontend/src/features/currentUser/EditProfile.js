@@ -30,12 +30,12 @@ const EditProfile = () => {
     }
   }, [dispatch, navigate, status, updateDone]);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = (values) => {
     dispatch(updateCurrentUser(values));
     setUpdateDone(true);
   };
 
-  const handleCancel = async () => {
+  const handleCancel = () => {
     dispatch(reset());
     navigate('/profile');
   };
@@ -49,7 +49,7 @@ const EditProfile = () => {
     return (
       <Card>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>Error: {message}</p>
+        <p>{message}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
