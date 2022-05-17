@@ -19,17 +19,27 @@ const theme = {
   errorTextClr: colours.red,
   errorBgClr: colours.white,
   textShadowClr: colours.green,
+
   buttonClr: colours.pink,
   buttonHoverClr: colours.darkPink,
   buttonTextClr: colours.black,
+
+  carouselTextShadowClr: colours.pink,
+
   linkTextClr: colours.black,
+
   navButtonClr: colours.darkGreen,
   navButtonHoverClr: colours.veryDarkGreen,
   navButtonTextClr: colours.black,
+
   inputBorderClr: colours.grey,
   inputErrorBorderClr: colours.red,
+
+  playerListBgClr: colours.white,
+
   spinnerBgClr: colours.white,
   spinnerFgClr: colours.darkPink,
+
   titleFont: '\'Londrina Sketch\', cursive',
   subtitleFont: '\'Permanent Marker\', cursive',
   buttonFont: '\'Permanent Marker\', cursive',
