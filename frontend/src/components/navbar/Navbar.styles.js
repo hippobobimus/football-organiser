@@ -49,6 +49,7 @@ const MenuContainer = styled(Container)`
   flex-direction: ${(props) => props.isRow ? 'row' : 'column'};
   justify-content: flex-start;
   gap: 30px;
+  z-index: 999;
 
   ${(props) => !props.isRow && columnMixin};
 `;
