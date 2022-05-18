@@ -3,8 +3,19 @@ const { Schema } = mongoose;
 
 const EventSchema = new Schema(
   {
-    start: { type: Date, required: true },
-    users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    time: {
+      buildUp: { type: Date, required: true },
+      start: { type: Date, required: true },
+      end: { type: Date, required: true },
+    },
+    // TODO location: { type: Schema.Types.ObjectId, ref: 'Location' },
+    attendees: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: 'User' },
+        guests: { type: Number, default: 0 },
+      },
+    ],
+    cancelled: { type: Boolean, default: false },
   },
   {
     timestamps: true,
