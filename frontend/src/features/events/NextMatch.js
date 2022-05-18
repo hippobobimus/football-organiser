@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { format } from 'date-fns';
+
 import {
   Subtitle,
   Section,
@@ -6,6 +10,7 @@ import {
   Button,
 } from '../../components/styles';
 import * as Styled from './NextMatch.styles';
+import { getNextMatch } from './eventsSlice';
 
 const CurrentUserSummary = () => {
   // TODO dummy data
@@ -40,11 +45,34 @@ const CurrentUserSummary = () => {
 };
 
 const MatchInfo = () => {
+  const dispatch = useDispatch();
+  const { status, nextMatch } = useSelector((state) => state.events);
+
+  const [formatted, setFormatted] = useState({
+    date: '',
+    buildUp: '',
+    start: '',
+    end: '',
+  });
+
+  useEffect(() => {
+    //    if (status === 'idle') {
+    //      dispatch(getNextMatch());
+    //    }
+
+    if (status === 'success') {
+      const { buildUp, start, end } = nextMatch.time;
+
+      setFormatted({
+        date: format(Date.parse(start), 'EEEE do LLL yyyy'),
+        buildUp: format(Date.parse(buildUp), 'h:mmaaa'),
+        start: format(Date.parse(start), 'h:mmaaa'),
+        end: format(Date.parse(end), 'h:mmaaa'),
+      });
+    }
+  }, [dispatch, nextMatch, status]);
+
   // TODO dummy data
-  const date = 'Saturday 1st Feb 2022';
-  const buildUp = '9:15am';
-  const kickOff = '9:30am';
-  const endTime = '10:30am';
   const location = {
     name: 'Powerleague Watford',
     number: '',
@@ -59,19 +87,19 @@ const MatchInfo = () => {
         <SectionHeading>When</SectionHeading>
         <Styled.InfoList>
           <Styled.InfoListItem style={{ justifyContent: 'center' }}>
-            {date}
+            {formatted.date}
           </Styled.InfoListItem>
           <Styled.InfoListItem>
             <span>Warm-Up:</span>
-            <span>{buildUp}</span>
+            <span>{formatted.buildUp}</span>
           </Styled.InfoListItem>
           <Styled.InfoListItem>
             <span>Kick-Off:</span>
-            <span>{kickOff}</span>
+            <span>{formatted.start}</span>
           </Styled.InfoListItem>
           <Styled.InfoListItem>
             <span>Finishes:</span>
-            <span>{endTime}</span>
+            <span>{formatted.end}</span>
           </Styled.InfoListItem>
         </Styled.InfoList>
       </Section>
@@ -148,6 +176,15 @@ const MatchDetails = () => {
 };
 
 const NextMatch = () => {
+  const dispatch = useDispatch();
+  const { status } = useSelector((state) => state.events);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(getNextMatch());
+    }
+  }, [status, dispatch]);
+
   return (
     <Styled.ContentContainer>
       <Subtitle>Next Match</Subtitle>
