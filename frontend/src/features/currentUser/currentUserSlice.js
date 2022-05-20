@@ -41,9 +41,6 @@ const currentUserSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.status = 'idle';
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = false;
       state.message = '';
     },
   },
@@ -73,6 +70,10 @@ const currentUserSlice = createSlice({
       });
   },
 });
+
+export const selectCurrentUserId = ({ currentUser }) => {
+  return currentUser.data?.id;
+};
 
 export const { reset } = currentUserSlice.actions;
 export default currentUserSlice.reducer;

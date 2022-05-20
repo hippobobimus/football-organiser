@@ -183,19 +183,19 @@ const updateCurrentUser = [
   },
 ];
 
+// @desc    Get users
+// @route   GET /api/users
+// @access  Private
+const readUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    return res.status(200).json(users);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 // TODO following currently unused.
-//
-// // @desc    Get users
-// // @route   GET /api/users
-// // @access  Private
-// const readUsers = async (req, res, next) => {
-//   try {
-//     const users = await User.find();
-//     return res.status(200).json(users);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
 //
 // // @desc    Get a user
 // // @route   GET /api/users/:id
@@ -252,4 +252,5 @@ export default {
   loginUser,
   readCurrentUser,
   updateCurrentUser,
+  readUsers,
 };

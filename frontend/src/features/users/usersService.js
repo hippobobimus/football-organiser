@@ -1,6 +1,6 @@
-const API_URL = '/api/events/';
+const API_URL = '/api/users/';
 
-const getEvents = async (token) => {
+const getUsers = async (token) => {
   const response = await fetch(API_URL, {
     method: 'GET',
     headers: {
@@ -20,6 +20,6 @@ const getEvents = async (token) => {
   return data;
 };
 
-const eventsService = { getEvents };
+const usersService = { getUsers };
 
-export default eventsService;
+export default usersService;

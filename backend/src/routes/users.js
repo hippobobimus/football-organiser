@@ -7,7 +7,7 @@ const router = express.Router();
 
 router
   .route('/')
-//  .get(userController.readUsers)
+  .get(protect, userController.readUsers)
   .post(userController.createUser);
 
 router

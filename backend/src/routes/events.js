@@ -6,11 +6,14 @@ import { protect } from '../middleware/auth';
 const router = express.Router();
 
 router
-  .route('/next-match')
-  .get(protect, eventController.getNextMatch);
+  .route('/')
+  .get(protect, eventController.readEvents);
 
 // TODO currently unused
 //
+// router
+//   .route('/next-match')
+//   .get(protect, eventController.getNextMatch);
 // router
 //   .route('/')
 //   .get(protect, eventController.readEvents)

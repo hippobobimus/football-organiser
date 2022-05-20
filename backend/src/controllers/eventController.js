@@ -20,13 +20,13 @@ import { Event } from '../models';
 //   body('users.*').escape(),
 // ];
 
-// @desc    Retrieve the next event of type 'match' in chronological order
-// @route   GET /api/events/next-match
+// @desc    Get all events
+// @route   GET /api/events
 // @access  Private
-const getNextMatch = async (req, res, next) => {
+const readEvents = async (req, res, next) => {
   try {
-    const nextMatch = await Event.findOne();
-    return res.status(200).json(nextMatch);
+    const events = await Event.find().populate({path: 'attendees.user', select: 'firstName lastName'});
+    return res.status(200).json(events);
   } catch (err) {
     return next(err);
   }
@@ -34,6 +34,23 @@ const getNextMatch = async (req, res, next) => {
 
 // TODO currently unused
 //
+// // @desc    Retrieve the next event of type 'match' in chronological order
+// // @route   GET /api/events/next-match
+// // @access  Private
+// const getNextMatch = async (req, res, next) => {
+//   try {
+//     const nextMatch = await Event.findOne();
+// 
+//     // Add data about the current user's attendance.
+//     nextMatch.isAttending = true;
+//     nextMatch.guests = 0;
+// 
+//     return res.status(200).json(nextMatch);
+//   } catch (err) {
+//     return next(err);
+//   }
+// };
+// 
 // // @desc    Register the current user for an event
 // // @route   GET /api/events/:id/join
 // // @access  Private
@@ -48,18 +65,6 @@ const getNextMatch = async (req, res, next) => {
 // const leaveEvent = async (req, res, next) => {
 //   // TODO
 //   res.status(200).json({ message: `Leave event ${req.params.id}` });
-// };
-//
-// // @desc    Get events
-// // @route   GET /api/events
-// // @access  Private
-// const readEvents = async (req, res, next) => {
-//   try {
-//     const events = await Event.find();
-//     return res.status(200).json(events);
-//   } catch (err) {
-//     return next(err);
-//   }
 // };
 //
 // // @desc    Create event
@@ -119,10 +124,10 @@ const getNextMatch = async (req, res, next) => {
 // };
 
 export default {
-  getNextMatch,
+  readEvents,
+  //  getNextMatch,
   //  joinEvent,
   //  leaveEvent,
-  //  readEvents,
   //  createEvent,
   //  readEvent,
   //  updateEvent,
