@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { format } from 'date-fns';
 
 import { Section, SectionHeading } from '../../components/styles';
 import * as Styled from './EventInfo.styles';
-import { selectEventById } from './eventsSlice';
 
-const EventInfo = ({ eventId }) => {
-  const event = useSelector((state) => selectEventById(state, eventId));
-
+const EventInfo = ({ event, location }) => {
   const [formatted, setFormatted] = useState({
     date: '',
     buildUp: '',
@@ -28,15 +24,6 @@ const EventInfo = ({ eventId }) => {
       });
     }
   }, [event]);
-
-  // TODO dummy data
-  const location = {
-    name: 'Powerleague Watford',
-    number: '',
-    street: 'Aldenham Road',
-    city: 'Watford',
-    postcode: 'WD23 2TY',
-  };
 
   if (!event) {
     return <p>No event</p>;

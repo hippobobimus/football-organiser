@@ -4,63 +4,79 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
 import * as Styled from './NextMatch.styles';
-import { fetchEvents, selectNextMatchId } from './eventsSlice';
-import { fetchUsers } from '../users/usersSlice';
+import { fetchNextMatch } from './eventsSlice';
 import {
-  getCurrentUser,
-  selectCurrentUserId,
-} from '../currentUser/currentUserSlice';
+  fetchCurrentUserEventAttendeeDetails,
+  fetchEventAttendees,
+  selectAllAttendees,
+} from './attendees/attendeesSlice';
 import EventDetails from './EventDetails';
 import UserAttendanceSummary from './UserAttendanceSummary';
 
 const NextMatch = () => {
   const dispatch = useDispatch();
 
+  // attendees
+  const {
+    status: attendeesStatus,
+    message: attendeesMessage,
+    attendeeDetails,
+    attendeeDetailsStatus,
+    attendeeDetailsMessage,
+  } = useSelector((state) => state.attendees);
+  const attendees = useSelector(selectAllAttendees);
+
   // events
-  const { status: eventsStatus, message: eventsMessage } = useSelector((state) => state.events);
-  const nextMatchId = useSelector(selectNextMatchId);
-
-  // current user
-  const { status: currentUserStatus, message: currentUserMessage } =
-    useSelector((state) => state.currentUser);
-  const userId = useSelector(selectCurrentUserId);
-
-  // users
-  const { status: usersStatus, message: usersMessage } = useSelector(
-    (state) => state.users
+  const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
+    (state) => state.events
   );
 
+  // TODO dummy data
+  const location = {
+    name: 'Powerleague Watford',
+    number: '',
+    street: 'Aldenham Road',
+    city: 'Watford',
+    postcode: 'WD23 2TY',
+  };
+
   useEffect(() => {
-    if (eventsStatus === 'idle') {
-      dispatch(fetchEvents());
+    if (eventDetailsStatus === 'idle') {
+      dispatch(fetchNextMatch());
     }
-    if (currentUserStatus === 'idle') {
-      dispatch(getCurrentUser());
+    if (eventDetailsStatus === 'success' && attendeesStatus === 'idle') {
+      dispatch(fetchEventAttendees(eventDetails.id));
     }
-    if (usersStatus === 'idle') {
-      dispatch(fetchUsers());
+    if (eventDetailsStatus === 'success' && attendeeDetailsStatus === 'idle') {
+      dispatch(fetchCurrentUserEventAttendeeDetails(eventDetails.id));
     }
-  }, [eventsStatus, currentUserStatus, usersStatus, dispatch]);
+  }, [
+    attendeesStatus,
+    attendeeDetailsStatus,
+    eventDetails,
+    eventDetailsStatus,
+    dispatch,
+  ]);
 
   if (
-    eventsStatus === 'error' ||
-    currentUserStatus === 'error' ||
-    usersStatus === 'error'
+    attendeesStatus === 'error' ||
+    attendeeDetailsStatus === 'error' ||
+    eventDetailsStatus === 'error'
   ) {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        {eventsMessage && <p>{eventsMessage}</p>}
-        {currentUserMessage && <p>{currentUserMessage}</p>}
-        {usersMessage && <p>{usersMessage}</p>}
+        {attendeesMessage && <p>{attendeesMessage}</p>}
+        {attendeeDetailsMessage && <p>{attendeeDetailsMessage}</p>}
+        {eventDetailsMessage && <p>{eventDetailsMessage}</p>}
       </>
     );
   }
 
   if (
-    eventsStatus === 'loading' ||
-    currentUserStatus === 'loading' ||
-    usersStatus === 'loading'
+    attendeesStatus === 'loading' ||
+    attendeeDetailsStatus === 'loading' ||
+    eventDetailsStatus === 'loading'
   ) {
     return <Spinner />;
   }
@@ -68,8 +84,15 @@ const NextMatch = () => {
   return (
     <Styled.ContentContainer>
       <Subtitle>Next Match</Subtitle>
-      <UserAttendanceSummary eventId={nextMatchId} userId={userId} />
-      <EventDetails eventId={nextMatchId} />
+      <UserAttendanceSummary
+        attendeeDetails={attendeeDetails}
+        eventId={eventDetails?.id}
+      />
+      <EventDetails
+        event={eventDetails}
+        location={location}
+        attendees={attendees}
+      />
     </Styled.ContentContainer>
   );
 };

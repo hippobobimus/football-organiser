@@ -1,11 +1,6 @@
-import { useSelector } from 'react-redux';
-
 import * as Styled from './UserListItem.styles';
-import { selectUserById } from '../users/usersSlice';
 
-const UserListItem = ({ userId, isGuest }) => {
-  const user = useSelector((state) => selectUserById(state, userId));
-
+const UserListItem = ({ user, isGuest }) => {
   return (
     <Styled.ListItem>
       <span>

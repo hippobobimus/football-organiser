@@ -1,23 +1,16 @@
-import { useSelector } from 'react-redux';
-
 import * as Styled from './EventDetails.styles';
 import EventInfo from './EventInfo';
 import AttendanceList from './AttendanceList';
-import { selectEventAttendees } from './eventsSlice';
 
-const EventDetails = ({ eventId }) => {
-  const attendees = useSelector((state) =>
-    selectEventAttendees(state, eventId)
-  );
-
+const EventDetails = ({ event, location, attendees }) => {
   return (
     <Styled.ContentCarousel headings={['Info', 'Lineup', 'Weather']}>
       <Styled.ContentCarouselItem>
-        <EventInfo eventId={eventId} />
+        <EventInfo event={event} location={location} />
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>
-        <AttendanceList attendanceRecords={attendees} />
+        <AttendanceList attendees={attendees} />
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>

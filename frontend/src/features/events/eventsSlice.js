@@ -1,10 +1,8 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
-  createSelector,
   createSlice,
 } from '@reduxjs/toolkit';
-import isFuture from 'date-fns/isFuture';
 
 import eventsService from './eventsService';
 
@@ -13,6 +11,9 @@ const eventsAdapter = createEntityAdapter({
 });
 
 const initialState = eventsAdapter.getInitialState({
+  eventDetails: null,
+  eventDetailsStatus: 'idle',
+  eventDetailsMessage: '',
   status: 'idle',
   message: '',
 });
@@ -28,12 +29,26 @@ export const fetchEvents = createAsyncThunk(
   }
 );
 
+export const fetchNextMatch = createAsyncThunk(
+  'events/fetchNextMatch',
+  async (_, thunkAPI) => {
+    try {
+      return await eventsService.getNextMatch(thunkAPI.getState().auth.token);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
     reset: (state) => {
       eventsAdapter.removeAll();
+      state.eventDetails = null;
+      state.eventDetailsStatus = 'idle';
+      state.eventDetailsMessage = '';
       state.status = 'idle';
       state.message = '';
     },
@@ -50,6 +65,18 @@ const eventsSlice = createSlice({
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = 'error';
         state.message = action.payload;
+      })
+
+      .addCase(fetchNextMatch.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(fetchNextMatch.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+      })
+      .addCase(fetchNextMatch.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
       });
   },
 });
@@ -59,23 +86,6 @@ export const {
   selectById: selectEventById,
   selectIds: selectEventIds,
 } = eventsAdapter.getSelectors((state) => state.events);
-
-export const selectNextMatchId = createSelector(selectAllEvents, (events) => {
-  // find the first match event that occurs in the future, or is in progress.
-  return events.find((event) => isFuture(Date.parse(event.time.end)))?.id;
-});
-
-export const selectEventAttendees = createSelector(selectEventById, (event) => {
-  if (!event) {
-    return null;
-  }
-
-  // TODO sorting
-  //let result = [...event.attendees];
-  //result.sort((a, b) => a.user.name.localeCompare(b.user.name));
-
-  return event.attendees;
-});
 
 export const { reset } = eventsSlice.actions;
 export default eventsSlice.reducer;

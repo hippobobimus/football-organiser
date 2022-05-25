@@ -1,45 +1,35 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { SmallButton, Button } from '../../components/styles';
 import * as Styled from './UserAttendanceSummary.styles';
-import { selectEventAttendees } from './eventsSlice';
+import { joinEvent, leaveEvent } from './attendees/attendeesSlice';
 
-const UserAttendanceSummary = ({ userId, eventId }) => {
-  const [isAttending, setIsAttending] = useState(false);
-  const [guests, setGuests] = useState(0);
+const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
+  const dispatch = useDispatch();
 
-  const attendees = useSelector((state) =>
-    selectEventAttendees(state, eventId)
-  );
+  if (!eventId) {
+    return <p>Error: No event</p>;
+  }
 
-  useEffect(() => {
-    const found = attendees?.find(({ user }) => {
-      // may or may not be populated.
-      const attendeeUserId = user?.id || user;
-      return attendeeUserId === userId;
-    });
+  const handleJoin = () => {
+    dispatch(joinEvent(eventId));
+  };
 
-    if (found) {
-      setIsAttending(true);
-      setGuests(found.guests || 0);
-    } else {
-      setIsAttending(false);
-      setGuests(0);
-    }
-  }, [attendees, userId]);
+  const handleLeave = () => {
+    dispatch(leaveEvent(eventId));
+  };
 
   return (
     <Styled.SummaryContainer>
-      {isAttending ? (
+      {attendeeDetails ? (
         <>
           <Styled.Status>You're Playing!</Styled.Status>
-          {guests ? (
+          {attendeeDetails?.guests ? (
             <Styled.GuestsContainer>
               <p>
                 ...and bringing{' '}
                 <u>
-                  <b>{guests} guest(s)</b>
+                  <b>{attendeeDetails.guests} guest(s)</b>
                 </u>
               </p>
               <SmallButton>-</SmallButton>
@@ -48,9 +38,10 @@ const UserAttendanceSummary = ({ userId, eventId }) => {
           ) : (
             <SmallButton>Add a Guest</SmallButton>
           )}
+        <SmallButton type='button' onClick={handleLeave}>Cancel my attendance</SmallButton>
         </>
       ) : (
-        <Button>Count Me In!</Button>
+        <Button type='button' onClick={handleJoin}>Count Me In!</Button>
       )}
     </Styled.SummaryContainer>
   );
