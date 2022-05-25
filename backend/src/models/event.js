@@ -9,12 +9,8 @@ const EventSchema = new Schema(
       end: { type: Date, required: true },
     },
     // TODO location: { type: Schema.Types.ObjectId, ref: 'Location' },
-    attendees: [
-      {
-        user: { type: Schema.Types.ObjectId, ref: 'User' },
-        guests: { type: Number, default: 0 },
-      },
-    ],
+    // TODO locked state
+    // TODO category - match, social, etc.
     cancelled: { type: Boolean, default: false },
   },
   {

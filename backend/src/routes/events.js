@@ -9,11 +9,28 @@ router
   .route('/')
   .get(protect, eventController.readEvents);
 
+router
+  .route('/next-match')
+  .get(protect, eventController.readNextMatch);
+
+router
+  .route('/:id/join')
+  .put(protect, eventController.joinEvent);
+
+router
+  .route('/:id/leave')
+  .put(protect, eventController.leaveEvent);
+
+router
+  .route('/:id/attendees')
+  .get(protect, eventController.readAttendees);
+
+router
+  .route('/:id/attendees/me')
+  .get(protect, eventController.readCurrentUserAttendee);
+
 // TODO currently unused
 //
-// router
-//   .route('/next-match')
-//   .get(protect, eventController.getNextMatch);
 // router
 //   .route('/')
 //   .get(protect, eventController.readEvents)
@@ -25,12 +42,5 @@ router
 //   .put(eventController.updateEvent)
 //   .delete(eventController.deleteEvent);
 // 
-// router
-//   .route('/:id/join')
-//   .put(eventController.joinEvent);
-// 
-// router
-//   .route('/:id/leave')
-//   .put(eventController.leaveEvent);
 
 export default router;

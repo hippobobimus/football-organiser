@@ -1,6 +1,160 @@
 // import { body, validationResult } from 'express-validator';
-// import createError from 'http-errors';
-import { Event } from '../models';
+import mongoose from 'mongoose';
+import createError from 'http-errors';
+import { Attendee, Event } from '../models';
+
+const { ObjectId } = mongoose.Types;
+
+// @desc    Get all events
+// @route   GET /api/events
+// @access  Private
+const readEvents = async (req, res, next) => {
+  try {
+    const events = await Event.find();
+    return res.status(200).json(events);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// @desc    Retrieve the next event of type 'match' in chronological order
+// @route   GET /api/events/next-match
+// @access  Private
+const readNextMatch = async (req, res, next) => {
+  try {
+    // TODO find the appropriate event.
+    const nextMatch = await Event.findOne();
+
+    return res.status(200).json(nextMatch);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// @desc    Get all attendees for the given event id
+// @route   GET /api/events/:id/attendees
+// @access  Private
+const readAttendees = async (req, res, next) => {
+  try {
+    const attendees = await Attendee.find({ event: req.params.id }).populate(
+      'user',
+      ['firstName', 'lastName']
+    );
+    return res.status(200).json(attendees);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// @desc    Get the attendee for the given event id and current user id
+// @route   GET /api/events/:id/attendees/me
+// @access  Private
+const readCurrentUserAttendee = async (req, res, next) => {
+  try {
+    const attendee = await Attendee.findOne({
+      event: req.params.id,
+      user: req.user.id,
+    });
+    return res.status(200).json(attendee);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// @desc    Register the current user for an event
+// @route   GET /api/events/:id/join
+// @access  Private
+const joinEvent = async (req, res, next) => {
+  let event;
+  let attendee;
+  try {
+    event = await Event.findById(req.params.id);
+    attendee = await Attendee.findOne({
+      user: req.user.id,
+      event: req.params.id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+
+  if (!event) {
+    return next(createError(404, 'Event not found'));
+  }
+
+  if (attendee) {
+    return next(
+      createError(409, 'Cannot join event, you are already registered.')
+    );
+  }
+
+  // TODO
+  //  if (event.locked) {
+  //    return next(
+  //      createError(400, 'It is no longer possible to join this event.')
+  //    );
+  //  }
+
+  attendee = new Attendee({
+    event: new ObjectId(req.params.id),
+    user: new ObjectId(req.user.id),
+    guests: 0,
+  });
+
+  try {
+    attendee = await attendee.save();
+    await attendee.populate('user', ['firstName', 'lastName'])
+  } catch (err) {
+    return next(err);
+  }
+
+  return res.status(200).json(attendee);
+};
+
+// @desc    De-register the current user from an event
+// @route   GET /api/events/:id/leave
+// @access  Private
+const leaveEvent = async (req, res, next) => {
+  let event;
+  let attendee;
+  try {
+    event = await Event.findById(req.params.id);
+    attendee = await Attendee.findOne({
+      user: req.user.id,
+      event: req.params.id,
+    });
+  } catch (err) {
+    return next(err);
+  }
+
+  if (!event) {
+    return next(createError(404, 'Event not found'));
+  }
+
+  if (!attendee) {
+    return next(
+      createError(
+        409,
+        'You cannot de-register from an event you are not already registered for.'
+      )
+    );
+  }
+
+  // TODO
+  //  if (event.locked) {
+  //    return next(
+  //      createError(400, 'Your event attendance can no longer be changed.')
+  //    );
+  //  }
+
+  // Remove attendee document from collection.
+  try {
+    await Attendee.deleteOne({ id: attendee.id });
+  } catch (err) {
+    return next(err);
+  }
+
+  return res.status(200).json(attendee);
+};
 
 // TODO currently unused
 //
@@ -19,53 +173,8 @@ import { Event } from '../models';
 //   body('start', 'Invalid start.').isISO8601().toDate(),
 //   body('users.*').escape(),
 // ];
-
-// @desc    Get all events
-// @route   GET /api/events
-// @access  Private
-const readEvents = async (req, res, next) => {
-  try {
-    const events = await Event.find().populate({path: 'attendees.user', select: 'firstName lastName'});
-    return res.status(200).json(events);
-  } catch (err) {
-    return next(err);
-  }
-};
-
+//
 // TODO currently unused
-//
-// // @desc    Retrieve the next event of type 'match' in chronological order
-// // @route   GET /api/events/next-match
-// // @access  Private
-// const getNextMatch = async (req, res, next) => {
-//   try {
-//     const nextMatch = await Event.findOne();
-// 
-//     // Add data about the current user's attendance.
-//     nextMatch.isAttending = true;
-//     nextMatch.guests = 0;
-// 
-//     return res.status(200).json(nextMatch);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-// 
-// // @desc    Register the current user for an event
-// // @route   GET /api/events/:id/join
-// // @access  Private
-// const joinEvent = async (req, res, next) => {
-//   // TODO
-//   res.status(200).json({ message: `Join event ${req.params.id}` });
-// };
-//
-// // @desc    De-register the current user for an event
-// // @route   GET /api/events/:id/join
-// // @access  Private
-// const leaveEvent = async (req, res, next) => {
-//   // TODO
-//   res.status(200).json({ message: `Leave event ${req.params.id}` });
-// };
 //
 // // @desc    Create event
 // // @route   POST /api/events
@@ -125,9 +234,11 @@ const readEvents = async (req, res, next) => {
 
 export default {
   readEvents,
-  //  getNextMatch,
-  //  joinEvent,
-  //  leaveEvent,
+  readAttendees,
+  readCurrentUserAttendee,
+  readNextMatch,
+  joinEvent,
+  leaveEvent,
   //  createEvent,
   //  readEvent,
   //  updateEvent,
