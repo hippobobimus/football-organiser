@@ -2,7 +2,7 @@ import { validationResult } from 'express-validator';
 import createError from 'http-errors';
 
 import { User } from '../models';
-import validate from '../middleware/validation';
+import validate from '../middleware/validation/userValidation';
 import {
   authenticatePassword,
   generatePassword,

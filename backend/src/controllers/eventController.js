@@ -1,7 +1,9 @@
-// import { body, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import mongoose from 'mongoose';
 import createError from 'http-errors';
+
 import { Attendee, Event } from '../models';
+import validate from '../middleware/validation/eventValidation';
 
 const { ObjectId } = mongoose.Types;
 
@@ -46,10 +48,10 @@ const readAttendees = async (req, res, next) => {
   }
 };
 
-// @desc    Get the attendee for the given event id and current user id
+// @desc    Get the authenticated user attendee record for the given event id
 // @route   GET /api/events/:id/attendees/me
 // @access  Private
-const readCurrentUserAttendee = async (req, res, next) => {
+const readAuthUserAttendee = async (req, res, next) => {
   try {
     const attendee = await Attendee.findOne({
       event: req.params.id,
@@ -61,10 +63,10 @@ const readCurrentUserAttendee = async (req, res, next) => {
   }
 };
 
-// @desc    Register the current user for an event
-// @route   GET /api/events/:id/join
+// @desc    Register the authenticated user for an event
+// @route   POST /api/events/:id/attendees/me
 // @access  Private
-const joinEvent = async (req, res, next) => {
+const createAuthUserAttendee = async (req, res, next) => {
   let event;
   let attendee;
   try {
@@ -102,7 +104,7 @@ const joinEvent = async (req, res, next) => {
 
   try {
     attendee = await attendee.save();
-    await attendee.populate('user', ['firstName', 'lastName'])
+    await attendee.populate('user', ['firstName', 'lastName']);
   } catch (err) {
     return next(err);
   }
@@ -110,10 +112,10 @@ const joinEvent = async (req, res, next) => {
   return res.status(200).json(attendee);
 };
 
-// @desc    De-register the current user from an event
-// @route   GET /api/events/:id/leave
+// @desc    De-register the authenticated user from an event
+// @route   DELETE /api/events/:id/attendees/me
 // @access  Private
-const leaveEvent = async (req, res, next) => {
+const deleteAuthUserAttendee = async (req, res, next) => {
   let event;
   let attendee;
   try {
@@ -148,13 +150,71 @@ const leaveEvent = async (req, res, next) => {
 
   // Remove attendee document from collection.
   try {
-    await Attendee.deleteOne({ id: attendee.id });
+    attendee = await Attendee.findByIdAndDelete(attendee.id);
   } catch (err) {
     return next(err);
   }
 
   return res.status(200).json(attendee);
 };
+
+// @desc    Update the authenticated user's attendance to the given event.
+// @route   PUT /api/events/:id/attendees/me
+// @access  Private
+const updateAuthUserAttendee = [
+  validate.guests().optional({ checkFalsy: true }),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return next(
+        createError(400, 'Field validation failed.', {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    let event;
+    let attendee;
+    try {
+      event = await Event.findById(req.params.id);
+      attendee = await Attendee.findOne({
+        user: req.user.id,
+        event: req.params.id,
+      });
+    } catch (err) {
+      return next(err);
+    }
+
+    if (!event) {
+      return next(createError(404, 'Event not found'));
+    }
+
+    if (!attendee) {
+      return next(createError(409, 'You are not registered for this event.'));
+    }
+
+    if (req.body.guests >= 0) {
+      attendee.guests = req.body.guests;
+    }
+
+    // TODO
+    //  if (event.locked) {
+    //    return next(
+    //      createError(400, 'Your event attendance can no longer be changed.')
+    //    );
+    //  }
+
+    try {
+      attendee = await attendee.save();
+      await attendee.populate('user', ['firstName', 'lastName']);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(200).json(attendee);
+  },
+];
 
 // TODO currently unused
 //
@@ -234,11 +294,12 @@ const leaveEvent = async (req, res, next) => {
 
 export default {
   readEvents,
-  readAttendees,
-  readCurrentUserAttendee,
   readNextMatch,
-  joinEvent,
-  leaveEvent,
+  readAttendees,
+  createAuthUserAttendee,
+  readAuthUserAttendee,
+  updateAuthUserAttendee,
+  deleteAuthUserAttendee,
   //  createEvent,
   //  readEvent,
   //  updateEvent,

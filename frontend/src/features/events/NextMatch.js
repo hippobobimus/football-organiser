@@ -6,7 +6,7 @@ import { Spinner } from '../../components/spinner';
 import * as Styled from './NextMatch.styles';
 import { fetchNextMatch } from './eventsSlice';
 import {
-  fetchCurrentUserEventAttendeeDetails,
+  fetchAuthUserEventAttendee,
   fetchEventAttendees,
   selectAllAttendees,
 } from './attendees/attendeesSlice';
@@ -48,7 +48,7 @@ const NextMatch = () => {
       dispatch(fetchEventAttendees(eventDetails.id));
     }
     if (eventDetailsStatus === 'success' && attendeeDetailsStatus === 'idle') {
-      dispatch(fetchCurrentUserEventAttendeeDetails(eventDetails.id));
+      dispatch(fetchAuthUserEventAttendee(eventDetails.id));
     }
   }, [
     attendeesStatus,

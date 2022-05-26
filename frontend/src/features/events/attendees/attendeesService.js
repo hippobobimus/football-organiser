@@ -20,7 +20,7 @@ const getEventAttendees = async (token, eventId) => {
   return data;
 };
 
-const getCurrentUserEventAttendeeDetails = async (token, eventId) => {
+const getAuthUserEventAttendee = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
     method: 'GET',
     headers: {
@@ -40,9 +40,9 @@ const getCurrentUserEventAttendeeDetails = async (token, eventId) => {
   return data;
 };
 
-const joinEvent = async (token, eventId) => {
-  const response = await fetch(`${API_URL}${eventId}/join`, {
-    method: 'PUT',
+const addAuthUserToEvent = async (token, eventId) => {
+  const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
+    method: 'POST',
     headers: {
       Authorization: token,
       Accept: 'application/json',
@@ -60,9 +60,9 @@ const joinEvent = async (token, eventId) => {
   return data;
 };
 
-const leaveEvent = async (token, eventId) => {
-  const response = await fetch(`${API_URL}${eventId}/leave`, {
-    method: 'PUT',
+const removeAuthUserFromEvent = async (token, eventId) => {
+  const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
+    method: 'DELETE',
     headers: {
       Authorization: token,
       Accept: 'application/json',
@@ -80,11 +80,33 @@ const leaveEvent = async (token, eventId) => {
   return data;
 };
 
-const eventsService = {
+const updateAuthUserEventAttendee = async (token, {eventId, ...params}) => {
+  const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
+    method: 'PUT',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+const attendeesService = {
   getEventAttendees,
-  getCurrentUserEventAttendeeDetails,
-  joinEvent,
-  leaveEvent,
+  getAuthUserEventAttendee,
+  addAuthUserToEvent,
+  removeAuthUserFromEvent,
+  updateAuthUserEventAttendee,
 };
 
-export default eventsService;
+export default attendeesService;

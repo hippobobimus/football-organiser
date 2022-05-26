@@ -14,20 +14,15 @@ router
   .get(protect, eventController.readNextMatch);
 
 router
-  .route('/:id/join')
-  .put(protect, eventController.joinEvent);
-
-router
-  .route('/:id/leave')
-  .put(protect, eventController.leaveEvent);
-
-router
   .route('/:id/attendees')
   .get(protect, eventController.readAttendees);
 
 router
   .route('/:id/attendees/me')
-  .get(protect, eventController.readCurrentUserAttendee);
+  .post(protect, eventController.createAuthUserAttendee)
+  .get(protect, eventController.readAuthUserAttendee)
+  .put(protect, eventController.updateAuthUserAttendee)
+  .delete(protect, eventController.deleteAuthUserAttendee);
 
 // TODO currently unused
 //
