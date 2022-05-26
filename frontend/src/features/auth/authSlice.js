@@ -6,6 +6,9 @@ const token = JSON.parse(localStorage.getItem('token')) || null;
 const isLoggedIn = Boolean(token);
 
 const initialState = {
+  authUser: null,
+  authUserStatus: 'idle',
+  authUserMessage: '',
   token,
   isLoggedIn,
   status: 'idle',
@@ -39,11 +42,20 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   }
 });
 
+export const fetchAuthUser = createAsyncThunk('auth/fetchAuthUser', async (_, thunkAPI) => {
+  try {
+    return await authService.getAuthUser(thunkAPI.getState().auth.token);
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.message);
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     reset: (state) => {
+      state.authUser = null;
       state.status = 'idle';
       state.message = '';
     },
@@ -63,6 +75,7 @@ const authSlice = createSlice({
         state.message = action.payload;
         state.token = null;
       })
+
       .addCase(login.pending, (state) => {
         state.status = 'loading';
       })
@@ -76,9 +89,23 @@ const authSlice = createSlice({
         state.message = action.payload;
         state.token = null;
       })
+
       .addCase(logout.fulfilled, (state) => {
         state.token = null;
         state.isLoggedIn = false;
+      })
+
+      .addCase(fetchAuthUser.pending, (state) => {
+        state.authUserStatus = 'loading';
+      })
+      .addCase(fetchAuthUser.fulfilled, (state, action) => {
+        state.authUserStatus = 'success';
+        state.authUser = action.payload;
+      })
+      .addCase(fetchAuthUser.rejected, (state, action) => {
+        state.authUserStatus = 'error';
+        state.authUserMessage = action.payload;
+        state.authUser = null;
       });
   },
 });

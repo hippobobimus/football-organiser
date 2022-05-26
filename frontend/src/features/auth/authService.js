@@ -46,6 +46,26 @@ const logout = async () => {
   localStorage.removeItem('token');
 };
 
-const authService = { register, login, logout };
+const getAuthUser = async (token) => {
+  const response = await fetch(API_URL + 'me', {
+    method: 'GET',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+const authService = { register, login, logout, getAuthUser };
 
 export default authService;
