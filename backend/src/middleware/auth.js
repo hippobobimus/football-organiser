@@ -27,7 +27,7 @@ const protect = async (req, res, next) => {
   try {
     payload = jsonwebtoken.verify(token, PUB_KEY);
   } catch (err) {
-    return next(createError(401, 'Access denied, invalid token.'))
+    return next(createError(401, 'Access denied, invalid token.'));
   }
 
   const { sub: id } = payload;
@@ -40,11 +40,24 @@ const protect = async (req, res, next) => {
   }
 
   if (!user) {
-    return next(createError(401, 'User does not exist.'))
+    return next(createError(401, 'User does not exist.'));
   }
 
   req.user = user;
   return next();
 };
 
-export { protect };
+const protectAdmin = [
+  protect,
+  (req, res, next) => {
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
+    return next(
+      createError(403, 'Insufficient privileges to access resource.')
+    );
+  },
+];
+
+export { protect, protectAdmin };

@@ -1,14 +1,14 @@
 import express from 'express';
 
 import eventController from '../controllers/eventController';
-import { protect } from '../middleware/auth';
+import { protect, protectAdmin } from '../middleware/auth';
 
 const router = express.Router();
 
 router
   .route('/')
   .get(protect, eventController.readEvents)
-  .post(protect, eventController.createEvent);
+  .post(protectAdmin, eventController.createEvent);
 
 router
   .route('/next-match')
