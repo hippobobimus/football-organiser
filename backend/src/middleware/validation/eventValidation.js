@@ -11,4 +11,28 @@ const guests = () => {
     .withMessage('Number of guests must be submitted.');
 };
 
-export default { guests };
+const buildUpTime = () => {
+  return body('buildUpTime')
+    .trim()
+    .isISO8601()
+    .withMessage('A valid build up date and time must be supplied.')
+    .toDate();
+};
+
+const startTime = () => {
+  return body('startTime')
+    .trim()
+    .isISO8601()
+    .withMessage('A valid start date and time must be supplied.')
+    .toDate();
+};
+
+const endTime = () => {
+  return body('endTime')
+    .trim()
+    .isISO8601()
+    .withMessage('A valid end date and time must be supplied.')
+    .toDate();
+};
+
+export default { guests, buildUpTime, startTime, endTime };

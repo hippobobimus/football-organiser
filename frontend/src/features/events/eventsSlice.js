@@ -40,12 +40,23 @@ export const fetchNextMatch = createAsyncThunk(
   }
 );
 
+export const createMatch = createAsyncThunk(
+  'events/createMatch',
+  async (matchData, thunkAPI) => {
+    try {
+      return await eventsService.createMatch(thunkAPI.getState().auth.token, matchData);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+)
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
     reset: (state) => {
-      eventsAdapter.removeAll();
+      eventsAdapter.removeAll(state);
       state.eventDetails = null;
       state.eventDetailsStatus = 'idle';
       state.eventDetailsMessage = '';
@@ -75,6 +86,19 @@ const eventsSlice = createSlice({
         state.eventDetails = action.payload;
       })
       .addCase(fetchNextMatch.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(createMatch.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(createMatch.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(createMatch.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
       });

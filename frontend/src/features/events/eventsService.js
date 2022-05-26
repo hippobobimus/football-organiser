@@ -40,6 +40,27 @@ const getNextMatch = async (token) => {
   return data;
 };
 
-const eventsService = { getEvents, getNextMatch };
+const createMatch = async (token, matchData) => {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(matchData),
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+}
+
+const eventsService = { getEvents, getNextMatch, createMatch };
 
 export default eventsService;

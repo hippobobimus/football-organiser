@@ -7,7 +7,8 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(protect, eventController.readEvents);
+  .get(protect, eventController.readEvents)
+  .post(protect, eventController.createEvent);
 
 router
   .route('/next-match')

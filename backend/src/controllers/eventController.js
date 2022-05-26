@@ -19,6 +19,39 @@ const readEvents = async (req, res, next) => {
   }
 };
 
+// @desc    Create a new event
+// @route   POST /api/events
+// @access  Private, admin only
+const createEvent = [
+  validate.buildUpTime(),
+  validate.startTime(),
+  validate.endTime(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return next(
+        createError(400, 'Field validation failed.', {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    try {
+      const event = await Event.create({
+        time: {
+          buildUp: req.body.buildUpTime,
+          start: req.body.startTime,
+          end: req.body.endTime,
+        }
+      });
+      return res.status(200).json(event);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
+
 // @desc    Retrieve the next event of type 'match' in chronological order
 // @route   GET /api/events/next-match
 // @access  Private
@@ -294,13 +327,13 @@ const updateAuthUserAttendee = [
 
 export default {
   readEvents,
+  createEvent,
   readNextMatch,
   readAttendees,
   createAuthUserAttendee,
   readAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,
-  //  createEvent,
   //  readEvent,
   //  updateEvent,
   //  deleteEvent,
