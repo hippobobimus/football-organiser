@@ -10,12 +10,14 @@ import {
   PageNotFound,
 } from './routes';
 import Protect from './features/auth/Protect';
+import ProtectAdmin from './features/auth/ProtectAdmin';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 import Profile from './features/currentUser/Profile';
 import EditProfile from './features/currentUser/EditProfile';
 import EditPassword from './features/currentUser/EditPassword';
 import NextMatch from './features/events/NextMatch';
+import CreateMatch from './features/events/CreateMatch';
 
 const RouteSwitch = () => {
   return (
@@ -32,6 +34,11 @@ const RouteSwitch = () => {
           <Route path='edit-profile' element={<EditProfile />} />
           <Route path='edit-password' element={<EditPassword />} />
           <Route path='match' element={<NextMatch />} />
+        </Route>
+
+        {/* Private routes that require admin privileges */}
+        <Route element={<ProtectAdmin />}>
+          <Route path='create-match' element={<CreateMatch />} />
         </Route>
 
         <Route path='lineup' element={<MatchLineup />} />
