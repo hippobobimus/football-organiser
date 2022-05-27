@@ -38,11 +38,11 @@ const EventInfo = ({ event, location }) => {
             {formatted.date}
           </Styled.InfoListItem>
           <Styled.InfoListItem>
-            <span>Warm-Up:</span>
+            <span>{event.category === 'match' ? 'Warm Up' : 'Arrive From'}:</span>
             <span>{formatted.buildUp}</span>
           </Styled.InfoListItem>
           <Styled.InfoListItem>
-            <span>Kick-Off:</span>
+            <span>{event.category === 'match' ? 'Kick-Off' : 'Starts'}:</span>
             <span>{formatted.start}</span>
           </Styled.InfoListItem>
           <Styled.InfoListItem>
