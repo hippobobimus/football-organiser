@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import App from './App';
-import PageNotFound from './routes/PageNotFound';
+import PageNotFound from './components/PageNotFound';
 import Protect from './features/auth/Protect';
 import ProtectAdmin from './features/auth/ProtectAdmin';
 import Login from './features/auth/Login';
