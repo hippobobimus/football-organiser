@@ -10,7 +10,8 @@ const EventSchema = new Schema(
     },
     // TODO location: { type: Schema.Types.ObjectId, ref: 'Location' },
     // TODO locked state
-    // TODO category - match, social, etc.
+    category: { type: String, required: true },
+    name: { type: String },
     cancelled: { type: Boolean, default: false },
   },
   {

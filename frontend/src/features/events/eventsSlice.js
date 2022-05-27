@@ -29,6 +29,20 @@ export const fetchEvents = createAsyncThunk(
   }
 );
 
+export const fetchOneEvent = createAsyncThunk(
+  'events/fetchOneEvent',
+  async (eventId, thunkAPI) => {
+    try {
+      return await eventsService.getOneEvent(
+        thunkAPI.getState().auth.token,
+        eventId
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 export const fetchNextMatch = createAsyncThunk(
   'events/fetchNextMatch',
   async (_, thunkAPI) => {
@@ -40,16 +54,16 @@ export const fetchNextMatch = createAsyncThunk(
   }
 );
 
-export const createMatch = createAsyncThunk(
+export const createEvent = createAsyncThunk(
   'events/createMatch',
-  async (matchData, thunkAPI) => {
+  async (eventData, thunkAPI) => {
     try {
-      return await eventsService.createMatch(thunkAPI.getState().auth.token, matchData);
+      return await eventsService.createEvent(thunkAPI.getState().auth.token, eventData);
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
   }
-)
+);
 
 const eventsSlice = createSlice({
   name: 'events',
@@ -78,6 +92,18 @@ const eventsSlice = createSlice({
         state.message = action.payload;
       })
 
+      .addCase(fetchOneEvent.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(fetchOneEvent.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+      })
+      .addCase(fetchOneEvent.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
       .addCase(fetchNextMatch.pending, (state) => {
         state.eventDetailsStatus = 'loading';
       })
@@ -90,15 +116,15 @@ const eventsSlice = createSlice({
         state.eventDetailsMessage = action.payload;
       })
 
-      .addCase(createMatch.pending, (state) => {
+      .addCase(createEvent.pending, (state) => {
         state.eventDetailsStatus = 'loading';
       })
-      .addCase(createMatch.fulfilled, (state, action) => {
+      .addCase(createEvent.fulfilled, (state, action) => {
         state.eventDetailsStatus = 'success';
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
-      .addCase(createMatch.rejected, (state, action) => {
+      .addCase(createEvent.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
       });

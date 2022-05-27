@@ -20,6 +20,26 @@ const getEvents = async (token) => {
   return data;
 };
 
+const getOneEvent = async (token, eventId) => {
+  const response = await fetch(`${API_URL}${eventId}`, {
+    method: 'GET',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
 const getNextMatch = async (token) => {
   const response = await fetch(`${API_URL}next-match`, {
     method: 'GET',
@@ -40,7 +60,7 @@ const getNextMatch = async (token) => {
   return data;
 };
 
-const createMatch = async (token, matchData) => {
+const createEvent = async (token, eventData) => {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -48,7 +68,7 @@ const createMatch = async (token, matchData) => {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(matchData),
+    body: JSON.stringify(eventData),
   });
 
   const data = await response.json();
@@ -61,6 +81,6 @@ const createMatch = async (token, matchData) => {
   return data;
 }
 
-const eventsService = { getEvents, getNextMatch, createMatch };
+const eventsService = { getEvents, getOneEvent, getNextMatch, createEvent };
 
 export default eventsService;

@@ -1,12 +1,12 @@
-import * as Styled from './EventDetails.styles';
+import * as Styled from './EventCarousel.styles';
 import EventInfo from './EventInfo';
 import AttendanceList from './AttendanceList';
 
-const EventDetails = ({ event, location, attendees }) => {
+const EventCarousel = ({ eventDetails, location, attendees }) => {
   return (
     <Styled.ContentCarousel headings={['Info', 'Lineup', 'Weather']}>
       <Styled.ContentCarouselItem>
-        <EventInfo event={event} location={location} />
+        <EventInfo event={eventDetails} location={location} />
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>
@@ -20,4 +20,4 @@ const EventDetails = ({ event, location, attendees }) => {
   );
 };
 
-export default EventDetails;
+export default EventCarousel;

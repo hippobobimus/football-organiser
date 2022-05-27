@@ -35,4 +35,22 @@ const endTime = () => {
     .toDate();
 };
 
-export default { guests, buildUpTime, startTime, endTime };
+const category = () => {
+  return body('category')
+    .trim()
+    .escape()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('An event category must be supplied.')
+    .isAlphanumeric('en-GB')
+    .withMessage('Invalid event category.');
+};
+
+const name = () => {
+  return body('name')
+    .trim()
+    .escape()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('An event name must be supplied.');
+};
+
+export default { guests, buildUpTime, startTime, endTime, category, name };

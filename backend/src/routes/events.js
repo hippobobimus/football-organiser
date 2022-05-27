@@ -15,6 +15,10 @@ router
   .get(protect, eventController.readNextMatch);
 
 router
+  .route('/:id')
+  .get(protect, eventController.readEvent);
+
+router
   .route('/:id/attendees')
   .get(protect, eventController.readAttendees);
 
@@ -26,17 +30,10 @@ router
   .delete(protect, eventController.deleteAuthUserAttendee);
 
 // TODO currently unused
-//
-// router
-//   .route('/')
-//   .get(protect, eventController.readEvents)
-//   .post(eventController.createEvent);
 // 
 // router
 //   .route('/:id')
-//   .get(eventController.readEvent)
 //   .put(eventController.updateEvent)
 //   .delete(eventController.deleteEvent);
-// 
 
 export default router;

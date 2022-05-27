@@ -11,14 +11,15 @@ import {
   FormButtonContainer,
   TextInput,
 } from '../../components/form';
-import { matchSchema } from '../validation/eventValidation';
+import { socialSchema } from '../validation/eventValidation';
 import { createEvent, reset } from './eventsSlice';
 
-const CreateMatch = () => {
+const CreateSocial = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [userEntries, setUserEntries] = useState({
+    name: '',
     buildUpTime: '',
     startTime: '',
     endTime: '',
@@ -30,13 +31,12 @@ const CreateMatch = () => {
 
   const handleSubmit = (values) => {
     setUserEntries({
+      name: values.name,
       buildUpTime: values?.buildUpTime,
       startTime: values?.startTime,
       endTime: values?.endTime,
     });
-    dispatch(
-      createEvent({ category: 'match', name: 'Football Match', ...values })
-    );
+    dispatch(createEvent({ category: 'social', ...values }));
   };
 
   const handleCancel = () => {
@@ -74,33 +74,27 @@ const CreateMatch = () => {
 
   return (
     <>
-      <Subtitle>Create a New Match</Subtitle>
+      <Subtitle>Create a New Social</Subtitle>
       <Formik
         initialValues={{
+          name: userEntries.name,
           buildUpTime: userEntries.buildUpTime,
           startTime: userEntries.startTime,
           endTime: userEntries.endTime,
         }}
-        validationSchema={matchSchema}
+        validationSchema={socialSchema}
         onSubmit={handleSubmit}
       >
         {(formik) => (
           <Form>
+            <TextInput label='Name' name='name' type='text' />
             <TextInput
-              label='Warm Up'
+              label='Arrive From'
               name='buildUpTime'
               type='datetime-local'
             />
-            <TextInput
-              label='Kick Off'
-              name='startTime'
-              type='datetime-local'
-            />
-            <TextInput
-              label='Finish'
-              name='endTime'
-              type='datetime-local'
-            />
+            <TextInput label='Start' name='startTime' type='datetime-local' />
+            <TextInput label='Finish' name='endTime' type='datetime-local' />
             <FormButtonContainer>
               <FormButton type='button' onClick={handleCancel}>
                 Cancel
@@ -116,4 +110,4 @@ const CreateMatch = () => {
   );
 };
 
-export default CreateMatch;
+export default CreateSocial;

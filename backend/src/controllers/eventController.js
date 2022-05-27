@@ -26,6 +26,8 @@ const createEvent = [
   validate.buildUpTime(),
   validate.startTime(),
   validate.endTime(),
+  validate.category(),
+  validate.name().optional({ checkFalsy: true }),
   async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -37,13 +39,19 @@ const createEvent = [
       );
     }
 
+    if (req.body.category !== 'match' && req.body.category !== 'social') {
+      return next(createError(400, 'Invalid event category.'));
+    }
+
     try {
       const event = await Event.create({
+        category: req.body.category,
+        name: req.body?.name || 'Event',
         time: {
           buildUp: req.body.buildUpTime,
           start: req.body.startTime,
           end: req.body.endTime,
-        }
+        },
       });
       return res.status(200).json(event);
     } catch (err) {
@@ -51,6 +59,28 @@ const createEvent = [
     }
   },
 ];
+
+// @desc    Get an event
+// @route   GET /api/events/:id
+// @access  Private
+const readEvent = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
+  let event;
+  try {
+    event = await Event.findById(req.params.id);
+  } catch (err) {
+    return next(err);
+  }
+
+  if (!event) {
+    return next(createError(400, 'Event not found.'));
+  }
+
+  return res.status(200).json(event);
+};
 
 // @desc    Retrieve the next event of type 'match' in chronological order
 // @route   GET /api/events/next-match
@@ -70,11 +100,16 @@ const readNextMatch = async (req, res, next) => {
 // @route   GET /api/events/:id/attendees
 // @access  Private
 const readAttendees = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
   try {
     const attendees = await Attendee.find({ event: req.params.id }).populate(
       'user',
       ['firstName', 'lastName']
     );
+
     return res.status(200).json(attendees);
   } catch (err) {
     return next(err);
@@ -85,11 +120,16 @@ const readAttendees = async (req, res, next) => {
 // @route   GET /api/events/:id/attendees/me
 // @access  Private
 const readAuthUserAttendee = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
   try {
     const attendee = await Attendee.findOne({
       event: req.params.id,
       user: req.user.id,
     });
+
     return res.status(200).json(attendee);
   } catch (err) {
     return next(err);
@@ -100,6 +140,10 @@ const readAuthUserAttendee = async (req, res, next) => {
 // @route   POST /api/events/:id/attendees/me
 // @access  Private
 const createAuthUserAttendee = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
   let event;
   let attendee;
   try {
@@ -149,6 +193,10 @@ const createAuthUserAttendee = async (req, res, next) => {
 // @route   DELETE /api/events/:id/attendees/me
 // @access  Private
 const deleteAuthUserAttendee = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
   let event;
   let attendee;
   try {
@@ -207,6 +255,10 @@ const updateAuthUserAttendee = [
       );
     }
 
+    if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+      return next(createError(400, 'Invalid event id.'));
+    }
+
     let event;
     let attendee;
     try {
@@ -251,64 +303,6 @@ const updateAuthUserAttendee = [
 
 // TODO currently unused
 //
-// const convertUsersToArray = (req, res, next) => {
-//   if (!(req.body.users instanceof Array)) {
-//     if (req.body.users) {
-//       req.body.users = new Array(req.body.users);
-//     } else {
-//       req.body.users = [];
-//     }
-//   }
-//   next();
-// };
-//
-// const validateAndSanitiseInput = [
-//   body('start', 'Invalid start.').isISO8601().toDate(),
-//   body('users.*').escape(),
-// ];
-//
-// TODO currently unused
-//
-// // @desc    Create event
-// // @route   POST /api/events
-// // @access  Private
-// const createEvent = [
-//   convertUsersToArray,
-//   validateAndSanitiseInput,
-//   async (req, res, next) => {
-//     const errors = validationResult(req);
-//
-//     if (!errors.isEmpty()) {
-//       return next(
-//         createError(400, 'Field validation failed.', {
-//           fieldValidationErrors: errors.errors,
-//         })
-//       );
-//     }
-//
-//     try {
-//       const event = await Event.create({
-//         start: req.body.start,
-//       });
-//       return res.status(200).json(event);
-//     } catch (err) {
-//       return next(err);
-//     }
-//   },
-// ];
-//
-// // @desc    Get an event
-// // @route   GET /api/events/:id
-// // @access  Private
-// const readEvent = async (req, res, next) => {
-//   try {
-//     const event = await Event.findById(req.params.id);
-//     return res.status(200).json(event);
-//   } catch (err) {
-//     return next(err);
-//   }
-// };
-//
 // // @desc    Edit event
 // // @route   PUT /api/events/:id
 // // @access  Private
@@ -328,13 +322,13 @@ const updateAuthUserAttendee = [
 export default {
   readEvents,
   createEvent,
+  readEvent,
   readNextMatch,
   readAttendees,
   createAuthUserAttendee,
   readAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,
-  //  readEvent,
   //  updateEvent,
   //  deleteEvent,
 };

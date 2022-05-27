@@ -8,10 +8,10 @@ import {
   updateAuthUserEventAttendee,
 } from './attendees/attendeesSlice';
 
-const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
+const UserAttendanceSummary = ({ attendeeDetails, eventDetails }) => {
   const dispatch = useDispatch();
 
-  if (!eventId) {
+  if (!eventDetails) {
     return (
       <Styled.SummaryContainer>
         <p>Error: No event</p>
@@ -20,7 +20,7 @@ const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
   }
 
   const handleJoin = () => {
-    dispatch(addAuthUserToEvent(eventId));
+    dispatch(addAuthUserToEvent(eventDetails.id));
   };
 
   if (!attendeeDetails) {
@@ -36,13 +36,13 @@ const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
   const { guests } = attendeeDetails;
 
   const handleLeave = () => {
-    dispatch(removeAuthUserFromEvent(eventId));
+    dispatch(removeAuthUserFromEvent(eventDetails.id));
   };
 
   const handleAddGuest = () => {
     dispatch(
       updateAuthUserEventAttendee({
-        eventId,
+        eventId: eventDetails.id,
         guests: guests + 1,
       })
     );
@@ -52,7 +52,7 @@ const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
     if (guests > 0) {
       dispatch(
         updateAuthUserEventAttendee({
-          eventId,
+          eventId: eventDetails.id,
           guests: guests - 1,
         })
       );
@@ -61,7 +61,9 @@ const UserAttendanceSummary = ({ attendeeDetails, eventId }) => {
 
   return (
     <Styled.SummaryContainer>
-      <Styled.Status>You're Playing!</Styled.Status>
+      <Styled.Status>
+        You're {eventDetails.category === 'match' ? 'Playing' : 'Coming'}!
+      </Styled.Status>
       {guests ? (
         <Styled.GuestsContainer>
           <p>

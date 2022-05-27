@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import { fetchNextMatch } from './eventsSlice';
+import { fetchOneEvent } from './eventsSlice';
 import EventView from './EventView';
 
-const NextMatch = () => {
+const Event = () => {
   const dispatch = useDispatch();
+  const { id: eventId } = useParams();
 
   const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
     (state) => state.events
@@ -15,9 +17,9 @@ const NextMatch = () => {
 
   useEffect(() => {
     if (eventDetailsStatus === 'idle') {
-      dispatch(fetchNextMatch());
+      dispatch(fetchOneEvent(eventId));
     }
-  }, [eventDetailsStatus, dispatch]);
+  }, [eventDetailsStatus, eventId, dispatch]);
 
   if (eventDetailsStatus === 'error') {
     return (
@@ -35,4 +37,4 @@ const NextMatch = () => {
   return <EventView eventDetails={eventDetails} />;
 };
 
-export default NextMatch;
+export default Event;
