@@ -50,6 +50,20 @@ export const fetchAuthUser = createAsyncThunk('auth/fetchAuthUser', async (_, th
   }
 });
 
+export const updateAuthUser = createAsyncThunk(
+  'auth/updateAuthUser',
+  async (user, thunkAPI) => {
+    try {
+      return await authService.updateAuthUser(
+        thunkAPI.getState().auth.token,
+        user
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -106,6 +120,18 @@ const authSlice = createSlice({
         state.authUserStatus = 'error';
         state.authUserMessage = action.payload;
         state.authUser = null;
+      })
+
+      .addCase(updateAuthUser.pending, (state) => {
+        state.authUserStatus = 'loading';
+      })
+      .addCase(updateAuthUser.fulfilled, (state, action) => {
+        state.authUserStatus = 'success';
+        state.authUser = action.payload;
+      })
+      .addCase(updateAuthUser.rejected, (state, action) => {
+        state.authUserStatus = 'error';
+        state.authUserMessage = action.payload;
       });
   },
 });

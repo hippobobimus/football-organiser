@@ -66,6 +66,27 @@ const getAuthUser = async (token) => {
   return data;
 };
 
-const authService = { register, login, logout, getAuthUser };
+const updateAuthUser = async (token, userData) => {
+  const response = await fetch(API_URL + 'me', {
+    method: 'PUT',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userData),
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+const authService = { register, login, logout, getAuthUser, updateAuthUser };
 
 export default authService;
