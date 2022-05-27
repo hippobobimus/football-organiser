@@ -40,8 +40,7 @@ const CreateMatch = () => {
   };
 
   const handleCancel = () => {
-    // TODO navigate to calendar
-    navigate('/');
+    navigate('/calendar');
     dispatch(reset());
   };
 
