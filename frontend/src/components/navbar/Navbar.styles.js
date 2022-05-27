@@ -38,7 +38,7 @@ const Nav = styled.nav`
   align-items: center;
   gap: 30px;
 
-  padding: 20px;
+  padding: 15px;
 
   background-color: ${(props) => props.theme.bgClr};
 `;

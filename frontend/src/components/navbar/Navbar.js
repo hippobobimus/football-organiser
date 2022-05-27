@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 import * as Styled from './Navbar.styles';
 import { Container } from '../styles';
 import MenuImg from './assets/menu.svg';
 import Menu from '../menu/Menu';
-import { logout } from '../../features/auth/authSlice';
 
-function Navbar({ title, menuItems, widthBreakpoint }) {
+const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [isMobile, setIsMobile] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { isLoggedIn } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const updateWidth = () => setScreenWidth(window.innerWidth);
@@ -45,12 +40,6 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
     setMenuIsVisible(!menuIsVisible);
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    setMenuIsVisible(false);
-    navigate('/');
-  };
-
   return (
     <Styled.Nav isMobile={isMobile}>
       <Container>
@@ -60,13 +49,10 @@ function Navbar({ title, menuItems, widthBreakpoint }) {
       {(menuIsVisible || !isMobile) && (
         <Styled.MenuContainer isRow={!isMobile}>
           <Menu isRow={!isMobile} items={menuItems} />
-          {isLoggedIn && (
-            <Styled.NavButton onClick={handleLogout}>Logout</Styled.NavButton>
-          )}
         </Styled.MenuContainer>
       )}
     </Styled.Nav>
   );
-}
+};
 
 export default Navbar;

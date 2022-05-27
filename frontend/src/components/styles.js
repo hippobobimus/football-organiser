@@ -57,7 +57,7 @@ export const Content = styled(Container)`
   grid-row: 2 / 3;
   grid-column: 1 / 2;
   height: 100%;
-  padding: 20px min(10%, 5000px);
+  padding: 0px min(10%, 5000px);
   flex-direction: column;
   justify-content: flex-start;
 
