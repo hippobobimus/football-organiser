@@ -108,6 +108,11 @@ const authSlice = createSlice({
         state.token = null;
       })
 
+      .addCase(logout.fulfilled, (state) => {
+        state.token = null;
+        state.isLoggedIn = false;
+      })
+
       .addCase(fetchAuthUser.pending, (state) => {
         state.authUserStatus = 'loading';
       })
