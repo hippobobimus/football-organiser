@@ -36,7 +36,9 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
 
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
-    return await authService.logout();
+    // purge store state and logout.
+    await authService.logout();
+    thunkAPI.dispatch({type: 'store/purge'});
   } catch (err) {
     return thunkAPI.rejectWithValue(err.message);
   }
@@ -70,6 +72,8 @@ const authSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.authUser = null;
+      state.authUserStatus = 'idle';
+      state.authUserMessage = '';
       state.status = 'idle';
       state.message = '';
     },
@@ -102,11 +106,6 @@ const authSlice = createSlice({
         state.status = 'error';
         state.message = action.payload;
         state.token = null;
-      })
-
-      .addCase(logout.fulfilled, (state) => {
-        state.token = null;
-        state.isLoggedIn = false;
       })
 
       .addCase(fetchAuthUser.pending, (state) => {
