@@ -9,10 +9,10 @@ import {
   FormButtonContainer,
   TextInput,
 } from '../../components/form';
-import { userRegistrationSchema } from '../validation/userValidation';
 import Spinner from '../../components/spinner/Spinner';
 import { Button, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
+import { userRegistrationSchema } from './authUserValidation';
 
 const Register = () => {
   const dispatch = useDispatch();

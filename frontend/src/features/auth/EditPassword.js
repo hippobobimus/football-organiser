@@ -11,8 +11,8 @@ import {
   TextInput,
 } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
-import { reset, updateAuthUser } from '../auth/authSlice';
-import { updatePasswordSchema } from '../validation/userValidation';
+import { reset, updateAuthUser } from './authSlice';
+import { updatePasswordSchema } from './authUserValidation';
 
 const EditPassword = () => {
   const dispatch = useDispatch();

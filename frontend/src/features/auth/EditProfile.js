@@ -11,8 +11,8 @@ import {
   TextInput,
 } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
-import { fetchAuthUser, reset, updateAuthUser } from '../auth/authSlice';
-import { userUpdateSchema } from '../validation/userValidation';
+import { fetchAuthUser, reset, updateAuthUser } from './authSlice';
+import { userUpdateSchema } from './authUserValidation';
 
 const EditProfile = () => {
   const dispatch = useDispatch();

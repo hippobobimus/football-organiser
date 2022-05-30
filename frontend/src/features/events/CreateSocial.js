@@ -11,8 +11,8 @@ import {
   FormButtonContainer,
   TextInput,
 } from '../../components/form';
-import { socialSchema } from '../validation/eventValidation';
 import { createEvent, reset } from './eventsSlice';
+import { socialSchema } from './eventValidation';
 
 const CreateSocial = () => {
   const dispatch = useDispatch();

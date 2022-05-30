@@ -11,7 +11,7 @@ import {
   FormButtonContainer,
   TextInput,
 } from '../../components/form';
-import { matchSchema } from '../validation/eventValidation';
+import { matchSchema } from './eventValidation';
 import { createEvent, reset } from './eventsSlice';
 
 const CreateMatch = () => {
