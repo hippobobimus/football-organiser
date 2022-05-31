@@ -7,7 +7,7 @@ import {
 import eventsService from './eventsService';
 
 const eventsAdapter = createEntityAdapter({
-  sortComparer: (a, b) => b.time.start.localeCompare(a.time.start),
+  sortComparer: (a, b) => a.time.start.localeCompare(b.time.start),
 });
 
 const initialState = eventsAdapter.getInitialState({
