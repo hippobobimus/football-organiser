@@ -12,7 +12,26 @@ const { ObjectId } = mongoose.Types;
 // @access  Private
 const readEvents = async (req, res, next) => {
   try {
-    const events = await Event.find();
+    let events = await Event.find().populate({
+      path: 'attendees',
+      populate: {
+        path: 'user',
+        select: ['firstName', 'lastName'],
+      }
+    }).populate('numAttendees');
+
+    events = events.map((event) => {
+      const authUserAttendee = event.attendees.find((attendee) => {
+        console.log(attendee);
+        console.log(req.user.id);
+        return attendee.user.id === req.user.id
+      });
+
+      event.set('authUserAttendee', authUserAttendee || null, { strict: false });
+
+      return event;
+    });
+
     return res.status(200).json(events);
   } catch (err) {
     return next(err);
