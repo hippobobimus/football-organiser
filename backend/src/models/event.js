@@ -21,4 +21,18 @@ const EventSchema = new Schema(
   }
 );
 
+EventSchema.virtual('attendees', {
+  ref: 'Attendee',
+  localField: '_id',
+  foreignField: 'event',
+});
+
+EventSchema.virtual('numAttendees', {
+  ref: 'Attendee',
+  localField: '_id',
+  foreignField: 'event',
+  get: (attendees) =>
+    attendees ? attendees.reduce((prev, curr) => prev + curr.guests + 1, 0) : 0,
+});
+
 export default mongoose.model('Event', EventSchema);
