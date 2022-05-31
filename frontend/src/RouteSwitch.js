@@ -30,7 +30,7 @@ const RouteSwitch = () => {
           <Route path='edit-profile' element={<EditProfile />} />
           <Route path='edit-password' element={<EditPassword />} />
           <Route path='calendar' element={<Calendar />} />
-          <Route path='event/:id' element={<Event />} />
+          <Route path='events/:id' element={<Event />} />
           <Route path='next-match' element={<NextMatch />} />
         </Route>
 

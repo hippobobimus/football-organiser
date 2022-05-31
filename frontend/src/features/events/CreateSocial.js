@@ -50,7 +50,7 @@ const CreateSocial = () => {
 
   useEffect(() => {
     if (eventDetailsStatus === 'success') {
-      navigate(`/event/${eventDetails.id}`);
+      navigate(`/events/${eventDetails.id}`);
       dispatch(reset());
     }
   }, [dispatch, navigate, eventDetails, eventDetailsStatus]);
