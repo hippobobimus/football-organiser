@@ -4,6 +4,6 @@ export const List = styled.ul`
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 15px;
   width: 100%;
 `;

@@ -36,7 +36,7 @@ const theme = {
   inputErrorBorderClr: colours.red,
 
   playerListBgClr: colours.white,
-  listItemBgClr: colours.veryDarkGreen,
+  listItemBgClr: colours.pink,
 
   spinnerBgClr: colours.white,
   spinnerFgClr: colours.darkPink,
