@@ -11,13 +11,17 @@ export const Button = styled.button`
   background-color: ${(props) => props.theme.buttonClr};
   color: ${(props) => props.theme.buttonTextClr};
   padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   &:hover,
-  &:active {
+  &:disabled,
+  &:enabled:active {
     background-color: ${(props) => props.theme.buttonHoverClr};
   }
 
-  &:active {
+  &:enabled:active {
     transform: translate(3px, 3px);
     box-shadow: none;
   }
