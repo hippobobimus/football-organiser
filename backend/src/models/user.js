@@ -35,4 +35,8 @@ UserSchema.virtual('name').get((value, virtual, doc) => {
   return fullName;
 });
 
+UserSchema.virtual('isAdmin').get((value, virtual, doc) => {
+  return doc.role === 'admin';
+})
+
 export default mongoose.model('User', UserSchema);
