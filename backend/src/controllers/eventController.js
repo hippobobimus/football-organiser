@@ -15,7 +15,7 @@ const readEvents = async (req, res, next) => {
 
   let options = {
     page,
-    limit: 2,
+    limit: 4,
     populate: [
       'numAttendees',
       {
