@@ -1,15 +1,21 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import uniqid from 'uniqid';
 
 import GlobalStyle from './GlobalStyle';
 import { Navbar } from './components';
-import { Card, Content } from './components/styles.js';
+import { Spinner } from './components/spinner';
+import { Card, Content, Subtitle } from './components/styles.js';
 import theme from './theme.js';
+import { fetchAuthUser } from './features/auth/authSlice';
 
 const App = () => {
+  const dispatch = useDispatch();
+
   const title = 'Bib Game Players';
-  
+
   const menuItems = [
     { uid: uniqid(), text: 'Next Match', path: '/next-match' },
     { uid: uniqid(), text: 'Calendar', path: '/calendar' },
@@ -19,6 +25,20 @@ const App = () => {
   const responsiveBreakpoint = {
     width: 900,
   };
+
+  const { authUserStatus, authUserMessage } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (authUserStatus === 'idle') {
+      dispatch(fetchAuthUser());
+    }
+  }, [dispatch, authUserStatus]);
+
+  if (authUserStatus === 'loading' || authUserStatus === 'idle') {
+    return <Spinner />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -30,7 +50,14 @@ const App = () => {
       />
       <Content>
         <Card>
-          <Outlet />
+          {authUserStatus === 'error' ? (
+            <>
+              <Subtitle>Something went wrong...</Subtitle>
+              <p>{authUserMessage}</p>
+            </>
+          ) : (
+            <Outlet />
+          )}
         </Card>
       </Content>
     </ThemeProvider>
