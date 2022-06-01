@@ -64,6 +64,48 @@ export const createEvent = createAsyncThunk(
   }
 );
 
+export const addAuthUserToEvent = createAsyncThunk(
+  'events/addAuthUserToEvent',
+  async (eventId, thunkAPI) => {
+    try {
+      return await eventsService.addAuthUserToEvent(
+        thunkAPI.getState().auth.token,
+        eventId
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const removeAuthUserFromEvent = createAsyncThunk(
+  'events/removeAuthUserFromEvent',
+  async (eventId, thunkAPI) => {
+    try {
+      return await eventsService.removeAuthUserFromEvent(
+        thunkAPI.getState().auth.token,
+        eventId
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updateAuthUserEventAttendee = createAsyncThunk(
+  'events/updateAuthUserEventAttendee',
+  async (attendeeParams, thunkAPI) => {
+    try {
+      return await eventsService.updateAuthUserEventAttendee(
+        thunkAPI.getState().auth.token,
+        attendeeParams
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
@@ -129,6 +171,45 @@ const eventsSlice = createSlice({
       .addCase(createEvent.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(addAuthUserToEvent.pending, (state) => {
+        state.attendeeDetailsStatus = 'loading';
+      })
+      .addCase(addAuthUserToEvent.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(addAuthUserToEvent.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(removeAuthUserFromEvent.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(removeAuthUserFromEvent.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(removeAuthUserFromEvent.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(updateAuthUserEventAttendee.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(updateAuthUserEventAttendee.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(updateAuthUserEventAttendee.rejected, (state, action) => {
+        state.attendeeDetailsStatus = 'error';
+        state.attendeeDetailsMessage = action.payload;
       });
   },
 });

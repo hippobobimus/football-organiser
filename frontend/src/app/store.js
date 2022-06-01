@@ -2,13 +2,11 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import authReducer from '../features/auth/authSlice';
 import eventsReducer from '../features/events/eventsSlice';
-import attendeesReducer from '../features/events/attendees/attendeesSlice';
 import usersReducer from '../features/users/usersSlice';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
   events: eventsReducer,
-  attendees: attendeesReducer,
   users: usersReducer,
 });
 

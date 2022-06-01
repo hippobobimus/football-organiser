@@ -19,18 +19,16 @@ router
   .get(protect, eventController.readEvent);
 
 router
-  .route('/:id/attendees')
-  .get(protect, eventController.readAttendees);
-
-router
   .route('/:id/attendees/me')
   .post(protect, eventController.createAuthUserAttendee)
-  .get(protect, eventController.readAuthUserAttendee)
   .put(protect, eventController.updateAuthUserAttendee)
   .delete(protect, eventController.deleteAuthUserAttendee);
 
 // TODO currently unused
 // 
+// router
+//   .route('/:id/attendees')
+//
 // router
 //   .route('/:id')
 //   .put(eventController.updateEvent)

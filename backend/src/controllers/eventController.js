@@ -7,6 +7,43 @@ import validate from '../middleware/validation/eventValidation';
 
 const { ObjectId } = mongoose.Types;
 
+/*
+ * Helper functions
+ */
+
+const getPopulatedEvent = async (eventId, authUserId) => {
+  let event = await Event.findById(eventId)
+    .populate('numAttendees')
+    .populate({
+      path: 'attendees',
+      populate: {
+        path: 'user',
+        select: ['firstName', 'lastName'],
+      },
+      sort: { name: 'asc' },
+    });
+
+  if (!event) {
+    throw createError(400, 'Event not found.');
+  }
+
+  // determine whether the auth user is registered for this event and, if so, attach their attendee
+  // separately.
+  const authUserAttendee = event.attendees?.find((attendee) => {
+    return attendee.user.id === authUserId;
+  });
+
+  event.set('authUserAttendee', authUserAttendee || null, {
+    strict: false,
+  });
+
+  return event;
+};
+
+/*
+ * Exported functions
+ */
+
 // @desc    Get all events
 // @route   GET /api/events
 // @access  Private
@@ -119,7 +156,16 @@ const readEvent = async (req, res, next) => {
 
   let event;
   try {
-    event = await Event.findById(req.params.id);
+    event = await Event.findById(req.params.id)
+      .populate('numAttendees')
+      .populate({
+        path: 'attendees',
+        populate: {
+          path: 'user',
+          select: ['firstName', 'lastName'],
+        },
+        sort: { name: 'asc' },
+      });
   } catch (err) {
     return next(err);
   }
@@ -127,6 +173,16 @@ const readEvent = async (req, res, next) => {
   if (!event) {
     return next(createError(400, 'Event not found.'));
   }
+
+  // determine whether the auth user is registered for this event and, if so, attach their attendee
+  // separately.
+  const authUserAttendee = event.attendees?.find((attendee) => {
+    return attendee.user.id === req.user.id;
+  });
+
+  event.set('authUserAttendee', authUserAttendee || null, {
+    strict: false,
+  });
 
   return res.status(200).json(event);
 };
@@ -140,46 +196,6 @@ const readNextMatch = async (req, res, next) => {
     const nextMatch = await Event.findOne();
 
     return res.status(200).json(nextMatch);
-  } catch (err) {
-    return next(err);
-  }
-};
-
-// @desc    Get all attendees for the given event id
-// @route   GET /api/events/:id/attendees
-// @access  Private
-const readAttendees = async (req, res, next) => {
-  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
-    return next(createError(400, 'Invalid event id.'));
-  }
-
-  try {
-    const attendees = await Attendee.find({ event: req.params.id }).populate(
-      'user',
-      ['firstName', 'lastName']
-    );
-
-    return res.status(200).json(attendees);
-  } catch (err) {
-    return next(err);
-  }
-};
-
-// @desc    Get the authenticated user attendee record for the given event id
-// @route   GET /api/events/:id/attendees/me
-// @access  Private
-const readAuthUserAttendee = async (req, res, next) => {
-  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
-    return next(createError(400, 'Invalid event id.'));
-  }
-
-  try {
-    const attendee = await Attendee.findOne({
-      event: req.params.id,
-      user: req.user.id,
-    });
-
-    return res.status(200).json(attendee);
   } catch (err) {
     return next(err);
   }
@@ -230,12 +246,16 @@ const createAuthUserAttendee = async (req, res, next) => {
 
   try {
     attendee = await attendee.save();
-    await attendee.populate('user', ['firstName', 'lastName']);
   } catch (err) {
     return next(err);
   }
 
-  return res.status(200).json(attendee);
+  try {
+    const updatedEvent = await getPopulatedEvent(req.params.id, req.user.id);
+    return res.status(200).json(updatedEvent);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // @desc    De-register the authenticated user from an event
@@ -285,7 +305,12 @@ const deleteAuthUserAttendee = async (req, res, next) => {
     return next(err);
   }
 
-  return res.status(200).json(attendee);
+  try {
+    const updatedEvent = await getPopulatedEvent(req.params.id, req.user.id);
+    return res.status(200).json(updatedEvent);
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // @desc    Update the authenticated user's attendance to the given event.
@@ -341,12 +366,16 @@ const updateAuthUserAttendee = [
 
     try {
       attendee = await attendee.save();
-      await attendee.populate('user', ['firstName', 'lastName']);
     } catch (err) {
       return next(err);
     }
 
-    return res.status(200).json(attendee);
+    try {
+      const updatedEvent = await getPopulatedEvent(req.params.id, req.user.id);
+      return res.status(200).json(updatedEvent);
+    } catch (err) {
+      return next(err);
+    }
   },
 ];
 
@@ -373,9 +402,7 @@ export default {
   createEvent,
   readEvent,
   readNextMatch,
-  readAttendees,
   createAuthUserAttendee,
-  readAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,
   //  updateEvent,
