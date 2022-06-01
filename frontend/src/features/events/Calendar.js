@@ -1,24 +1,35 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Subtitle } from '../../components/styles';
+import {
+  Button,
+  ButtonRow,
+  SmallButton,
+  Subtitle,
+} from '../../components/styles';
 import { Spinner } from '../../components/spinner';
+import PaginationButtons from '../../components/pagination/PaginationButtons';
 import { fetchEvents, selectAllEvents } from './eventsSlice';
 import EventsList from './EventsList';
 
 const Calendar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const { status, message } = useSelector((state) => state.events);
+  const [page, setPage] = useState(1);
+  const [finished, setFinished] = useState(false);
+
+  const authUser = useSelector((state) => state.auth.authUser);
+
+  const { status, message, pagination } = useSelector((state) => state.events);
   const events = useSelector(selectAllEvents);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchEvents());
-    }
-  }, [dispatch, status]);
+    dispatch(fetchEvents({ page, finished }));
+  }, [dispatch, finished, page]);
 
-  if (status === 'loading') {
+  if (status === 'loading' || status === 'idle') {
     return <Spinner />;
   }
 
@@ -31,10 +42,43 @@ const Calendar = () => {
     );
   }
 
+  const handlePageDown = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const handlePageUp = () => {
+    setPage((prev) => prev - 1);
+  };
+
   return (
     <>
       <Subtitle>Calendar</Subtitle>
+      {authUser.isAdmin && (
+        <ButtonRow>
+          <Button type='button' onClick={() => navigate('/create-match')}>
+            New Match
+          </Button>
+          <Button type='button' onClick={() => navigate('/create-social')}>
+            New Social
+          </Button>
+        </ButtonRow>
+      )}
       <EventsList events={events} />
+      <PaginationButtons
+        onUpClick={handlePageUp}
+        onDownClick={handlePageDown}
+        upDisabled={!pagination?.hasPrevPage}
+        downDisabled={!pagination?.hasNextPage}
+      />
+      {finished ? (
+        <SmallButton type='button' onClick={() => setFinished(false)}>
+          Current & Upcoming Events
+        </SmallButton>
+      ) : (
+        <SmallButton type='button' onClick={() => setFinished(true)}>
+          Past Events
+        </SmallButton>
+      )}
     </>
   );
 };

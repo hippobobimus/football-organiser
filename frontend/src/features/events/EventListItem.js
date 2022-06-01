@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { format } from 'date-fns';
 import { mdiAccountCheckOutline, mdiAccountGroupOutline } from '@mdi/js';
 
 import * as Styled from './EventListItem.styles';
+import { reset } from './eventsSlice';
 
 const EventListItem = ({ event }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [formatted, setFormatted] = useState({
     date: '',
     start: '',
   });
 
-  const { name, time } = event;
-
-  // TODO dummy data
-  const isAttending = true;
-  const attendees = 12;
+  const { name, time, numAttendees, authUserAttendee } = event;
 
   useEffect(() => {
     if (time) {
@@ -30,30 +32,39 @@ const EventListItem = ({ event }) => {
     }
   }, [time]);
 
+  const handleClick = () => {
+    navigate(`/events/${event.id}`);
+    dispatch(reset());
+  };
+
   return (
-    <Styled.ListItem>
-      <Styled.FieldsList>
-        <Styled.DateField>
-          <span>{formatted.weekday}</span>
-          <span>{formatted.date}</span>
-        </Styled.DateField>
+    <li>
+      <Styled.ListItemButton type='button' onClick={handleClick}>
+        <Styled.FieldsList>
+          <Styled.DateField>
+            <span>{formatted.weekday}</span>
+            <span>{formatted.date}</span>
+          </Styled.DateField>
 
-        <Styled.TimeField>{formatted.start}</Styled.TimeField>
+          <Styled.TimeField>{formatted.start}</Styled.TimeField>
 
-        <Styled.NameField>{name}</Styled.NameField>
+          <Styled.NameField>{name}</Styled.NameField>
 
-        <Styled.AttendeesField>
-          <Styled.FieldIcon path={mdiAccountGroupOutline} size={1} />
-          <b>{attendees}</b>
-        </Styled.AttendeesField>
+          <Styled.IconContainer>
+            <Styled.AttendeesField>
+              <Styled.FieldIcon path={mdiAccountGroupOutline} size={1} />
+              <b>{numAttendees === 0 ? '-' : numAttendees}</b>
+            </Styled.AttendeesField>
 
-        {isAttending && (
-          <Styled.UserAttendanceField>
-            <Styled.FieldIcon path={mdiAccountCheckOutline} size={1} />
-          </Styled.UserAttendanceField>
-        )}
-      </Styled.FieldsList>
-    </Styled.ListItem>
+            {authUserAttendee && (
+              <Styled.UserAttendanceField>
+                <Styled.FieldIcon path={mdiAccountCheckOutline} size={1} />
+              </Styled.UserAttendanceField>
+            )}
+          </Styled.IconContainer>
+        </Styled.FieldsList>
+      </Styled.ListItemButton>
+    </li>
   );
 };
 

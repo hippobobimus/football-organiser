@@ -1,14 +1,18 @@
 import styled from 'styled-components';
 import Icon from '@mdi/react';
 
-export const ListItem = styled.li`
-  background-color: ${(props) => props.theme.listItemBgClr};
-  border-radius: 5px;
-  box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
+import { Button } from '../../components/styles';
+
+export const IconContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 10px 15px 5px 15px;
+  gap: 5px;
+  width: 60px;
+`;
+
+export const ListItemButton = styled(Button)`
+  font-family: ${(props) => props.theme.font};
   font-size: 0.9rem;
   width: 100%;
   height: 75px;
@@ -17,9 +21,10 @@ export const ListItem = styled.li`
 export const FieldsList = styled.ul`
   list-style: none;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
+  width: 100%;
 `;
 
 export const Field = styled.li`
@@ -43,7 +48,9 @@ export const TimeField = styled(Field)`
 
 export const NameField = styled(Field)`
   text-align: center;
-  width: 80px;
+  width: 25%;
+  min-width: 80px;
+  overflow-wrap: break-word;
 `;
 
 export const AttendeesField = styled(Field)`

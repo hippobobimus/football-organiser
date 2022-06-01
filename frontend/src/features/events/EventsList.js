@@ -5,7 +5,7 @@ const EventsList = ({ events }) => {
   return (
     <Styled.List>
       {events.map((event) => (
-        <EventListItem event={event} />
+        <EventListItem key={event.id} event={event} />
       ))}
     </Styled.List>
   );
