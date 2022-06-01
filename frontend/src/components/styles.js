@@ -1,6 +1,13 @@
 import { Link as ReactRouterLink } from 'react-router-dom';
 import styled from 'styled-components';
 
+export const ButtonRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+`;
+
 export const Button = styled.button`
   cursor: pointer;
   border-radius: 5px;
