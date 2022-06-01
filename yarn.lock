@@ -3889,6 +3889,7 @@ __metadata:
     http-errors: ^2.0.0
     jsonwebtoken: ^8.5.1
     mongoose: ^6.3.1
+    mongoose-paginate-v2: ^1.6.3
     morgan: ^1.10.0
     nodemon: ^2.0.15
     prettier: ^2.6.2
@@ -9269,6 +9270,13 @@ __metadata:
     saslprep:
       optional: true
   checksum: 423974a663c90e6673226a9ad691e8b445ecd43fc4e9e424343644b20c35188bd3d6692dcc2798022cc6b5c6f4391b54747c7543134b46f93cb3da428e5f9246
+  languageName: node
+  linkType: hard
+
+"mongoose-paginate-v2@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "mongoose-paginate-v2@npm:1.6.3"
+  checksum: 3a63a6025ddfd3d024ae2befcd4f086905ab8ffe29546654774283974aed855b38b76bb75a92ccf16e7cd553756b2ce3f3ade93b1e3397c578f7629a2a459235
   languageName: node
   linkType: hard
 

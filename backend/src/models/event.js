@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
+
 const { Schema } = mongoose;
 
 const EventSchema = new Schema(
@@ -34,5 +36,7 @@ EventSchema.virtual('numAttendees', {
   get: (attendees) =>
     attendees ? attendees.reduce((prev, curr) => prev + curr.guests + 1, 0) : 0,
 });
+
+EventSchema.plugin(mongoosePaginate);
 
 export default mongoose.model('Event', EventSchema);

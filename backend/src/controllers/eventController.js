@@ -11,28 +11,58 @@ const { ObjectId } = mongoose.Types;
 // @route   GET /api/events
 // @access  Private
 const readEvents = async (req, res, next) => {
-  try {
-    let events = await Event.find().populate({
-      path: 'attendees',
-      populate: {
-        path: 'user',
-        select: ['firstName', 'lastName'],
-      }
-    }).populate('numAttendees');
+  const page = req.query?.page > 0 ? req.query.page : 1;
 
-    events = events.map((event) => {
-      const authUserAttendee = event.attendees.find((attendee) => {
-        console.log(attendee);
-        console.log(req.user.id);
-        return attendee.user.id === req.user.id
+  let options = {
+    page,
+    limit: 2,
+    populate: [
+      'numAttendees',
+      {
+        path: 'attendees',
+        populate: {
+          path: 'user',
+          select: ['firstName', 'lastName'],
+        },
+      },
+    ],
+  };
+
+  let query;
+
+  if (req.query?.finished.toLowerCase() === 'true') {
+    // past events.
+    query = {
+      'time.end': { $lt: Date.now() },
+    };
+    // show most recent first.
+    options.sort = { 'time.start': 'desc' };
+  } else {
+    // upcoming and in-progress events.
+    query = {
+      'time.end': { $gte: Date.now() },
+    };
+    // show most recent first.
+    options.sort = { 'time.start': 'asc' };
+  }
+
+  try {
+    let results = await Event.paginate(query, options);
+
+    // identify the attendee associated with the auth user and add as an extra field.
+    results.docs = results.docs.map((event) => {
+      const authUserAttendee = event.attendees?.find((attendee) => {
+        return attendee.user.id === req.user.id;
       });
 
-      event.set('authUserAttendee', authUserAttendee || null, { strict: false });
+      event.set('authUserAttendee', authUserAttendee || null, {
+        strict: false,
+      });
 
       return event;
     });
 
-    return res.status(200).json(events);
+    return res.status(200).json(results);
   } catch (err) {
     return next(err);
   }
