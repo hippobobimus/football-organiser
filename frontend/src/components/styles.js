@@ -35,7 +35,7 @@ export const Button = styled.button`
 `;
 
 export const SmallButton = styled(Button)`
-  padding: 0px 10px;
+  padding: 2px 10px;
 `;
 
 export const Container = styled.div`
