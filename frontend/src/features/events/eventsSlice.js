@@ -6,23 +6,22 @@ import {
 
 import eventsService from './eventsService';
 
-const eventsAdapter = createEntityAdapter({
-  sortComparer: (a, b) => a.time.start.localeCompare(b.time.start),
-});
+const eventsAdapter = createEntityAdapter();
 
 const initialState = eventsAdapter.getInitialState({
   eventDetails: null,
   eventDetailsStatus: 'idle',
   eventDetailsMessage: '',
+  pagination: null,
   status: 'idle',
   message: '',
 });
 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
-  async (_, thunkAPI) => {
+  async (queryParams, thunkAPI) => {
     try {
-      return await eventsService.getEvents(thunkAPI.getState().auth.token);
+      return await eventsService.getEvents(thunkAPI.getState().auth.token, queryParams);
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -74,6 +73,7 @@ const eventsSlice = createSlice({
       state.eventDetails = null;
       state.eventDetailsStatus = 'idle';
       state.eventDetailsMessage = '';
+      state.pagination = null;
       state.status = 'idle';
       state.message = '';
     },
@@ -85,7 +85,9 @@ const eventsSlice = createSlice({
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.status = 'success';
-        eventsAdapter.upsertMany(state, action.payload);
+        const { docs, ...pagination } = action.payload;
+        eventsAdapter.setAll(state, docs);
+        state.pagination = pagination;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.status = 'error';

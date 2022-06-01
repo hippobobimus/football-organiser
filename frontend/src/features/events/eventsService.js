@@ -1,7 +1,13 @@
 const API_URL = '/api/events/';
 
-const getEvents = async (token) => {
-  const response = await fetch(API_URL, {
+const getEvents = async (token, queryParams) => {
+  const queryString = Object.entries(queryParams)
+    .map(([key, val]) => `${key}=${val}`)
+    .join('&');
+
+  const url = `${API_URL}${queryString ? '?' : ''}${queryString}`;
+
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       Authorization: token,
@@ -79,7 +85,7 @@ const createEvent = async (token, eventData) => {
   }
 
   return data;
-}
+};
 
 const eventsService = { getEvents, getOneEvent, getNextMatch, createEvent };
 
