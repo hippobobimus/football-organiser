@@ -26,19 +26,15 @@ const App = () => {
     width: 900,
   };
 
-  const { authUserStatus, authUserMessage } = useSelector(
+  const { isLoggedIn, authUserStatus, authUserMessage } = useSelector(
     (state) => state.auth
   );
 
   useEffect(() => {
-    if (authUserStatus === 'idle') {
+    if (isLoggedIn && authUserStatus === 'idle') {
       dispatch(fetchAuthUser());
     }
-  }, [dispatch, authUserStatus]);
-
-  if (authUserStatus === 'loading' || authUserStatus === 'idle') {
-    return <Spinner />;
-  }
+  }, [dispatch, authUserStatus, isLoggedIn]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,12 +46,16 @@ const App = () => {
       />
       <Content>
         <Card>
-          {authUserStatus === 'error' ? (
+          {authUserStatus === 'error' && (
             <>
               <Subtitle>Something went wrong...</Subtitle>
               <p>{authUserMessage}</p>
             </>
-          ) : (
+          )}
+          {authUserStatus === 'loading' && (
+            <Spinner />
+          )}
+          {(authUserStatus === 'success' || authUserStatus === 'idle') && (
             <Outlet />
           )}
         </Card>
