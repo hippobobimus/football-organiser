@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
 
-import { Button, Subtitle } from '../../components/styles';
+import { Button, SectionHeading, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
 import {
-  Form,
-  FormButton,
-  FormButtonContainer,
+  MultiStepForm,
+  FormStep,
   TextInput,
 } from '../../components/form';
-import { matchSchema } from './eventValidation';
+import { addressSchema, matchSchema } from './eventValidation';
 import { createEvent, reset } from './eventsSlice';
 
 const CreateMatch = () => {
@@ -74,17 +72,16 @@ const CreateMatch = () => {
   return (
     <>
       <Subtitle>Create a New Match</Subtitle>
-      <Formik
+      <MultiStepForm
         initialValues={{
           buildUpTime: userEntries.buildUpTime,
           startTime: userEntries.startTime,
           endTime: userEntries.endTime,
         }}
-        validationSchema={matchSchema}
         onSubmit={handleSubmit}
+        onCancel={handleCancel}
       >
-        {(formik) => (
-          <Form>
+        <FormStep validationSchema={matchSchema}>
             <TextInput
               label='Warm Up'
               name='buildUpTime'
@@ -100,19 +97,75 @@ const CreateMatch = () => {
               name='endTime'
               type='datetime-local'
             />
-            <FormButtonContainer>
-              <FormButton type='button' onClick={handleCancel}>
-                Cancel
-              </FormButton>
-              <FormButton type='submit' disabled={formik.isSubmitting}>
-                Save
-              </FormButton>
-            </FormButtonContainer>
-          </Form>
-        )}
-      </Formik>
+        </FormStep>
+        <FormStep validationSchema={addressSchema}>
+          <SectionHeading>Address</SectionHeading>
+            <TextInput
+              label='Name'
+              name='locationName'
+              type='text'
+            />
+            <TextInput
+              label='Address Line 1'
+              name='locationLine1'
+              type='text'
+            />
+            <TextInput
+              label='Address Line 2'
+              name='locationLine2'
+              type='text'
+            />
+            <TextInput
+              label='Town'
+              name='locationTown'
+              type='text'
+            />
+            <TextInput
+              label='Postcode'
+              name='locationPostcode'
+              type='text'
+            />
+        </FormStep>
+      </MultiStepForm>
     </>
   );
 };
+//      <Formik
+//        initialValues={{
+//          buildUpTime: userEntries.buildUpTime,
+//          startTime: userEntries.startTime,
+//          endTime: userEntries.endTime,
+//        }}
+//        validationSchema={matchSchema}
+//        onSubmit={handleSubmit}
+//      >
+//        {(formik) => (
+//          <Form>
+//            <TextInput
+//              label='Warm Up'
+//              name='buildUpTime'
+//              type='datetime-local'
+//            />
+//            <TextInput
+//              label='Kick Off'
+//              name='startTime'
+//              type='datetime-local'
+//            />
+//            <TextInput
+//              label='Finish'
+//              name='endTime'
+//              type='datetime-local'
+//            />
+//            <FormButtonContainer>
+//              <FormButton type='button' onClick={handleCancel}>
+//                Cancel
+//              </FormButton>
+//              <FormButton type='submit' disabled={formik.isSubmitting}>
+//                Save
+//              </FormButton>
+//            </FormButtonContainer>
+//          </Form>
+//        )}
+//      </Formik>
 
 export default CreateMatch;
