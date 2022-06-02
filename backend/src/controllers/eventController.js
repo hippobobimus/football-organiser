@@ -20,7 +20,7 @@ const getPopulatedEvent = async (eventId, authUserId) => {
         path: 'user',
         select: ['firstName', 'lastName'],
       },
-      sort: { name: 'asc' },
+      sort: { 'user.name': 'asc' },
     });
 
   if (!event) {
@@ -114,19 +114,23 @@ const createEvent = [
   validate.endTime(),
   validate.category(),
   validate.name().optional({ checkFalsy: true }),
+  validate.locationName().optional({ checkFalsy: true }),
+  validate.locationLine1(),
+  validate.locationLine2().optional({ checkFalsy: true }),
+  validate.locationTown(),
+  validate.locationPostcode(),
   async (req, res, next) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
+      const msg = errors.errors
+        .map((err) => `'${err.param}': ${err.msg}`)
+        .join(' ');
       return next(
-        createError(400, 'Field validation failed.', {
+        createError(400, 'Field validation failed. ' + msg, {
           fieldValidationErrors: errors.errors,
         })
       );
-    }
-
-    if (req.body.category !== 'match' && req.body.category !== 'social') {
-      return next(createError(400, 'Invalid event category.'));
     }
 
     try {
@@ -137,6 +141,13 @@ const createEvent = [
           buildUp: req.body.buildUpTime,
           start: req.body.startTime,
           end: req.body.endTime,
+        },
+        location: {
+          name: req.body?.locationName || '',
+          line1: req.body.locationLine1,
+          line2: req.body?.locationLine2 || '',
+          town: req.body.locationTown,
+          postcode: req.body.locationPostcode,
         },
       });
       return res.status(200).json(event);
@@ -164,7 +175,7 @@ const readEvent = async (req, res, next) => {
           path: 'user',
           select: ['firstName', 'lastName'],
         },
-        sort: { name: 'asc' },
+        sort: { 'user.name': 'asc' },
       });
   } catch (err) {
     return next(err);

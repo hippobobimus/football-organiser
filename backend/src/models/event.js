@@ -10,10 +10,16 @@ const EventSchema = new Schema(
       start: { type: Date, required: true },
       end: { type: Date, required: true },
     },
-    // TODO location: { type: Schema.Types.ObjectId, ref: 'Location' },
-    // TODO locked state
+    location: {
+      name: { type: String },
+      line1: { type: String, required: true },
+      line2: { type: String },
+      town: { type: String, required: true },
+      postcode: { type: String, required: true },
+    },
     category: { type: String, required: true },
     name: { type: String },
+    // TODO locked state
     cancelled: { type: Boolean, default: false },
   },
   {

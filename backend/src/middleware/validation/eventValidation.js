@@ -8,7 +8,7 @@ const guests = () => {
     .trim()
     .isNumeric()
     .isLength({ min: 1, max: 2 })
-    .withMessage('Number of guests must be submitted.');
+    .withMessage('Number of guests between 0-99 must be submitted.');
 };
 
 const buildUpTime = () => {
@@ -16,6 +16,8 @@ const buildUpTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid build up date and time must be supplied.')
+    .isAfter()
+    .withMessage('Cannot be in the past.')
     .toDate();
 };
 
@@ -24,6 +26,8 @@ const startTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid start date and time must be supplied.')
+    .isAfter()
+    .withMessage('Cannot be in the past.')
     .toDate();
 };
 
@@ -32,6 +36,8 @@ const endTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid end date and time must be supplied.')
+    .isAfter()
+    .withMessage('Cannot be in the past.')
     .toDate();
 };
 
@@ -39,9 +45,7 @@ const category = () => {
   return body('category')
     .trim()
     .escape()
-    .isLength({ min: 1, max: 20 })
-    .withMessage('An event category must be supplied.')
-    .isAlphanumeric('en-GB')
+    .matches(/^(match|social)$/i)
     .withMessage('Invalid event category.');
 };
 
@@ -49,8 +53,76 @@ const name = () => {
   return body('name')
     .trim()
     .escape()
+    .notEmpty()
+    .withMessage('An event name must be supplied.')
     .isLength({ min: 1, max: 20 })
-    .withMessage('An event name must be supplied.');
+    .withMessage('Maximum event name length of 20 characters.');
 };
 
-export default { guests, buildUpTime, startTime, endTime, category, name };
+const locationName = () => {
+  return body('locationName')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Location name is required.')
+    .isLength({ min: 1, max: 20 })
+    .withMessage(
+      'A location name of less than 20 characters must be supplied.'
+    );
+};
+
+const locationLine1 = () => {
+  return body('locationLine1')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Address line 1 is required.')
+    .isLength({ min: 1, max: 30 })
+    .withMessage(
+      'The first line of the address must be less than 30 characters.'
+    );
+};
+
+const locationLine2 = () => {
+  return body('locationLine2')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Address line 2 is required.')
+    .isLength({ min: 1, max: 30 })
+    .withMessage(
+      'The second line of the address must be less than 30 characters.'
+    );
+};
+
+const locationTown = () => {
+  return body('locationTown')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Address town is required.')
+    .isLength({ min: 1, max: 30 })
+    .withMessage('The address town must be less than 30 characters.');
+};
+
+const locationPostcode = () => {
+  return body('locationPostcode')
+    .trim()
+    .escape()
+    .isPostalCode('GB')
+    .withMessage('Must be a valid UK postcode format.');
+};
+
+export default {
+  guests,
+  buildUpTime,
+  startTime,
+  endTime,
+  category,
+  name,
+  locationName,
+  locationLine1,
+  locationLine2,
+  locationTown,
+  locationPostcode,
+};
