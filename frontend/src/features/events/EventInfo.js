@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { Section, SectionHeading } from '../../components/styles';
 import * as Styled from './EventInfo.styles';
 
-const EventInfo = ({ event, location }) => {
+const EventInfo = ({ event }) => {
   const [formatted, setFormatted] = useState({
     date: '',
     buildUp: '',
@@ -29,6 +29,8 @@ const EventInfo = ({ event, location }) => {
     return <p>No event</p>;
   }
 
+  const { location } = event;
+
   return (
     <>
       <Section>
@@ -38,7 +40,9 @@ const EventInfo = ({ event, location }) => {
             {formatted.date}
           </Styled.InfoListItem>
           <Styled.InfoListItem>
-            <span>{event.category === 'match' ? 'Warm Up' : 'Arrive From'}:</span>
+            <span>
+              {event.category === 'match' ? 'Warm Up' : 'Arrive From'}:
+            </span>
             <span>{formatted.buildUp}</span>
           </Styled.InfoListItem>
           <Styled.InfoListItem>
@@ -54,10 +58,9 @@ const EventInfo = ({ event, location }) => {
       <Section>
         <SectionHeading>Where</SectionHeading>
         <p>{location.name}</p>
-        <p>
-          {location.number} {location.street}
-        </p>
-        <p>{location.city}</p>
+        <p>{location.line1}</p>
+        <p>{location.line2}</p>
+        <p>{location.town}</p>
         <p>{location.postcode}</p>
       </Section>
     </>

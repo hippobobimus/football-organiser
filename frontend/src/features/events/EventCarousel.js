@@ -2,11 +2,11 @@ import * as Styled from './EventCarousel.styles';
 import EventInfo from './EventInfo';
 import AttendanceList from './AttendanceList';
 
-const EventCarousel = ({ event, location }) => {
+const EventCarousel = ({ event }) => {
   return (
     <Styled.ContentCarousel headings={['Info', 'Lineup', 'Weather']}>
       <Styled.ContentCarouselItem>
-        <EventInfo event={event} location={location} />
+        <EventInfo event={event} />
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>
