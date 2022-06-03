@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Formik } from 'formik';
 
-import Form from './Form';
-import FormButtonContainer from './FormButtonContainer';
-import FormButton from './FormButton';
+import * as Styled from './MultiStepForm.styles';
 
 const MultiStepForm = ({ children, initialValues, onSubmit, onCancel }) => {
   const [stepNum, setStepNum] = useState(0);
@@ -42,26 +40,26 @@ const MultiStepForm = ({ children, initialValues, onSubmit, onCancel }) => {
       validationSchema={step.props.validationSchema}
     >
       {(formik) => (
-        <Form>
+        <Styled.Form>
           {step}
-          <FormButtonContainer>
+          <Styled.FormButtonContainer>
             {stepNum === 0 ? (
-              <FormButton type='button' onClick={onCancel}>
+              <Styled.FormButton type='button' onClick={onCancel}>
                 Cancel
-              </FormButton>
+              </Styled.FormButton>
             ) : (
-              <FormButton
+              <Styled.FormButton
                 type='button'
                 onClick={() => handleBack(formik.values)}
               >
                 Back
-              </FormButton>
+              </Styled.FormButton>
             )}
-            <FormButton type='submit' disabled={formik.isSubmitting}>
+            <Styled.FormButton type='submit' disabled={formik.isSubmitting}>
               {isLastStep ? 'Save' : 'Next'}
-            </FormButton>
-          </FormButtonContainer>
-        </Form>
+            </Styled.FormButton>
+          </Styled.FormButtonContainer>
+        </Styled.Form>
       )}
     </Formik>
   );
