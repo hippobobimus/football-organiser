@@ -10,8 +10,7 @@ import Profile from './features/auth/Profile';
 import EditProfile from './features/auth/EditProfile';
 import EditPassword from './features/auth/EditPassword';
 import NextMatch from './features/events/NextMatch';
-import CreateMatch from './features/events/CreateMatch';
-import CreateSocial from './features/events/CreateSocial';
+import CreateEvent from './features/events/CreateEvent';
 import Event from './features/events/Event';
 import Calendar from './features/events/Calendar';
 
@@ -36,8 +35,8 @@ const RouteSwitch = () => {
 
         {/* Private routes that require admin privileges */}
         <Route element={<ProtectAdmin />}>
-          <Route path='create-match' element={<CreateMatch />} />
-          <Route path='create-social' element={<CreateSocial />} />
+          <Route path='create-match' element={<CreateEvent category='match' />} />
+          <Route path='create-social' element={<CreateEvent category='social' />} />
         </Route>
 
         <Route path='*' element={<PageNotFound />} />

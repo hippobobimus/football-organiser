@@ -4,23 +4,26 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, SectionHeading, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import {
-  MultiStepForm,
-  FormStep,
-  TextInput,
-} from '../../components/form';
-import { addressSchema, matchSchema } from './eventValidation';
+import { MultiStepForm, FormStep, TextInput } from '../../components/form';
+import { addressSchema, eventInfoSchema } from './eventValidation';
 import { createEvent, reset } from './eventsSlice';
 
-const CreateMatch = () => {
+const CreateEvent = ({ category }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [submitted, setSubmitted] = useState(false);
   const [userEntries, setUserEntries] = useState({
+    category,
+    name: category === 'match' ? 'Football Match' : '',
     buildUpTime: '',
     startTime: '',
     endTime: '',
+    locationName: '',
+    locationLine1: '',
+    locationLine2: '',
+    locationTown: '',
+    locationPostcode: '',
   });
 
   const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
@@ -28,15 +31,9 @@ const CreateMatch = () => {
   );
 
   const handleSubmit = (values) => {
-    setUserEntries({
-      buildUpTime: values?.buildUpTime,
-      startTime: values?.startTime,
-      endTime: values?.endTime,
-    });
+    setUserEntries(values);
     setSubmitted(true);
-    dispatch(
-      createEvent({ category: 'match', name: 'Football Match', ...values })
-    );
+    dispatch(createEvent(values));
   };
 
   const handleCancel = () => {
@@ -74,64 +71,34 @@ const CreateMatch = () => {
 
   return (
     <>
-      <Subtitle>Create a New Match</Subtitle>
+      <Subtitle>
+        {category === 'match' && 'Create a New Match'}
+        {category === 'social' && 'Create a New Social'}
+      </Subtitle>
       <MultiStepForm
-        initialValues={{
-          buildUpTime: userEntries.buildUpTime,
-          startTime: userEntries.startTime,
-          endTime: userEntries.endTime,
-        }}
+        initialValues={userEntries}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >
-        <FormStep validationSchema={matchSchema}>
-            <TextInput
-              label='Warm Up'
-              name='buildUpTime'
-              type='datetime-local'
-            />
-            <TextInput
-              label='Kick Off'
-              name='startTime'
-              type='datetime-local'
-            />
-            <TextInput
-              label='Finish'
-              name='endTime'
-              type='datetime-local'
-            />
+        <FormStep validationSchema={eventInfoSchema}>
+          {category === 'social' && (
+            <TextInput label='Name' name='name' type='text' />
+          )}
+          <TextInput label='Warm Up' name='buildUpTime' type='datetime-local' />
+          <TextInput label='Kick Off' name='startTime' type='datetime-local' />
+          <TextInput label='Finish' name='endTime' type='datetime-local' />
         </FormStep>
         <FormStep validationSchema={addressSchema}>
           <SectionHeading>Address</SectionHeading>
-            <TextInput
-              label='Name'
-              name='locationName'
-              type='text'
-            />
-            <TextInput
-              label='Address Line 1'
-              name='locationLine1'
-              type='text'
-            />
-            <TextInput
-              label='Address Line 2'
-              name='locationLine2'
-              type='text'
-            />
-            <TextInput
-              label='Town'
-              name='locationTown'
-              type='text'
-            />
-            <TextInput
-              label='Postcode'
-              name='locationPostcode'
-              type='text'
-            />
+          <TextInput label='Name' name='locationName' type='text' />
+          <TextInput label='Address Line 1' name='locationLine1' type='text' />
+          <TextInput label='Address Line 2' name='locationLine2' type='text' />
+          <TextInput label='Town' name='locationTown' type='text' />
+          <TextInput label='Postcode' name='locationPostcode' type='text' />
         </FormStep>
       </MultiStepForm>
     </>
   );
 };
 
-export default CreateMatch;
+export default CreateEvent;
