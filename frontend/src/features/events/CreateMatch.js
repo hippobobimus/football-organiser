@@ -16,6 +16,7 @@ const CreateMatch = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [submitted, setSubmitted] = useState(false);
   const [userEntries, setUserEntries] = useState({
     buildUpTime: '',
     startTime: '',
@@ -32,26 +33,28 @@ const CreateMatch = () => {
       startTime: values?.startTime,
       endTime: values?.endTime,
     });
+    setSubmitted(true);
     dispatch(
       createEvent({ category: 'match', name: 'Football Match', ...values })
     );
   };
 
   const handleCancel = () => {
-    navigate('/calendar');
     dispatch(reset());
+    navigate('/calendar');
   };
 
   const handleBack = () => {
     dispatch(reset());
+    setSubmitted(false);
   };
 
   useEffect(() => {
-    if (eventDetailsStatus === 'success') {
+    if (submitted && eventDetailsStatus === 'success') {
       navigate(`/events/${eventDetails.id}`);
       dispatch(reset());
     }
-  }, [dispatch, navigate, eventDetails, eventDetailsStatus]);
+  }, [dispatch, navigate, eventDetails, eventDetailsStatus, submitted]);
 
   if (eventDetailsStatus === 'loading') {
     return <Spinner />;
@@ -130,42 +133,5 @@ const CreateMatch = () => {
     </>
   );
 };
-//      <Formik
-//        initialValues={{
-//          buildUpTime: userEntries.buildUpTime,
-//          startTime: userEntries.startTime,
-//          endTime: userEntries.endTime,
-//        }}
-//        validationSchema={matchSchema}
-//        onSubmit={handleSubmit}
-//      >
-//        {(formik) => (
-//          <Form>
-//            <TextInput
-//              label='Warm Up'
-//              name='buildUpTime'
-//              type='datetime-local'
-//            />
-//            <TextInput
-//              label='Kick Off'
-//              name='startTime'
-//              type='datetime-local'
-//            />
-//            <TextInput
-//              label='Finish'
-//              name='endTime'
-//              type='datetime-local'
-//            />
-//            <FormButtonContainer>
-//              <FormButton type='button' onClick={handleCancel}>
-//                Cancel
-//              </FormButton>
-//              <FormButton type='submit' disabled={formik.isSubmitting}>
-//                Save
-//              </FormButton>
-//            </FormButtonContainer>
-//          </Form>
-//        )}
-//      </Formik>
 
 export default CreateMatch;

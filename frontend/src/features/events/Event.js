@@ -16,10 +16,8 @@ const Event = () => {
   );
 
   useEffect(() => {
-    if (eventDetailsStatus === 'idle') {
-      dispatch(fetchOneEvent(eventId));
-    }
-  }, [eventDetailsStatus, eventId, dispatch]);
+    dispatch(fetchOneEvent(eventId));
+  }, [eventId, dispatch]);
 
   if (eventDetailsStatus === 'error') {
     return (
@@ -34,7 +32,7 @@ const Event = () => {
     return <Spinner />;
   }
 
-  return <EventView eventDetails={eventDetails} />;
+  return <EventView event={eventDetails} />;
 };
 
 export default Event;

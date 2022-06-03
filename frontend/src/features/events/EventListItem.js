@@ -33,8 +33,8 @@ const EventListItem = ({ event }) => {
   }, [time]);
 
   const handleClick = () => {
-    navigate(`/events/${event.id}`);
     dispatch(reset());
+    navigate(`/events/${event.id}`);
   };
 
   return (

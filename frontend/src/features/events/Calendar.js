@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -15,7 +15,6 @@ import EventsList from './EventsList';
 
 const Calendar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [finished, setFinished] = useState(false);
@@ -55,10 +54,10 @@ const Calendar = () => {
       <Subtitle>Calendar</Subtitle>
       {authUser.isAdmin && (
         <ButtonRow>
-          <Button type='button' onClick={() => navigate('/create-match')}>
+          <Button as={Link} to='/create-match'>
             New Match
           </Button>
-          <Button type='button' onClick={() => navigate('/create-social')}>
+          <Button as={Link} to='/create-social'>
             New Social
           </Button>
         </ButtonRow>
@@ -72,11 +71,11 @@ const Calendar = () => {
       />
       {finished ? (
         <SmallButton type='button' onClick={() => setFinished(false)}>
-          Current & Upcoming Events
+          Show Current & Upcoming Events
         </SmallButton>
       ) : (
         <SmallButton type='button' onClick={() => setFinished(true)}>
-          Past Events
+          Show Past Events
         </SmallButton>
       )}
     </>

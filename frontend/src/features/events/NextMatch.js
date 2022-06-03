@@ -14,10 +14,8 @@ const NextMatch = () => {
   );
 
   useEffect(() => {
-    if (eventDetailsStatus === 'idle') {
-      dispatch(fetchNextMatch());
-    }
-  }, [eventDetailsStatus, dispatch]);
+    dispatch(fetchNextMatch());
+  }, [dispatch]);
 
   if (eventDetailsStatus === 'error') {
     return (
@@ -32,7 +30,7 @@ const NextMatch = () => {
     return <Spinner />;
   }
 
-  return <EventView eventDetails={eventDetails} />;
+  return <EventView event={eventDetails} />;
 };
 
 export default NextMatch;
