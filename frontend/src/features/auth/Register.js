@@ -1,14 +1,8 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
+import { Link, useNavigate } from 'react-router-dom';
 
-import {
-  Form,
-  FormButton,
-  FormButtonContainer,
-  TextInput,
-} from '../../components/form';
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
 import { Button, Subtitle } from '../../components/styles';
 import { register, reset } from './authSlice';
@@ -25,6 +19,7 @@ const Register = () => {
   const { isLoggedIn, status, message } = useSelector((state) => state.auth);
 
   const handleSubmit = (values) => {
+    // ensure password not stored.
     setUserEntry({
       firstName: values.firstName,
       lastName: values.lastName,
@@ -38,20 +33,13 @@ const Register = () => {
     dispatch(reset());
   };
 
-  const handleBack = () => {
-    dispatch(reset());
-  };
-
-  const handleStart = () => {
-    navigate('/');
-    dispatch(reset());
-  };
-
   if (isLoggedIn || status === 'success') {
     return (
       <>
         <Subtitle>Welcome!</Subtitle>
-        <Button onClick={handleStart}>Get Started</Button>
+        <Button as={Link} to='/'>
+          Get Started
+        </Button>
       </>
     );
   }
@@ -61,7 +49,7 @@ const Register = () => {
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type='button' onClick={() => dispatch(reset())}>
           Back
         </Button>
       </>
@@ -69,53 +57,33 @@ const Register = () => {
   }
 
   if (status === 'loading') {
-    return (
-      <>
-        <Spinner />
-      </>
-    );
+    return <Spinner />;
   }
 
   return (
     <>
       <Subtitle>Create an Account</Subtitle>
-      <Formik
-        initialValues={{
-          firstName: userEntry.firstName,
-          lastName: userEntry.lastName,
-          email: userEntry.email,
-          newPassword: '',
-          confirmPassword: '',
-        }}
-        validationSchema={userRegistrationSchema}
+      <MultiStepForm
+        initialValues={{ newPassword: '', confirmPassword: '', ...userEntry }}
         onSubmit={handleSubmit}
+        onCancel={handleCancel}
       >
-        {(formik) => (
-          <Form>
-            <TextInput label='First Name' name='firstName' type='text' />
-            <TextInput label='Last Name' name='lastName' type='text' />
-            <TextInput label='Email' name='email' type='email' />
-            <TextInput
-              label='Enter a strong password'
-              name='newPassword'
-              type='password'
-            />
-            <TextInput
-              label='Confirm password'
-              name='confirmPassword'
-              type='password'
-            />
-            <FormButtonContainer>
-              <FormButton type='button' onClick={handleCancel}>
-                Cancel
-              </FormButton>
-              <FormButton type='submit' disabled={formik.isSubmitting}>
-                Save
-              </FormButton>
-            </FormButtonContainer>
-          </Form>
-        )}
-      </Formik>
+        <FormStep validationSchema={userRegistrationSchema}>
+          <TextInput label='First Name' name='firstName' type='text' />
+          <TextInput label='Last Name' name='lastName' type='text' />
+          <TextInput label='Email' name='email' type='email' />
+          <TextInput
+            label='Enter a strong password'
+            name='newPassword'
+            type='password'
+          />
+          <TextInput
+            label='Confirm password'
+            name='confirmPassword'
+            type='password'
+          />
+        </FormStep>
+      </MultiStepForm>
     </>
   );
 };

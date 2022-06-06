@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 
 import * as Styled from './MultiStepForm.styles';
 
-const MultiStepForm = ({ children, initialValues, onSubmit, onCancel }) => {
+const MultiStepForm = ({ children, initialValues, onSubmit, onCancel, submitLabel }) => {
   const [stepNum, setStepNum] = useState(0);
   const steps = React.Children.toArray(children);
   const [snapshot, setSnapshot] = useState(initialValues);
@@ -44,9 +44,11 @@ const MultiStepForm = ({ children, initialValues, onSubmit, onCancel }) => {
           {step}
           <Styled.FormButtonContainer>
             {stepNum === 0 ? (
-              <Styled.FormButton type='button' onClick={onCancel}>
-                Cancel
-              </Styled.FormButton>
+              onCancel && (
+                <Styled.FormButton type='button' onClick={onCancel}>
+                  Cancel
+                </Styled.FormButton>
+              )
             ) : (
               <Styled.FormButton
                 type='button'
@@ -56,7 +58,7 @@ const MultiStepForm = ({ children, initialValues, onSubmit, onCancel }) => {
               </Styled.FormButton>
             )}
             <Styled.FormButton type='submit' disabled={formik.isSubmitting}>
-              {isLastStep ? 'Save' : 'Next'}
+              {isLastStep ? submitLabel || 'Save' : 'Next'}
             </Styled.FormButton>
           </Styled.FormButtonContainer>
         </Styled.Form>

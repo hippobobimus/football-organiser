@@ -1,52 +1,48 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
 
 import { Button, Subtitle } from '../../components/styles';
 import {
-  Form,
-  FormButton,
-  FormButtonContainer,
+  FormStep,
+  MultiStepForm,
   TextInput,
 } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
-import { reset, updateAuthUser } from './authSlice';
+import { resetUpdate, updateAuthUser } from './authSlice';
 import { updatePasswordSchema } from './authUserValidation';
 
 const EditPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [updateDone, setUpdateDone] = useState(false);
-  const { authUserStatus, authUserMessage } = useSelector((state) => state.auth);
+  const { updateStatus, updateMessage } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (updateDone && authUserStatus === 'success') {
-      dispatch(reset());
+    if (updateStatus === 'success') {
+      dispatch(resetUpdate());
       navigate('/profile');
     }
-  }, [dispatch, navigate, authUserStatus, updateDone]);
+  }, [dispatch, navigate, updateStatus]);
 
   const handleSubmit = (values) => {
     dispatch(updateAuthUser(values));
-    setUpdateDone(true);
   };
 
   const handleCancel = () => {
-    dispatch(reset());
+    dispatch(resetUpdate());
     navigate('/profile');
   };
 
   const handleBack = () => {
-    dispatch(reset());
+    dispatch(resetUpdate());
     navigate('/profile');
   };
 
-  if (authUserStatus === 'error') {
+  if (updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{authUserMessage}</p>
+        <p>{updateMessage}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
@@ -54,51 +50,36 @@ const EditPassword = () => {
     );
   }
 
-  if (authUserStatus === 'loading') {
+  if (updateStatus === 'loading') {
     return <Spinner />;
   }
 
   return (
     <>
       <Subtitle>Change Your Password</Subtitle>
-
-      <Formik
+      <MultiStepForm
         initialValues={{
           currentPassword: '',
           newPassword: '',
           confirmPassword: '',
         }}
-        validationSchema={updatePasswordSchema}
         onSubmit={handleSubmit}
+        onCancel={handleCancel}
       >
-        {(formik) => (
-          <Form>
-            <TextInput
-              label='Current password'
-              name='currentPassword'
-              type='password'
-            />
-            <TextInput
-              label='New password'
-              name='newPassword'
-              type='password'
-            />
-            <TextInput
-              label='Confirm password'
-              name='confirmPassword'
-              type='password'
-            />
-            <FormButtonContainer>
-              <FormButton type='button' onClick={handleCancel}>
-                Cancel
-              </FormButton>
-              <FormButton type='submit' disabled={formik.isSubmitting}>
-                Save
-              </FormButton>
-            </FormButtonContainer>
-          </Form>
-        )}
-      </Formik>
+        <FormStep validationSchema={updatePasswordSchema}>
+          <TextInput
+            label='Current password'
+            name='currentPassword'
+            type='password'
+          />
+          <TextInput label='New password' name='newPassword' type='password' />
+          <TextInput
+            label='Confirm password'
+            name='confirmPassword'
+            type='password'
+          />
+        </FormStep>
+      </MultiStepForm>
     </>
   );
 };

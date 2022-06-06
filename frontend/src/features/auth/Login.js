@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Formik } from 'formik';
 
 import {
-  Form,
-  FormButton,
-  FormButtonContainer,
+  FormStep,
+  MultiStepForm,
   TextInput,
 } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
@@ -40,16 +38,12 @@ const Login = () => {
     dispatch(login(values));
   };
 
-  const handleBack = () => {
-    dispatch(reset());
-  };
-
   if (status === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type='button' onClick={() => dispatch(reset())}>
           Back
         </Button>
       </>
@@ -63,27 +57,19 @@ const Login = () => {
   return (
     <>
       <Subtitle>Please Login</Subtitle>
-      <Formik
-        initialValues={{ email: userEmail, currentPassword: '' }}
-        validationSchema={loginSchema}
+      <MultiStepForm
+        initialValues={{
+          email: userEmail,
+          currentPassword: '',
+        }}
         onSubmit={handleSubmit}
+        submitLabel='Login'
       >
-        {(formik) => (
-          <Form>
-            <TextInput label='Email' name='email' type='email' />
-            <TextInput
-              label='Password'
-              name='currentPassword'
-              type='password'
-            />
-            <FormButtonContainer>
-              <FormButton type='submit' disabled={formik.isSubmitting}>
-                Login
-              </FormButton>
-            </FormButtonContainer>
-          </Form>
-        )}
-      </Formik>
+        <FormStep validationSchema={loginSchema}>
+          <TextInput label='Email' name='email' type='email' />
+          <TextInput label='Password' name='currentPassword' type='password' />
+        </FormStep>
+      </MultiStepForm>
       <Container>
         <p>Not registered yet?</p>
         <Link to='/register'>Create an account</Link>

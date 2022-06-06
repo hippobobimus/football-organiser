@@ -9,6 +9,8 @@ const initialState = {
   authUser: null,
   authUserStatus: 'idle',
   authUserMessage: '',
+  updateStatus: '',
+  updateMessage: '',
   token,
   isLoggedIn,
   status: 'idle',
@@ -38,19 +40,22 @@ export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
     // purge store state and logout.
     await authService.logout();
-    thunkAPI.dispatch({type: 'store/purge'});
+    thunkAPI.dispatch({ type: 'store/purge' });
   } catch (err) {
     return thunkAPI.rejectWithValue(err.message);
   }
 });
 
-export const fetchAuthUser = createAsyncThunk('auth/fetchAuthUser', async (_, thunkAPI) => {
-  try {
-    return await authService.getAuthUser(thunkAPI.getState().auth.token);
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.message);
+export const fetchAuthUser = createAsyncThunk(
+  'auth/fetchAuthUser',
+  async (_, thunkAPI) => {
+    try {
+      return await authService.getAuthUser(thunkAPI.getState().auth.token);
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
   }
-});
+);
 
 export const updateAuthUser = createAsyncThunk(
   'auth/updateAuthUser',
@@ -74,8 +79,14 @@ const authSlice = createSlice({
       state.authUser = null;
       state.authUserStatus = 'idle';
       state.authUserMessage = '';
+      state.updateStatus = 'idle';
+      state.updateMessage = '';
       state.status = 'idle';
       state.message = '';
+    },
+    resetUpdate: (state) => {
+      state.updateStatus = 'idle';
+      state.updateMessage = '';
     },
   },
   extraReducers(builder) {
@@ -127,18 +138,18 @@ const authSlice = createSlice({
       })
 
       .addCase(updateAuthUser.pending, (state) => {
-        state.authUserStatus = 'loading';
+        state.updateStatus = 'loading';
       })
       .addCase(updateAuthUser.fulfilled, (state, action) => {
-        state.authUserStatus = 'success';
+        state.updateStatus = 'success';
         state.authUser = action.payload;
       })
       .addCase(updateAuthUser.rejected, (state, action) => {
-        state.authUserStatus = 'error';
-        state.authUserMessage = action.payload;
+        state.updateStatus = 'error';
+        state.updateMessage = action.payload;
       });
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, resetUpdate } = authSlice.actions;
 export default authSlice.reducer;

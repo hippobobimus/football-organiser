@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,15 +8,14 @@ import {
   SmallButton,
 } from '../../components/styles';
 import * as Styled from './Profile.styles';
-import Spinner from '../../components/spinner/Spinner';
-import { fetchAuthUser, logout, reset } from '../auth/authSlice';
+import { logout, reset, resetUpdate } from '../auth/authSlice';
 
 const ProfileInfo = ({ user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    dispatch(reset());
+    dispatch(resetUpdate());
     navigate('/edit-profile');
   };
 
@@ -47,17 +45,15 @@ const ProfileInfo = ({ user }) => {
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { authUser, authUserStatus, authUserMessage } = useSelector((state) => state.auth);
+  const { authUser } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (authUserStatus === 'idle') {
-      dispatch(fetchAuthUser());
-    }
-  }, [dispatch, authUserStatus]);
+  if (!authUser) {
+    return null;
+  }
 
   const handleChangePassword = () => {
     navigate('/edit-password');
-    dispatch(reset());
+    dispatch(resetUpdate());
   };
 
   const handleLogout = () => {
@@ -65,19 +61,6 @@ const Profile = () => {
     navigate('/');
     dispatch(reset());
   };
-
-  if (authUserStatus === 'error') {
-    return (
-      <>
-        <Subtitle>Something went wrong...</Subtitle>
-        <p>{authUserMessage}</p>
-      </>
-    );
-  }
-
-  if (authUserStatus === 'loading' || authUserStatus === 'idle') {
-    return <Spinner />;
-  }
 
   return (
     <>
