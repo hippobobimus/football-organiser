@@ -1,10 +1,13 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import { isPast } from 'date-fns';
 
 const { Schema } = mongoose;
 
 const EventSchema = new Schema(
   {
+    name: { type: String },
+    category: { type: String, required: true },
     time: {
       buildUp: { type: Date, required: true },
       start: { type: Date, required: true },
@@ -17,10 +20,8 @@ const EventSchema = new Schema(
       town: { type: String, required: true },
       postcode: { type: String, required: true },
     },
-    category: { type: String, required: true },
-    name: { type: String },
-    // TODO locked state
-    cancelled: { type: Boolean, default: false },
+    capacity: {type: Number, default: -1 },
+    isCancelled: { type: Boolean, default: false },
   },
   {
     timestamps: true,
@@ -41,6 +42,14 @@ EventSchema.virtual('numAttendees', {
   foreignField: 'event',
   get: (attendees) =>
     attendees ? attendees.reduce((prev, curr) => prev + curr.guests + 1, 0) : 0,
+});
+
+EventSchema.virtual('isFinished').get((value, virtual, doc) =>{
+  return isPast(doc.time.end);
+});
+
+EventSchema.virtual('isFull').get((value, virtual, doc) =>{
+  return doc.capacity >= 0 && doc.numAttendees >= doc.capacity;
 });
 
 EventSchema.plugin(mongoosePaginate);

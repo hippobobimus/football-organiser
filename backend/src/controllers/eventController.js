@@ -11,6 +11,30 @@ const { ObjectId } = mongoose.Types;
  * Helper functions
  */
 
+const populateEvent = async (event, authUserId) => {
+   await event.populate('numAttendees');
+   await event.populate({
+      path: 'attendees',
+      populate: {
+        path: 'user',
+        select: ['firstName', 'lastName'],
+      },
+      sort: { 'user.name': 'asc' },
+    });
+
+  // determine whether the auth user is registered for this event and, if so, attach their attendee
+  // separately.
+  const authUserAttendee = event.attendees?.find((attendee) => {
+    return attendee.user.id === authUserId;
+  });
+
+  event.set('authUserAttendee', authUserAttendee || null, {
+    strict: false,
+  });
+
+  return event;
+};
+
 const getPopulatedEvent = async (eventId, authUserId) => {
   let event = await Event.findById(eventId)
     .populate('numAttendees')
@@ -119,6 +143,7 @@ const createEvent = [
   validate.locationLine2().optional({ checkFalsy: true }),
   validate.locationTown(),
   validate.locationPostcode(),
+  validate.capacity().optional({ checkFalsy: true }),
   async (req, res, next) => {
     const errors = validationResult(req);
 
@@ -136,19 +161,20 @@ const createEvent = [
     try {
       const event = await Event.create({
         category: req.body.category,
-        name: req.body?.name || 'Event',
+        name: req.body.name || 'Event',
         time: {
           buildUp: req.body.buildUpTime,
           start: req.body.startTime,
           end: req.body.endTime,
         },
         location: {
-          name: req.body?.locationName || '',
+          name: req.body.locationName || '',
           line1: req.body.locationLine1,
-          line2: req.body?.locationLine2 || '',
+          line2: req.body.locationLine2 || '',
           town: req.body.locationTown,
           postcode: req.body.locationPostcode,
         },
+        capacity: req.body.capacity || -1,
       });
       return res.status(200).json(event);
     } catch (err) {
@@ -203,7 +229,7 @@ const readEvent = async (req, res, next) => {
 // @access  Private
 const readNextMatch = async (req, res, next) => {
   try {
-    // TODO find the appropriate event.
+    // TODO find the appropriate event and populate.
     const nextMatch = await Event.findOne();
 
     return res.status(200).json(nextMatch);
@@ -211,6 +237,97 @@ const readNextMatch = async (req, res, next) => {
     return next(err);
   }
 };
+
+// @desc    Edit event
+// @route   PUT /api/events/:id
+// @access  Private, admin only
+const updateEvent = [
+  validate.buildUpTime().optional({ checkFalsy: true }),
+  validate.startTime().optional({ checkFalsy: true }),
+  validate.endTime().optional({ checkFalsy: true }),
+  validate.category().optional({ checkFalsy: true }),
+  validate.name().optional({ checkFalsy: true }),
+  validate.locationName().optional({ checkFalsy: true }),
+  validate.locationLine1().optional({ checkFalsy: true }),
+  validate.locationLine2().optional({ checkFalsy: true }),
+  validate.locationTown().optional({ checkFalsy: true }),
+  validate.locationPostcode().optional({ checkFalsy: true }),
+  validate.capacity().optional({ checkFalsy: true }),
+  validate.isCancelled().optional({ checkFalsy: false }),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const msg = errors.errors
+        .map((err) => `'${err.param}': ${err.msg}`)
+        .join(' ');
+      return next(
+        createError(400, 'Field validation failed. ' + msg, {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    let event;
+    try {
+      event = await Event.findById(req.params.id);
+    } catch (err) {
+      return next(err);
+    }
+
+    if (!event) {
+      return next(createError(404, 'Event not found'));
+    }
+
+    // whitelist request body.
+    if (req.body.buildUpTime) {
+      event.time.buildUp = req.body.buildUpTime;
+    }
+    if (req.body.startTime) {
+      event.time.start = req.body.startTime;
+    }
+    if (req.body.endTime) {
+      event.time.end = req.body.endTime;
+    }
+    if (req.body.category) {
+      event.category = req.body.category;
+    }
+    if (req.body.name) {
+      event.name = req.body.name;
+    }
+    if (req.body.locationName) {
+      event.location.name = req.body.locationName;
+    }
+    if (req.body.locationLine1) {
+      event.location.line1 = req.body.locationLine1;
+    }
+    if (req.body.locationLine2) {
+      event.location.line2 = req.body.locationLine2;
+    }
+    if (req.body.locationTown) {
+      event.location.town = req.body.locationTown;
+    }
+    if (req.body.locationPostcode) {
+      event.location.postcode = req.body.locationPostcode;
+    }
+    if (req.body.capacity) {
+      event.capacity = req.body.capacity;
+    }
+    if (typeof req.body.isCancelled !== 'undefined') {
+      event.isCancelled = req.body.isCancelled;
+    }
+
+    try {
+      event = await event.save();
+
+      event = await populateEvent(event, req.user.id);
+
+      return res.status(200).json(event);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
 
 // @desc    Register the authenticated user for an event
 // @route   POST /api/events/:id/attendees/me
@@ -242,12 +359,15 @@ const createAuthUserAttendee = async (req, res, next) => {
     );
   }
 
-  // TODO
-  //  if (event.locked) {
-  //    return next(
-  //      createError(400, 'It is no longer possible to join this event.')
-  //    );
-  //  }
+  if (event.isFinished) {
+    return next(createError(400, 'This event has finished.'));
+  }
+  if (event.isCancelled) {
+    return next(createError(400, 'This event has been cancelled.'));
+  }
+  if (event.isFull) {
+    return next(createError(400, 'This event is full.'));
+  }
 
   attendee = new Attendee({
     event: new ObjectId(req.params.id),
@@ -302,12 +422,12 @@ const deleteAuthUserAttendee = async (req, res, next) => {
     );
   }
 
-  // TODO
-  //  if (event.locked) {
-  //    return next(
-  //      createError(400, 'Your event attendance can no longer be changed.')
-  //    );
-  //  }
+  if (event.isFinished) {
+    return next(createError(400, 'This event has finished.'));
+  }
+  if (event.isCancelled) {
+    return next(createError(400, 'This event has been cancelled.'));
+  }
 
   // Remove attendee document from collection.
   try {
@@ -364,16 +484,19 @@ const updateAuthUserAttendee = [
       return next(createError(409, 'You are not registered for this event.'));
     }
 
+    if (event.isFinished) {
+      return next(createError(400, 'This event has finished.'));
+    }
+    if (event.isCancelled) {
+      return next(createError(400, 'This event has been cancelled.'));
+    }
+    if (event.isFull) {
+      return next(createError(400, 'This event is full.'));
+    }
+
     if (req.body.guests >= 0) {
       attendee.guests = req.body.guests;
     }
-
-    // TODO
-    //  if (event.locked) {
-    //    return next(
-    //      createError(400, 'Your event attendance can no longer be changed.')
-    //    );
-    //  }
 
     try {
       attendee = await attendee.save();
@@ -392,14 +515,6 @@ const updateAuthUserAttendee = [
 
 // TODO currently unused
 //
-// // @desc    Edit event
-// // @route   PUT /api/events/:id
-// // @access  Private
-// const updateEvent = (req, res, next) => {
-//   // TODO
-//   res.status(200).json({ message: `Update event; id=${req.params.id}` });
-// };
-//
 // // @desc    Delete an event
 // // @route   DELETE /api/events/:id
 // // @access  Private
@@ -413,9 +528,9 @@ export default {
   createEvent,
   readEvent,
   readNextMatch,
+  updateEvent,
+  //  deleteEvent,
   createAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,
-  //  updateEvent,
-  //  deleteEvent,
 };

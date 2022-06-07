@@ -113,6 +113,23 @@ const locationPostcode = () => {
     .withMessage('Must be a valid UK postcode format.');
 };
 
+const capacity = () => {
+  return body('capacity')
+    .trim()
+    .escape()
+    .isInt()
+    .withMessage('Capacity must be a valid integer value.')
+    .toInt();
+}
+
+const isCancelled = () => {
+  return body('isCancelled')
+    .trim()
+    .isBoolean()
+    .withMessage('A boolean value must be supplied.')
+    .toBoolean();
+}
+
 export default {
   guests,
   buildUpTime,
@@ -125,4 +142,6 @@ export default {
   locationLine2,
   locationTown,
   locationPostcode,
+  capacity,
+  isCancelled,
 };
