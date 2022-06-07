@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import { fetchOneEvent } from './eventsSlice';
+import { fetchOneEvent, updateEvent } from './eventsSlice';
 import EventView from './EventView';
 
 const Event = () => {
@@ -32,7 +32,21 @@ const Event = () => {
     return <Spinner />;
   }
 
-  return <EventView event={eventDetails} />;
+  const handleCancel = () => {
+    dispatch(updateEvent({ id: eventId, update: { isCancelled: true } }));
+  };
+
+  const handleUncancel = () => {
+    dispatch(updateEvent({ id: eventId, update: { isCancelled: false } }));
+  };
+
+  return (
+    <EventView
+      event={eventDetails}
+      onCancel={handleCancel}
+      onUncancel={handleUncancel}
+    />
+  );
 };
 
 export default Event;

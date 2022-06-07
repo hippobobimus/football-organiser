@@ -9,3 +9,12 @@ export const List = styled.ul`
   width: 95%;
   height: 230px;
 `;
+
+export const AttendanceTotal = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  font-family: ${(props) => props.theme.subtitleFont};
+  font-size: 1.2rem;
+`;

@@ -87,6 +87,27 @@ const createEvent = async (token, eventData) => {
   return data;
 };
 
+const updateEvent = async (token, {id, update}) => {
+  const response = await fetch(API_URL + id, {
+    method: 'PUT',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(update),
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
 const addAuthUserToEvent = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
     method: 'POST',
@@ -153,6 +174,7 @@ const eventsService = {
   getOneEvent,
   getNextMatch,
   createEvent,
+  updateEvent,
   addAuthUserToEvent,
   removeAuthUserFromEvent,
   updateAuthUserEventAttendee,

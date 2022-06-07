@@ -11,10 +11,28 @@ import {
 const UserAttendanceSummary = ({ event }) => {
   const dispatch = useDispatch();
 
-  if (!event) {
+  if (!event || event.isCancelled || (event.isFinished && !event.authUserAttendee)) {
+    return null;
+  }
+
+  const guests = event.authUserAttendee?.guests;
+
+  if (event.isFinished) {
     return (
       <Styled.SummaryContainer>
-        <p>Error: No event</p>
+        <Styled.Status>
+          {event.category === 'match' ? 'You Played!' : 'You Attended!'}
+        </Styled.Status>
+        {guests > 0 && (
+          <Styled.GuestsContainer>
+            <p>
+              ...and brought{' '}
+              <u>
+                <b>{guests} guest(s)</b>
+              </u>
+            </p>
+          </Styled.GuestsContainer>
+        )}
       </Styled.SummaryContainer>
     );
   }
@@ -32,8 +50,6 @@ const UserAttendanceSummary = ({ event }) => {
       </Styled.SummaryContainer>
     );
   }
-
-  const { guests } = event.authUserAttendee;
 
   const handleLeave = () => {
     dispatch(removeAuthUserFromEvent(event.id));
@@ -62,9 +78,9 @@ const UserAttendanceSummary = ({ event }) => {
   return (
     <Styled.SummaryContainer>
       <Styled.Status>
-        You're {event.category === 'match' ? 'Playing' : 'Coming'}!
+        {event.category === 'match' ? "You're Playing!" : "You're Attending!"}
       </Styled.Status>
-      {guests ? (
+      {guests > 0 ? (
         <Styled.GuestsContainer>
           <p>
             ...and bringing{' '}
@@ -75,12 +91,12 @@ const UserAttendanceSummary = ({ event }) => {
           <SmallButton type='button' onClick={handleRemoveGuest}>
             -
           </SmallButton>
-          <SmallButton type='button' onClick={handleAddGuest}>
+          <SmallButton type='button' onClick={handleAddGuest} disabled={event.isFull}>
             +
           </SmallButton>
         </Styled.GuestsContainer>
       ) : (
-        <SmallButton type='button' onClick={handleAddGuest}>
+        <SmallButton type='button' onClick={handleAddGuest} disabled={event.isFull}>
           I'm Bringing a Guest
         </SmallButton>
       )}

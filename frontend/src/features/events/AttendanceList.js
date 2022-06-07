@@ -1,8 +1,8 @@
-import { Section, SectionHeading } from '../../components/styles';
+import { Section } from '../../components/styles';
 import * as Styled from './AttendanceList.styles';
 import UserListItem from '../users/UserListItem';
 
-const AttendanceList = ({ attendees }) => {
+const AttendanceList = ({ attendees, isFull, capacity }) => {
   let listItems = [];
   let totalAttendance = 0;
 
@@ -25,7 +25,10 @@ const AttendanceList = ({ attendees }) => {
 
   return (
     <Section style={{ width: '100%' }}>
-      <SectionHeading>Total = {totalAttendance}</SectionHeading>
+      <Styled.AttendanceTotal>
+        <span>Total = {totalAttendance}</span>
+        <span>{isFull ? '(Full)' : capacity > -1 && `(Max. ${capacity})`}</span>
+      </Styled.AttendanceTotal>
       <Styled.List>{listItems}</Styled.List>
     </Section>
   );

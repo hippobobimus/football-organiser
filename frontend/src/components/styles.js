@@ -96,6 +96,7 @@ export const Title = styled.h1`
   color: ${(props) => props.theme.textClr};
   font-family: ${(props) => props.theme.titleFont};
   font-size: 2rem;
+  font-weight: bold;
   white-space: nowrap;
 `;
 

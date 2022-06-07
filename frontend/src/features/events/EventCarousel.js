@@ -10,7 +10,11 @@ const EventCarousel = ({ event }) => {
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>
-        <AttendanceList attendees={event.attendees} />
+        <AttendanceList
+          attendees={event.attendees}
+          isFull={event.isFull}
+          capacity={event.capacity}
+        />
       </Styled.ContentCarouselItem>
 
       <Styled.ContentCarouselItem>

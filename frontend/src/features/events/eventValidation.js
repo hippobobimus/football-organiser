@@ -18,6 +18,10 @@ export const eventInfoSchema = Yup.object({
   endTime: Yup.date()
     .required('Required')
     .min(Yup.ref('startTime'), 'Cannot precede the kick off time'),
+  capacity: Yup.number()
+    .optional()
+    .min(1, 'Must be at least 1')
+    .max(100, 'Must be no more than 100'),
 });
 
 export const addressSchema = Yup.object({

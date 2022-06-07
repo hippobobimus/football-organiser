@@ -8,6 +8,7 @@ const colours = {
   darkPink: '#c34271',
   white: 'white',
   red: 'red',
+  darkRed: 'darkRed',
 }
 
 const theme = {
@@ -19,6 +20,8 @@ const theme = {
   errorTextClr: colours.red,
   errorBgClr: colours.white,
   textShadowClr: colours.green,
+
+  alertTextClr: colours.black,
 
   buttonClr: colours.pink,
   buttonHoverClr: colours.darkPink,

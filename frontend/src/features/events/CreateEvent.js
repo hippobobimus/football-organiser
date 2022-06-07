@@ -24,6 +24,7 @@ const CreateEvent = ({ category }) => {
     locationLine2: '',
     locationTown: '',
     locationPostcode: '',
+    capacity: '',
   });
 
   const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
@@ -87,6 +88,7 @@ const CreateEvent = ({ category }) => {
           <TextInput label='Warm Up' name='buildUpTime' type='datetime-local' />
           <TextInput label='Kick Off' name='startTime' type='datetime-local' />
           <TextInput label='Finish' name='endTime' type='datetime-local' />
+          <TextInput label='Maximum No. of Attendees (optional)' name='capacity' type='number' />
         </FormStep>
         <FormStep validationSchema={addressSchema}>
           <SectionHeading>Address</SectionHeading>
