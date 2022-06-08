@@ -536,6 +536,100 @@ const updateAuthUserAttendee = [
   },
 ];
 
+// @desc    Update the attendance record for the given user and event
+// @route   PUT /api/events/:eventId/attendees/:userId
+// @access  Private, admin only
+const updateAttendee = [
+  validate.guests().optional({ checkFalsy: true }),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return next(
+        createError(400, 'Field validation failed.', {
+          fieldValidationErrors: errors.errors,
+        })
+      );
+    }
+
+    if (!mongoose.isObjectIdOrHexString(req.params.eventId)) {
+      return next(createError(400, 'Invalid event id.'));
+    }
+
+    if (!mongoose.isObjectIdOrHexString(req.params.userId)) {
+      return next(createError(400, 'Invalid user id.'));
+    }
+
+    let attendee;
+    try {
+      attendee = await Attendee.findOne({
+        user: req.params.userId,
+        event: req.params.eventId,
+      });
+    } catch (err) {
+      return next(err);
+    }
+
+    if (!attendee) {
+      return next(createError(404, 'Attendance record not found'));
+    }
+
+    if (req.body.guests >= 0) {
+      attendee.guests = req.body.guests;
+    }
+
+    try {
+      attendee = await attendee.save();
+    } catch (err) {
+      return next(err);
+    }
+
+    try {
+      const updatedEvent = await getPopulatedEvent(req.params.eventId, req.user.id);
+      return res.status(200).json(updatedEvent);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
+
+// @desc    Remove the given attendee record
+// @route   DELETE /api/events/:eventId/attendees/:userId
+// @access  Private, admin only
+const deleteAttendee = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.eventId)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
+  if (!mongoose.isObjectIdOrHexString(req.params.userId)) {
+    return next(createError(400, 'Invalid user id.'));
+  }
+
+  let attendee;
+  try {
+    attendee = await Attendee.findOneAndDelete({
+      user: req.params.userId,
+      event: req.params.eventId,
+    });
+  } catch (err) {
+    return next(err);
+  }
+
+  if (!attendee) {
+    return next(createError(404, 'Attendance record not found'));
+  }
+
+  try {
+    const updatedEvent = await getPopulatedEvent(
+      req.params.eventId,
+      req.user.id
+    );
+    return res.status(200).json(updatedEvent);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   readEvents,
   createEvent,
@@ -546,4 +640,7 @@ export default {
   createAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,
+  // createAttendee,
+  updateAttendee,
+  deleteAttendee,
 };

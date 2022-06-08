@@ -26,15 +26,11 @@ router
   .put(protect, eventController.updateAuthUserAttendee)
   .delete(protect, eventController.deleteAuthUserAttendee);
 
-// TODO currently unused
-// 
-// router
-//   .route('/:id/attendees')
-//   .post(protectAdmin, eventController.createEventAttendee);
-//
-// router
-//   .route('/:id/attendees/:attendeeId')
-//   .put(protectAdmin, eventController.updateEventAttendee)
-//   .delete(protectAdmin, eventController.deleteEventAttendee);
+router
+  .route('/:eventId/attendees/:userId')
+// TODO
+//  .post(protectAdmin, eventController.createAttendee)
+  .put(protectAdmin, eventController.updateAttendee)
+  .delete(protectAdmin, eventController.deleteAttendee);
 
 export default router;

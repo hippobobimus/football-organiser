@@ -142,6 +142,34 @@ export const updateAuthUserEventAttendee = createAsyncThunk(
   }
 );
 
+export const updateAttendee = createAsyncThunk(
+  'events/updateAttendee',
+  async (attendeeParams, thunkAPI) => {
+    try {
+      return await eventsService.updateAttendee(
+        thunkAPI.getState().auth.token,
+        attendeeParams
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const deleteAttendee = createAsyncThunk(
+  'events/deleteAttendee',
+  async (attendeeParams, thunkAPI) => {
+    try {
+      return await eventsService.deleteAttendee(
+        thunkAPI.getState().auth.token,
+        attendeeParams
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
@@ -272,6 +300,32 @@ const eventsSlice = createSlice({
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateAuthUserEventAttendee.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(updateAttendee.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(updateAttendee.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(updateAttendee.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(deleteAttendee.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(deleteAttendee.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(deleteAttendee.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
       });

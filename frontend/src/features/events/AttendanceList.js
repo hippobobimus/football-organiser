@@ -1,19 +1,22 @@
 import { Section } from '../../components/styles';
 import * as Styled from './AttendanceList.styles';
-import UserListItem from '../users/UserListItem';
+import AttendanceListItem from './AttendanceListItem';
 
 const AttendanceList = ({ attendees, isFull, capacity }) => {
   let listItems = [];
   let totalAttendance = 0;
 
-  attendees?.forEach(({ user, guests = 0 }) => {
-    // user doc may or may not have been populated.
-    const userId = user?.id || user;
+  attendees?.forEach((attendee) => {
+    const guests = attendee.guests || 0;
 
-    listItems.push(<UserListItem key={userId} user={user} />);
+    listItems.push(
+      <AttendanceListItem key={attendee.id} attendee={attendee} />
+    );
 
     for (let i = 0; i < guests; i += 1) {
-      listItems.push(<UserListItem key={userId + i} user={user} isGuest />);
+      listItems.push(
+        <AttendanceListItem key={attendee.id + i} attendee={attendee} isGuest />
+      );
     }
 
     totalAttendance += 1 + guests;
