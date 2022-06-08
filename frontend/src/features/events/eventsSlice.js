@@ -12,6 +12,8 @@ const initialState = eventsAdapter.getInitialState({
   eventDetails: null,
   eventDetailsStatus: 'idle',
   eventDetailsMessage: '',
+  deleteStatus: 'idle',
+  deleteMessage: '',
   pagination: null,
   status: 'idle',
   message: '',
@@ -21,7 +23,10 @@ export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
   async (queryParams, thunkAPI) => {
     try {
-      return await eventsService.getEvents(thunkAPI.getState().auth.token, queryParams);
+      return await eventsService.getEvents(
+        thunkAPI.getState().auth.token,
+        queryParams
+      );
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -57,7 +62,38 @@ export const createEvent = createAsyncThunk(
   'events/createMatch',
   async (eventData, thunkAPI) => {
     try {
-      return await eventsService.createEvent(thunkAPI.getState().auth.token, eventData);
+      return await eventsService.createEvent(
+        thunkAPI.getState().auth.token,
+        eventData
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updateEvent = createAsyncThunk(
+  'events/updateEvent',
+  async (eventData, thunkAPI) => {
+    try {
+      return await eventsService.updateEvent(
+        thunkAPI.getState().auth.token,
+        eventData
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const deleteEvent = createAsyncThunk(
+  'events/deleteEvent',
+  async (eventId, thunkAPI) => {
+    try {
+      return await eventsService.deleteEvent(
+        thunkAPI.getState().auth.token,
+        eventId
+      );
     } catch (err) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -106,17 +142,6 @@ export const updateAuthUserEventAttendee = createAsyncThunk(
   }
 );
 
-export const updateEvent = createAsyncThunk(
-  'events/updateEvent',
-  async (eventData, thunkAPI) => {
-    try {
-      return await eventsService.updateEvent(thunkAPI.getState().auth.token, eventData);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-)
-
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
@@ -126,6 +151,7 @@ const eventsSlice = createSlice({
       state.eventDetails = null;
       state.eventDetailsStatus = 'idle';
       state.eventDetailsMessage = '';
+      state.deleteStatus = 'idle';
       state.pagination = null;
       state.status = 'idle';
       state.message = '';
@@ -195,6 +221,20 @@ const eventsSlice = createSlice({
       .addCase(updateEvent.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(deleteEvent.pending, (state) => {
+        state.deleteStatus = 'loading';
+      })
+      .addCase(deleteEvent.fulfilled, (state, action) => {
+        state.deleteStatus = 'success';
+        state.eventDetails = null;
+        state.eventDetailsStatus = 'idle';
+        eventsAdapter.removeOne(state, action.payload.id);
+      })
+      .addCase(deleteEvent.rejected, (state, action) => {
+        state.deleteStatus = 'error';
+        state.deleteMessage = action.payload;
       })
 
       .addCase(addAuthUserToEvent.pending, (state) => {

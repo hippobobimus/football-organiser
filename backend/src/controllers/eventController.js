@@ -12,15 +12,15 @@ const { ObjectId } = mongoose.Types;
  */
 
 const populateEvent = async (event, authUserId) => {
-   await event.populate('numAttendees');
-   await event.populate({
-      path: 'attendees',
-      populate: {
-        path: 'user',
-        select: ['firstName', 'lastName'],
-      },
-      sort: { 'user.name': 'asc' },
-    });
+  await event.populate('numAttendees');
+  await event.populate({
+    path: 'attendees',
+    populate: {
+      path: 'user',
+      select: ['firstName', 'lastName'],
+    },
+    sort: { 'user.name': 'asc' },
+  });
 
   // determine whether the auth user is registered for this event and, if so, attach their attendee
   // separately.
@@ -268,6 +268,10 @@ const updateEvent = [
       );
     }
 
+    if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+      return next(createError(400, 'Invalid event id.'));
+    }
+
     let event;
     try {
       event = await Event.findById(req.params.id);
@@ -328,6 +332,25 @@ const updateEvent = [
     }
   },
 ];
+
+// @desc    Delete an event
+// @route   DELETE /api/events/:id
+// @access  Private, admin only
+const deleteEvent = async (req, res, next) => {
+  if (!mongoose.isObjectIdOrHexString(req.params.id)) {
+    return next(createError(400, 'Invalid event id.'));
+  }
+
+  let event;
+  try {
+    event = await Event.findByIdAndDelete(req.params.id);
+    // remove related attendee records.
+    await Attendee.deleteMany({ event: req.params.id });
+    return res.status(200).json(event);
+  } catch (err) {
+    return next(err);
+  }
+};
 
 // @desc    Register the authenticated user for an event
 // @route   POST /api/events/:id/attendees/me
@@ -513,23 +536,13 @@ const updateAuthUserAttendee = [
   },
 ];
 
-// TODO currently unused
-//
-// // @desc    Delete an event
-// // @route   DELETE /api/events/:id
-// // @access  Private
-// const deleteEvent = (req, res, next) => {
-//   // TODO
-//   res.status(200).json({ message: `Delete event; id=${req.params.id}` });
-// };
-
 export default {
   readEvents,
   createEvent,
   readEvent,
   readNextMatch,
   updateEvent,
-  //  deleteEvent,
+  deleteEvent,
   createAuthUserAttendee,
   updateAuthUserAttendee,
   deleteAuthUserAttendee,

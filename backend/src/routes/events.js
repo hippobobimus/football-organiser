@@ -17,7 +17,8 @@ router
 router
   .route('/:id')
   .get(protect, eventController.readEvent)
-  .put(protectAdmin, eventController.updateEvent);
+  .put(protectAdmin, eventController.updateEvent)
+  .delete(protectAdmin, eventController.deleteEvent);
 
 router
   .route('/:id/attendees/me')
@@ -29,15 +30,11 @@ router
 // 
 // router
 //   .route('/:id/attendees')
-//   .post(protectAdmin, eventController.createEventAttendee)
+//   .post(protectAdmin, eventController.createEventAttendee);
 //
 // router
 //   .route('/:id/attendees/:attendeeId')
 //   .put(protectAdmin, eventController.updateEventAttendee)
-//   .delete(protectAdmin, eventController.deleteEventAttendee)
-//
-// router
-//   .route('/:id')
-//   .delete(eventController.deleteEvent);
+//   .delete(protectAdmin, eventController.deleteEventAttendee);
 
 export default router;

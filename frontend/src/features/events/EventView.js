@@ -3,14 +3,14 @@ import * as Styled from './EventView.styles';
 import EventCarousel from './EventCarousel';
 import UserAttendanceSummary from './UserAttendanceSummary';
 
-const EventView = ({ event, onCancel, onUncancel }) => {
+const EventView = ({ event, onCancel, onUncancel, onDelete }) => {
   return (
     <Styled.ContentContainer>
       <Subtitle>{event?.name}</Subtitle>
       <Styled.Status>
-          {(event.isCancelled && 'Cancelled') ||
-            (event.isFinished && 'Finished') ||
-            (event.isFull && 'Event Full')}
+        {(event.isCancelled && 'Cancelled') ||
+          (event.isFinished && 'Finished') ||
+          (event.isFull && 'Event Full')}
       </Styled.Status>
       <ButtonRow>
         {event.isCancelled ? (
@@ -22,6 +22,9 @@ const EventView = ({ event, onCancel, onUncancel }) => {
             Cancel Event
           </SmallButton>
         )}
+        <SmallButton type='button' onClick={onDelete}>
+          Delete Event
+        </SmallButton>
       </ButtonRow>
       <UserAttendanceSummary event={event} />
       <EventCarousel event={event} />

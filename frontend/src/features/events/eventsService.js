@@ -108,6 +108,26 @@ const updateEvent = async (token, {id, update}) => {
   return data;
 };
 
+const deleteEvent = async (token, id) => {
+  const response = await fetch(API_URL + id, {
+    method: 'DELETE',
+    headers: {
+      Authorization: token,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const data = await response.json();
+
+  // fetch does not reject on http error status codes, must be handled separately.
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
 const addAuthUserToEvent = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
     method: 'POST',
@@ -175,6 +195,7 @@ const eventsService = {
   getNextMatch,
   createEvent,
   updateEvent,
+  deleteEvent,
   addAuthUserToEvent,
   removeAuthUserFromEvent,
   updateAuthUserEventAttendee,
