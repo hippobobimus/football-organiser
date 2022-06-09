@@ -8,7 +8,7 @@ export const CarouselContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px;
+  padding: 5px 20px;
   width: 100%;
 `;
 

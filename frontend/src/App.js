@@ -7,7 +7,7 @@ import uniqid from 'uniqid';
 import GlobalStyle from './GlobalStyle';
 import { Navbar } from './components';
 import { Spinner } from './components/spinner';
-import { Card, Content, Subtitle } from './components/styles.js';
+import { Content, Subtitle } from './components/styles.js';
 import theme from './theme.js';
 import { fetchAuthUser } from './features/auth/authSlice';
 
@@ -45,20 +45,16 @@ const App = () => {
         widthBreakpoint={responsiveBreakpoint.width}
       />
       <Content>
-        <Card>
-          {authUserStatus === 'error' && (
-            <>
-              <Subtitle>Something went wrong...</Subtitle>
-              <p>{authUserMessage}</p>
-            </>
-          )}
-          {authUserStatus === 'loading' && (
-            <Spinner />
-          )}
-          {(authUserStatus === 'success' || authUserStatus === 'idle') && (
-            <Outlet />
-          )}
-        </Card>
+        {authUserStatus === 'error' && (
+          <>
+            <Subtitle>Something went wrong...</Subtitle>
+            <p>{authUserMessage}</p>
+          </>
+        )}
+        {authUserStatus === 'loading' && <Spinner />}
+        {(authUserStatus === 'success' || authUserStatus === 'idle') && (
+          <Outlet />
+        )}
       </Content>
     </ThemeProvider>
   );

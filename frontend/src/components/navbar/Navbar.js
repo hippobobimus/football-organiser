@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { mdiMenu } from '@mdi/js';
 
 import * as Styled from './Navbar.styles';
 import { Container } from '../styles';
-import MenuImg from './assets/menu.svg';
 import Menu from '../menu/Menu';
 
 const Navbar = ({ title, menuItems, widthBreakpoint }) => {
@@ -43,7 +43,9 @@ const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   return (
     <Styled.Nav isMobile={isMobile}>
       <Container>
-        {isMobile && <Styled.MenuToggle src={MenuImg} onClick={toggleMenu} />}
+        {isMobile && (
+          <Styled.MenuToggle path={mdiMenu} title='Menu' onClick={toggleMenu} />
+        )}
         <Styled.NavTitle>{title}</Styled.NavTitle>
       </Container>
       {(menuIsVisible || !isMobile) && (

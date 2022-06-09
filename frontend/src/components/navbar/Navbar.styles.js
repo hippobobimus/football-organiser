@@ -1,5 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
-import { Button, Container, Icon, Title } from '../styles';
+import Icon from '@mdi/react';
+
+import { Button, Container, Title } from '../styles';
 
 const rotateX = keyframes`
   0% {
@@ -17,24 +19,25 @@ const animationMixin = css`
 `;
 
 const columnMixin = css`
-    position: absolute;
-    top: 100%;
-    width: 100%;
-    height: calc(100vh - 100%);
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  height: calc(100vh - 100%);
 
-    flex-direction: column;
+  flex-direction: column;
 
-    padding: 20px;
+  padding: 20px;
 
-    ${animationMixin}
+  ${animationMixin}
 `;
 
 const Nav = styled.nav`
   position: relative;
 
   display: flex;
-  flex-direction: ${(props) => props.isMobile ? 'column' : 'row' };
-  justify-content: ${(props) => props.isMobile ? 'flex-start' : 'space-around'};
+  flex-direction: ${(props) => (props.isMobile ? 'column' : 'row')};
+  justify-content: ${(props) =>
+    props.isMobile ? 'flex-start' : 'space-around'};
   align-items: center;
   gap: 30px;
 
@@ -46,7 +49,7 @@ const Nav = styled.nav`
 const MenuContainer = styled(Container)`
   background-color: ${(props) => props.theme.bgClr};
 
-  flex-direction: ${(props) => props.isRow ? 'row' : 'column'};
+  flex-direction: ${(props) => (props.isRow ? 'row' : 'column')};
   justify-content: flex-start;
   gap: 30px;
   z-index: 999;

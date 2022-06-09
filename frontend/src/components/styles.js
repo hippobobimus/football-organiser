@@ -46,7 +46,15 @@ export const Container = styled.div`
   gap: 5px;
 `;
 
-export const Card = styled(Container)`
+export const Content = styled(Container)`
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+  height: 100%;
+  padding: 10px min(5%, 5000px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
 
   background: repeating-linear-gradient(
@@ -56,31 +64,6 @@ export const Card = styled(Container)`
     ${(props) => props.theme.fgClrDark} 80px,
     ${(props) => props.theme.fgClrDark} 160px
   );
-  border-radius: 25px;
-  box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
-  padding: 30px;
-
-  min-width: 100%;
-  min-height: 90%;
-`;
-
-export const Content = styled(Container)`
-  grid-row: 2 / 3;
-  grid-column: 1 / 2;
-  height: 100%;
-  padding: 0px min(10%, 5000px);
-  flex-direction: column;
-  justify-content: flex-start;
-
-  background-color: ${(props) => props.theme.bgClr};
-`;
-
-export const Icon = styled.img`
-  height: 1rem;
-
-  &:hover {
-    cursor: pointer;
-  }
 `;
 
 export const Link = styled(ReactRouterLink)`
