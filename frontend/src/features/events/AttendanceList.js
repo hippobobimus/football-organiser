@@ -1,10 +1,12 @@
-import { Section } from '../../components/styles';
+import { useSelector } from 'react-redux';
+import { Section, SmallButton } from '../../components/styles';
 import * as Styled from './AttendanceList.styles';
 import AttendanceListItem from './AttendanceListItem';
 
-const AttendanceList = ({ attendees, isFull, capacity }) => {
+const AttendanceList = ({ attendees, isFull }) => {
   let listItems = [];
-  let totalAttendance = 0;
+
+  const { isAdmin } = useSelector((state) => state.auth.authUser);
 
   attendees?.forEach((attendee) => {
     const guests = attendee.guests || 0;
@@ -18,21 +20,14 @@ const AttendanceList = ({ attendees, isFull, capacity }) => {
         <AttendanceListItem key={attendee.id + i} attendee={attendee} isGuest />
       );
     }
-
-    totalAttendance += 1 + guests;
   });
-
-  if (totalAttendance === 0) {
-    return <p>Nobody yet...</p>;
-  }
 
   return (
     <Section style={{ width: '100%' }}>
-      <Styled.AttendanceTotal>
-        <span>Total = {totalAttendance}</span>
-        <span>{isFull ? '(Full)' : capacity > -1 && `(Max. ${capacity})`}</span>
-      </Styled.AttendanceTotal>
-      <Styled.List>{listItems}</Styled.List>
+      <Styled.List>
+        {listItems}
+        {isAdmin && <SmallButton disabled={isFull}>Add User</SmallButton>}
+      </Styled.List>
     </Section>
   );
 };

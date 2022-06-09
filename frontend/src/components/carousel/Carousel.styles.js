@@ -6,7 +6,7 @@ export const CarouselContainer = styled.div`
   flex-direction: column;
   gap: 5px;
   width: 300px;
-  height: 300px;
+  height: 320px;
 `;
 
 export const InnerCarouselContainer = styled.div`
@@ -28,6 +28,7 @@ export const CarouselNav = styled.nav`
   display: flex;
   justify-content: center;
   align-items: center;
+  border-bottom: 2px solid black;
 `;
 
 export const CarouselNavList = styled.ul`

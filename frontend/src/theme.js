@@ -28,6 +28,7 @@ const theme = {
   buttonTextClr: colours.black,
 
   carouselTextShadowClr: colours.pink,
+  eventCarouselBgClr: colours.darkGreen,
 
   linkTextClr: colours.black,
 
@@ -37,6 +38,9 @@ const theme = {
 
   inputBorderClr: colours.grey,
   inputErrorBorderClr: colours.red,
+
+  infoBarBgClr: colours.darkGreen,
+  infoBarTextShadowClr: colours.pink,
 
   playerListBgClr: colours.white,
   listItemBgClr: colours.pink,

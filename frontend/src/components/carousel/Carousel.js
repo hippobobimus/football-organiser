@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Icon from '@mdi/react';
+import { mdiArrowLeftBoldOutline, mdiArrowRightBoldOutline } from '@mdi/js';
 
 import { SmallButton } from '../styles';
 import * as Styled from './Carousel.styles';
@@ -42,8 +44,16 @@ const Carousel = ({ children, className, headings }) => {
       </Styled.InnerCarouselContainer>
 
       <Styled.ButtonRow>
-        <SmallButton onClick={() => cycleLeft()}>&lt;</SmallButton>
-        <SmallButton onClick={() => cycleRight()}>&gt;</SmallButton>
+        <SmallButton onClick={() => cycleLeft()} disabled={index === 0}>
+          <Icon path={mdiArrowLeftBoldOutline} size={0.75} title='Page left' />
+        </SmallButton>
+        <SmallButton onClick={() => cycleRight()} disabled={index === maxIndex}>
+          <Icon
+            path={mdiArrowRightBoldOutline}
+            size={0.75}
+            title='Page right'
+          />
+        </SmallButton>
       </Styled.ButtonRow>
     </Styled.CarouselContainer>
   );

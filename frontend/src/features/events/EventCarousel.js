@@ -1,26 +1,34 @@
 import * as Styled from './EventCarousel.styles';
-import EventInfo from './EventInfo';
+import UserAttendanceSummary from './UserAttendanceSummary';
+import EventLocation from './EventLocation';
 import AttendanceList from './AttendanceList';
 
 const EventCarousel = ({ event }) => {
   return (
-    <Styled.ContentCarousel headings={['Info', 'Lineup', 'Weather']}>
-      <Styled.ContentCarouselItem>
-        <EventInfo event={event} />
-      </Styled.ContentCarouselItem>
+    <Styled.CarouselContainer>
+      <Styled.ContentCarousel
+        headings={['Me', 'Lineup', 'Location', 'Weather']}
+      >
+        <Styled.ContentCarouselItem>
+          <UserAttendanceSummary event={event} />
+        </Styled.ContentCarouselItem>
 
-      <Styled.ContentCarouselItem>
-        <AttendanceList
-          attendees={event.attendees}
-          isFull={event.isFull}
-          capacity={event.capacity}
-        />
-      </Styled.ContentCarouselItem>
+        <Styled.ContentCarouselItem>
+          <AttendanceList
+            attendees={event.attendees}
+            isFull={event.isFull}
+          />
+        </Styled.ContentCarouselItem>
 
-      <Styled.ContentCarouselItem>
-        <div>Weather</div>
-      </Styled.ContentCarouselItem>
-    </Styled.ContentCarousel>
+        <Styled.ContentCarouselItem>
+          <EventLocation event={event} />
+        </Styled.ContentCarouselItem>
+
+        <Styled.ContentCarouselItem>
+          <div>Weather</div>
+        </Styled.ContentCarouselItem>
+      </Styled.ContentCarousel>
+    </Styled.CarouselContainer>
   );
 };
 
