@@ -15,21 +15,20 @@ router
   .get(protect, eventController.readNextMatch);
 
 router
-  .route('/:id')
+  .route('/:eventId')
   .get(protect, eventController.readEvent)
   .put(protectAdmin, eventController.updateEvent)
   .delete(protectAdmin, eventController.deleteEvent);
 
 router
-  .route('/:id/attendees/me')
+  .route('/:eventId/attendees/me')
   .post(protect, eventController.createAuthUserAttendee)
   .put(protect, eventController.updateAuthUserAttendee)
   .delete(protect, eventController.deleteAuthUserAttendee);
 
 router
   .route('/:eventId/attendees/:userId')
-// TODO
-//  .post(protectAdmin, eventController.createAttendee)
+  .post(protectAdmin, eventController.createAttendee)
   .put(protectAdmin, eventController.updateAttendee)
   .delete(protectAdmin, eventController.deleteAttendee);
 

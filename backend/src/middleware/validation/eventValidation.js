@@ -1,7 +1,22 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
+import mongoose from 'mongoose';
 
 // If the validator is exported directly the '.exists()' check will fail.
 // Hence exported as an arrow function!
+
+const eventId = () => {
+  return param('eventId')
+    .trim()
+    .custom((id) => mongoose.isObjectIdOrHexString(id))
+    .withMessage('A valid event id must be given.');
+}
+
+const userId = () => {
+  return param('userId')
+    .trim()
+    .custom((id) => mongoose.isObjectIdOrHexString(id))
+    .withMessage('A valid user id must be given.');
+}
 
 const guests = () => {
   return body('guests')
@@ -131,6 +146,8 @@ const isCancelled = () => {
 }
 
 export default {
+  eventId,
+  userId,
   guests,
   buildUpTime,
   startTime,
