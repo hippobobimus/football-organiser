@@ -12,6 +12,7 @@ import EditPassword from './features/auth/EditPassword';
 import NextMatch from './features/events/NextMatch';
 import CreateEvent from './features/events/CreateEvent';
 import Event from './features/events/Event';
+import EditEvent from './features/events/EditEvent';
 import Calendar from './features/events/Calendar';
 
 const RouteSwitch = () => {
@@ -30,6 +31,7 @@ const RouteSwitch = () => {
           <Route path='edit-password' element={<EditPassword />} />
           <Route path='calendar' element={<Calendar />} />
           <Route path='events/:id' element={<Event />} />
+          <Route path='events/:id/edit' element={<EditEvent />} />
           <Route path='next-match' element={<NextMatch />} />
         </Route>
 
