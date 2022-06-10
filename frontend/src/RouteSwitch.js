@@ -13,6 +13,7 @@ import NextMatch from './features/events/NextMatch';
 import CreateEvent from './features/events/CreateEvent';
 import Event from './features/events/Event';
 import EditEvent from './features/events/EditEvent';
+import AddAttendee from './features/events/AddAttendee';
 import Calendar from './features/events/Calendar';
 
 const RouteSwitch = () => {
@@ -32,6 +33,7 @@ const RouteSwitch = () => {
           <Route path='calendar' element={<Calendar />} />
           <Route path='events/:id' element={<Event />} />
           <Route path='events/:id/edit' element={<EditEvent />} />
+          <Route path='events/:id/add-user' element={<AddAttendee />} />
           <Route path='next-match' element={<NextMatch />} />
         </Route>
 

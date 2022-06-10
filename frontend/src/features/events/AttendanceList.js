@@ -1,9 +1,10 @@
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { Section, SmallButton } from '../../components/styles';
 import * as Styled from './AttendanceList.styles';
 import AttendanceListItem from './AttendanceListItem';
 
-const AttendanceList = ({ attendees, isFull }) => {
+const AttendanceList = ({ attendees, eventId, isFull }) => {
   let listItems = [];
 
   const { isAdmin } = useSelector((state) => state.auth.authUser);
@@ -26,7 +27,15 @@ const AttendanceList = ({ attendees, isFull }) => {
     <Section style={{ width: '100%' }}>
       <Styled.List>
         {listItems}
-        {isAdmin && <SmallButton disabled={isFull}>Add User</SmallButton>}
+        {isAdmin && (
+          <SmallButton
+            as={Link}
+            to={`/events/${eventId}/add-user`}
+            disabled={isFull}
+          >
+            Add User
+          </SmallButton>
+        )}
       </Styled.List>
     </Section>
   );
