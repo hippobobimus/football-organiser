@@ -142,6 +142,20 @@ export const updateAuthUserEventAttendee = createAsyncThunk(
   }
 );
 
+export const createAttendee = createAsyncThunk(
+  'events/createAttendee',
+  async (attendeeParams, thunkAPI) => {
+    try {
+      return await eventsService.createAttendee(
+        thunkAPI.getState().auth.token,
+        attendeeParams
+      );
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 export const updateAttendee = createAsyncThunk(
   'events/updateAttendee',
   async (attendeeParams, thunkAPI) => {
@@ -300,6 +314,19 @@ const eventsSlice = createSlice({
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateAuthUserEventAttendee.rejected, (state, action) => {
+        state.eventDetailsStatus = 'error';
+        state.eventDetailsMessage = action.payload;
+      })
+
+      .addCase(createAttendee.pending, (state) => {
+        state.eventDetailsStatus = 'loading';
+      })
+      .addCase(createAttendee.fulfilled, (state, action) => {
+        state.eventDetailsStatus = 'success';
+        state.eventDetails = action.payload;
+        eventsAdapter.upsertOne(state, action.payload);
+      })
+      .addCase(createAttendee.rejected, (state, action) => {
         state.eventDetailsStatus = 'error';
         state.eventDetailsMessage = action.payload;
       })
