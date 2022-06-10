@@ -22,6 +22,11 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
 
+  &[disabled] {
+    pointer-events: none;
+    background-color: ${(props) => props.theme.buttonHoverClr};
+  }
+
   &:hover,
   &:disabled,
   &:enabled:active {
