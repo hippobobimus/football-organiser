@@ -7,9 +7,11 @@
     "backend"
   ],
   "scripts": {
+    "start": "yarn workspace backend start",
     "client": "yarn workspace frontend start",
     "server": "yarn workspace backend devdebug",
-    "dev": "concurrently \"yarn run server\" \"yarn run client\""
+    "dev": "concurrently \"yarn run server\" \"yarn run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn workspace frontend install && yarn workspace frontend run build"
   },
   "devDependencies": {
     "concurrently": "^7.1.0"
