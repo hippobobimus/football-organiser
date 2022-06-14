@@ -520,7 +520,7 @@ const createAttendee = [
 
     if (attendee) {
       return next(
-        createError(404, 'The user is already registered for this event')
+        createError(400, 'The user is already registered for this event')
       );
     }
 
