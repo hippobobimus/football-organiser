@@ -48,7 +48,7 @@ const theme = {
   spinnerBgClr: colours.white,
   spinnerFgClr: colours.darkPink,
 
-  titleFont: '\'Londrina Sketch\', cursive',
+  titleFont: '\'Bangers\', cursive',
   subtitleFont: '\'Permanent Marker\', cursive',
   buttonFont: '\'Permanent Marker\', cursive',
   font: '\'Chilanka\', cursive',
