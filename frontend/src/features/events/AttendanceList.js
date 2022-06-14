@@ -1,10 +1,14 @@
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Section, SmallButton } from '../../components/styles';
 import * as Styled from './AttendanceList.styles';
 import AttendanceListItem from './AttendanceListItem';
+import { reset } from './eventsSlice';
 
 const AttendanceList = ({ attendees, eventId, isFull }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   let listItems = [];
 
   const { isAdmin } = useSelector((state) => state.auth.authUser);
@@ -23,15 +27,20 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
     }
   });
 
+  const handleAddUser = () => {
+    dispatch(reset());
+    navigate(`/events/${eventId}/add-user`);
+  }
+
   return (
     <Section style={{ width: '100%' }}>
       <Styled.List>
         {listItems}
         {isAdmin && (
           <SmallButton
-            as={Link}
-            to={`/events/${eventId}/add-user`}
+            type='button'
             disabled={isFull}
+            onClick={handleAddUser}
           >
             Add User
           </SmallButton>

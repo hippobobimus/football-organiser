@@ -61,6 +61,10 @@ const MenuToggle = styled(Icon)`
   position: absolute;
   left: 3vw;
   height: min(2rem, 8vw);
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const NavTitle = styled(Title)`

@@ -21,22 +21,22 @@ const Calendar = () => {
 
   const authUser = useSelector((state) => state.auth.authUser);
 
-  const { status, message, pagination } = useSelector((state) => state.events);
+  const { fetchStatus, fetchMessage, pagination } = useSelector((state) => state.events);
   const events = useSelector(selectAllEvents);
 
   useEffect(() => {
     dispatch(fetchEvents({ page, finished }));
   }, [dispatch, finished, page]);
 
-  if (status === 'loading' || status === 'idle') {
+  if (fetchStatus === 'loading' || fetchStatus === 'idle') {
     return <Spinner />;
   }
 
-  if (status === 'error') {
+  if (fetchStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{message}</p>
+        <p>{fetchMessage}</p>
       </>
     );
   }

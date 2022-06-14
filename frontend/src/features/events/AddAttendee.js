@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,7 +12,14 @@ const AddAttendee = () => {
   const navigate = useNavigate();
   const { id: eventId } = useParams();
 
-  const { eventDetailsStatus, eventDetailsMessage } = useSelector((state) => state.events);
+  const { updateStatus, updateMessage } = useSelector((state) => state.events);
+
+  useEffect(() => {
+    if (updateStatus === 'success') {
+      dispatch(reset());
+      navigate(`/events/${eventId}`);
+    }
+  }, [dispatch, eventId, navigate, updateStatus])
 
   const handleCancel = () => {
     dispatch(reset());
@@ -27,15 +35,15 @@ const AddAttendee = () => {
     navigate(`/events/${eventId}`);
   };
 
-  if (eventDetailsStatus === 'loading') {
+  if (updateStatus === 'loading') {
     return <Spinner />;
   }
 
-  if (eventDetailsStatus === 'error') {
+  if (updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{eventDetailsMessage}</p>
+        <p>{updateMessage}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>

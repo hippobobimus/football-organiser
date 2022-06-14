@@ -2,18 +2,15 @@ import { SmallButton, ButtonRow, Subtitle } from '../../components/styles';
 import * as Styled from './EventView.styles';
 import EventInfoBar from './EventInfoBar';
 import EventCarousel from './EventCarousel';
-import { Link } from 'react-router-dom';
 
-const EventView = ({ event, onCancel, onUncancel, onDelete }) => {
-  const editPath = `/events/${event.id}/edit`;
-
+const EventView = ({ event, onEdit, onCancel, onUncancel, onDelete }) => {
   return (
     <Styled.ContentContainer>
       <Subtitle>{event?.name}</Subtitle>
       <EventInfoBar event={event} />
       <EventCarousel event={event} />
       <ButtonRow>
-        <SmallButton as={Link} to={editPath}>
+        <SmallButton type='button' onClick={onEdit}>
           Edit
         </SmallButton>
         {event.isCancelled ? (

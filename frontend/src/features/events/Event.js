@@ -1,33 +1,46 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Button, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import { deleteEvent, fetchOneEvent, reset, updateEvent } from './eventsSlice';
+import { deleteEvent, fetchNextMatch, fetchOneEvent, reset, updateEvent } from './eventsSlice';
 import EventView from './EventView';
 
-const Event = () => {
+const Event = ({ nextMatch }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { id: eventId } = useParams();
 
   const {
     eventDetails,
-    eventDetailsStatus,
-    eventDetailsMessage,
+    fetchStatus,
+    fetchMessage,
+    updateStatus,
+    updateMessage,
     deleteStatus,
     deleteMessage,
   } = useSelector((state) => state.events);
 
   useEffect(() => {
-    dispatch(fetchOneEvent(eventId));
-  }, [eventId, dispatch]);
+    if (nextMatch) {
+      dispatch(fetchNextMatch(eventId));
+    } else if (eventId) {
+      dispatch(fetchOneEvent(eventId));
+    }
+  }, [eventId, dispatch, nextMatch]);
 
-  if (eventDetailsStatus === 'error' || deleteStatus === 'error') {
+  if (
+    fetchStatus === 'error' ||
+    updateStatus === 'error' ||
+    deleteStatus === 'error'
+  ) {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        {eventDetailsMessage && <p>{eventDetailsMessage}</p>}
+        {fetchMessage && <p>{fetchMessage}</p>}
+        {updateMessage && <p>{updateMessage}</p>}
         {deleteMessage && <p>{deleteMessage}</p>}
       </>
     );
@@ -52,12 +65,18 @@ const Event = () => {
   }
 
   if (
-    eventDetailsStatus === 'loading' ||
-    eventDetailsStatus === 'idle' ||
+    fetchStatus === 'idle' ||
+    fetchStatus === 'loading' ||
+    updateStatus === 'loading' ||
     deleteStatus === 'loading'
   ) {
     return <Spinner />;
   }
+
+  const handleEdit = () => {
+    dispatch(reset());
+    navigate(`/events/${eventId}/edit`);
+  };
 
   const handleCancel = () => {
     if (window.confirm('Are you sure you want to cancel this event?')) {
@@ -78,6 +97,7 @@ const Event = () => {
   return (
     <EventView
       event={eventDetails}
+      onEdit={handleEdit}
       onCancel={handleCancel}
       onUncancel={handleUncancel}
       onDelete={handleDelete}

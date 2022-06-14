@@ -12,7 +12,6 @@ const CreateEvent = ({ category }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [submitted, setSubmitted] = useState(false);
   const [userEntries, setUserEntries] = useState({
     category,
     name: category === 'match' ? 'Football Match' : '',
@@ -27,13 +26,12 @@ const CreateEvent = ({ category }) => {
     capacity: '',
   });
 
-  const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
+  const { eventDetails, updateStatus, updateMessage } = useSelector(
     (state) => state.events
   );
 
   const handleSubmit = (values) => {
     setUserEntries(values);
-    setSubmitted(true);
     dispatch(createEvent(values));
   };
 
@@ -44,25 +42,24 @@ const CreateEvent = ({ category }) => {
 
   const handleBack = () => {
     dispatch(reset());
-    setSubmitted(false);
   };
 
   useEffect(() => {
-    if (submitted && eventDetailsStatus === 'success') {
-      navigate(`/events/${eventDetails.id}`);
+    if (updateStatus === 'success') {
       dispatch(reset());
+      navigate(`/events/${eventDetails.id}`);
     }
-  }, [dispatch, navigate, eventDetails, eventDetailsStatus, submitted]);
+  }, [dispatch, navigate, eventDetails, updateStatus]);
 
-  if (eventDetailsStatus === 'loading') {
+  if (updateStatus === 'loading') {
     return <Spinner />;
   }
 
-  if (eventDetailsStatus === 'error') {
+  if (updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{eventDetailsMessage}</p>
+        <p>{updateMessage}</p>
         <Button type='button' onClick={handleBack}>
           Back
         </Button>

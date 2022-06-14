@@ -9,7 +9,6 @@ import Register from './features/auth/Register';
 import Profile from './features/auth/Profile';
 import EditProfile from './features/auth/EditProfile';
 import EditPassword from './features/auth/EditPassword';
-import NextMatch from './features/events/NextMatch';
 import CreateEvent from './features/events/CreateEvent';
 import Event from './features/events/Event';
 import EditEvent from './features/events/EditEvent';
@@ -34,7 +33,7 @@ const RouteSwitch = () => {
           <Route path='events/:id' element={<Event />} />
           <Route path='events/:id/edit' element={<EditEvent />} />
           <Route path='events/:id/add-user' element={<AddAttendee />} />
-          <Route path='next-match' element={<NextMatch />} />
+          <Route path='next-match' element={<Event nextMatch />} />
         </Route>
 
         {/* Private routes that require admin privileges */}

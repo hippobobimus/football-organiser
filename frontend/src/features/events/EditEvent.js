@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, isPast } from 'date-fns';
 
 import { Button, SectionHeading, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
@@ -15,61 +15,85 @@ const EditEvent = () => {
 
   const { id: eventId } = useParams();
 
-  const [submitted, setSubmitted] = useState(false);
   const [formattedTime, setFormattedTime] = useState(null);
 
-  const { eventDetails, eventDetailsStatus, eventDetailsMessage } = useSelector(
-    (state) => state.events
-  );
+  const {
+    eventDetails,
+    fetchStatus,
+    fetchMessage,
+    updateStatus,
+    updateMessage,
+  } = useSelector((state) => state.events);
 
   useEffect(() => {
-    dispatch(fetchOneEvent(eventId));
-  }, [dispatch, eventId])
-
-  // format event timing information.
-  useEffect(() => {
-    if (!eventDetails?.time) {
-      return;
-    }
-
-    setFormattedTime({
-      buildUp: format(Date.parse(eventDetails.time.buildUp), "yyyy-MM-dd'T'HH:mm"),
-      start: format(Date.parse(eventDetails.time.start), "yyyy-MM-dd'T'HH:mm"),
-      end: format(Date.parse(eventDetails.time.end), "yyyy-MM-dd'T'HH:mm"),
-    });
-  }, [eventDetails]);
-
-  useEffect(() => {
-    if (submitted && eventDetailsStatus === 'success') {
+    if (updateStatus === 'success') {
       navigate(`/events/${eventDetails.id}`);
       dispatch(reset());
     }
-  }, [dispatch, navigate, eventDetails, eventDetailsStatus, submitted]);
+  }, [dispatch, navigate, eventDetails, updateStatus]);
+
+  useEffect(() => {
+    dispatch(fetchOneEvent(eventId));
+  }, [dispatch, eventId]);
+
+  // format event timing information.
+  useEffect(() => {
+    if (eventDetails?.time) {
+      setFormattedTime({
+        buildUp: format(
+          Date.parse(eventDetails.time.buildUp),
+          "yyyy-MM-dd'T'HH:mm"
+        ),
+        start: format(
+          Date.parse(eventDetails.time.start),
+          "yyyy-MM-dd'T'HH:mm"
+        ),
+        end: format(Date.parse(eventDetails.time.end), "yyyy-MM-dd'T'HH:mm"),
+      });
+    }
+  }, [eventDetails]);
 
   const handleSubmit = (values) => {
-    setSubmitted(true);
-    dispatch(updateEvent({ id: eventId, update: values}));
+    dispatch(updateEvent({ id: eventId, update: values }));
   };
 
   const handleCancel = () => {
-    navigate(`/events/${eventId}`)
+    navigate(`/events/${eventId}`);
     dispatch(reset());
   };
 
   const handleBack = () => {
-    navigate(`/events/${eventId}`)
+    navigate(`/events/${eventId}`);
     dispatch(reset());
   };
 
-  if (eventDetailsStatus === 'loading' || eventDetailsStatus === 'idle' || !formattedTime) {
+  if (
+    fetchStatus === 'loading' ||
+    fetchStatus === 'idle' ||
+    updateStatus === 'loading' ||
+    !formattedTime
+  ) {
     return <Spinner />;
   }
 
-  if (eventDetailsStatus === 'error') {
+  if (isPast(Date.parse(eventDetails.time.buildUp))) {
+    return (
+      <>
+        <Subtitle>Event in progress/finished</Subtitle>
+        <p>Editing is no longer possible</p>
+        <Button type='button' onClick={handleBack}>
+          Back
+        </Button>
+      </>
+    );
+  }
+
+  if (fetchStatus === 'error' || updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{eventDetailsMessage}</p>
+        {fetchMessage && <p>{fetchMessage}</p>}
+        {updateMessage && <p>{updateMessage}</p>}
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
@@ -108,7 +132,11 @@ const EditEvent = () => {
           <TextInput label='Warm Up' name='buildUpTime' type='datetime-local' />
           <TextInput label='Kick Off' name='startTime' type='datetime-local' />
           <TextInput label='Finish' name='endTime' type='datetime-local' />
-          <TextInput label='Maximum No. of Attendees (optional)' name='capacity' type='number' />
+          <TextInput
+            label='Maximum No. of Attendees (optional)'
+            name='capacity'
+            type='number'
+          />
         </FormStep>
         <FormStep validationSchema={addressSchema}>
           <SectionHeading>Address</SectionHeading>
