@@ -4,7 +4,13 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Button, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import { deleteEvent, fetchNextMatch, fetchOneEvent, reset, updateEvent } from './eventsSlice';
+import {
+  deleteEvent,
+  fetchNextMatch,
+  fetchOneEvent,
+  reset,
+  updateEvent,
+} from './eventsSlice';
 import EventView from './EventView';
 
 const Event = ({ nextMatch }) => {
@@ -93,6 +99,14 @@ const Event = ({ nextMatch }) => {
       dispatch(deleteEvent(eventId));
     }
   };
+
+  if (nextMatch && fetchStatus === 'success' && !eventDetails) {
+    return (
+      <>
+        <Subtitle>No upcoming matches...</Subtitle>
+      </>
+    );
+  }
 
   return (
     <EventView

@@ -13,7 +13,12 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
 
   const { isAdmin } = useSelector((state) => state.auth.authUser);
 
-  attendees?.forEach((attendee) => {
+  let sortedAttendees;
+  if (attendees) {
+    sortedAttendees = [...attendees].sort((a, b) => a.user.name.localeCompare(b.user.name));
+  }
+
+  sortedAttendees?.forEach((attendee) => {
     const guests = attendee.guests || 0;
 
     listItems.push(

@@ -36,7 +36,6 @@ const populateEvent = async (event, authUserId) => {
       path: 'user',
       select: ['firstName', 'lastName'],
     },
-    sort: { 'user.name': 'asc' },
   });
 
   // determine whether the auth user is registered for this event and, if so, attach their attendee
@@ -54,29 +53,12 @@ const populateEvent = async (event, authUserId) => {
 
 const getPopulatedEvent = async (eventId, authUserId) => {
   let event = await Event.findById(eventId)
-    .populate('numAttendees')
-    .populate({
-      path: 'attendees',
-      populate: {
-        path: 'user',
-        select: ['firstName', 'lastName'],
-      },
-      sort: { 'user.name': 'asc' },
-    });
 
   if (!event) {
     throw createError(400, 'Event not found.');
   }
 
-  // determine whether the auth user is registered for this event and, if so, attach their attendee
-  // separately.
-  const authUserAttendee = event.attendees?.find((attendee) => {
-    return attendee.user.id === authUserId;
-  });
-
-  event.set('authUserAttendee', authUserAttendee || null, {
-    strict: false,
-  });
+  await populateEvent(event, authUserId);
 
   return event;
 };
@@ -205,13 +187,28 @@ const readEvent = [
   },
 ];
 
-// @desc    Retrieve the next event of type 'match' in chronological order
+// @desc    Retrieve the chronologically next upcoming event of type 'match'
 // @route   GET /api/events/next-match
 // @access  Private
 const readNextMatch = async (req, res, next) => {
   try {
-    // TODO find the appropriate event and populate.
-    const nextMatch = await Event.findOne();
+    const query = await Event.find({
+      category: 'match',
+      'time.end': { $gte: new Date() },
+    })
+      .sort({
+        'time.end': 'asc',
+      })
+      .limit(1);
+
+    if (query.length === 0) {
+      // no upcoming matches
+      return res.status(200).json(null);
+    }
+
+    const nextMatch = query[0];
+
+    await populateEvent(nextMatch, req.user.id);
 
     return res.status(200).json(nextMatch);
   } catch (err) {
