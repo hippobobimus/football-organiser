@@ -42,3 +42,7 @@ export const addressSchema = Yup.object({
       'Must be a valid UK postcode format.'
     ),
 });
+
+export const attendeeUserSchema = Yup.object({
+  userId: Yup.string().required('Required'),
+});

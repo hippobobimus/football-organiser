@@ -532,7 +532,6 @@ const createAttendee = [
       return next(createError(404, 'Event not found'));
     }
 
-    console.log(event);
     if (event.isFull) {
       return next(createError(400, 'Event is full'));
     }

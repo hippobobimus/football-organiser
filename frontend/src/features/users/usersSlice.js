@@ -7,12 +7,12 @@ import {
 import usersService from './usersService';
 
 const usersAdapter = createEntityAdapter({
-  sortComparer: (a, b) => b.name.localeCompare(a.name),
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
 const initialState = usersAdapter.getInitialState({
-  status: 'idle',
-  message: '',
+  fetchStatus: 'idle',
+  fetchMessage: '',
 });
 
 export const fetchUsers = createAsyncThunk(
@@ -31,23 +31,23 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      usersAdapter.removeAll();
-      state.status = 'idle';
-      state.message = '';
+      usersAdapter.removeAll(state);
+      state.fetchStatus = 'idle';
+      state.fetchMessage = '';
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchUsers.pending, (state) => {
-        state.status = 'loading';
+        state.fetchStatus = 'loading';
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.status = 'success';
+        state.fetchStatus = 'success';
         usersAdapter.upsertMany(state, action.payload);
       })
       .addCase(fetchUsers.rejected, (state, action) => {
-        state.status = 'error';
-        state.message = action.payload;
+        state.fetchStatus = 'error';
+        state.fetchMessage = action.payload;
       });
   },
 });

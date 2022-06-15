@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
 import { MultiStepForm, FormStep, SelectField } from '../../components/form';
-import { createAttendee, reset } from './eventsSlice';
+import { createAttendee, reset as resetEvents } from './eventsSlice';
+import { fetchUsers, reset as resetUsers, selectAllUsers } from '../users/usersSlice';
+import { attendeeUserSchema } from './eventValidation';
 
 const AddAttendee = () => {
   const dispatch = useDispatch();
@@ -13,37 +15,51 @@ const AddAttendee = () => {
   const { id: eventId } = useParams();
 
   const { updateStatus, updateMessage } = useSelector((state) => state.events);
+  const { fetchStatus, fetchMessage } = useSelector((state) => state.users);
+  const users = useSelector(selectAllUsers);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   useEffect(() => {
     if (updateStatus === 'success') {
-      dispatch(reset());
+      dispatch(resetEvents());
+      dispatch(resetUsers());
       navigate(`/events/${eventId}`);
     }
-  }, [dispatch, eventId, navigate, updateStatus])
+  }, [dispatch, eventId, navigate, updateStatus]);
 
   const handleCancel = () => {
-    dispatch(reset());
+    dispatch(resetEvents());
+    dispatch(resetUsers());
     navigate(`/events/${eventId}`);
   };
 
   const handleSubmit = (values) => {
-    dispatch(createAttendee(values))
+    dispatch(createAttendee(values));
   };
 
   const handleBack = () => {
-    dispatch(reset());
+    dispatch(resetEvents());
+    dispatch(resetUsers());
     navigate(`/events/${eventId}`);
   };
 
-  if (updateStatus === 'loading') {
+  if (
+    fetchStatus === 'idle' ||
+    fetchStatus === 'loading' ||
+    updateStatus === 'loading'
+  ) {
     return <Spinner />;
   }
 
-  if (updateStatus === 'error') {
+  if (fetchStatus === 'error' || updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
-        <p>{updateMessage}</p>
+        {updateMessage && <p>{updateMessage}</p>}
+        {fetchMessage && <p>{fetchMessage}</p>}
         <Button type='button' onClick={handleBack}>
           Back
         </Button>
@@ -51,11 +67,15 @@ const AddAttendee = () => {
     );
   }
 
+  const usersOptionsList = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.name}
+    </option>
+  ));
+
   return (
     <>
-      <Subtitle>
-        Add User to Event
-      </Subtitle>
+      <Subtitle>Add User to Event</Subtitle>
       <MultiStepForm
         initialValues={{
           userId: '',
@@ -65,12 +85,10 @@ const AddAttendee = () => {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >
-        <FormStep validationSchema={null}>
+        <FormStep validationSchema={attendeeUserSchema}>
           <SelectField label='User' name='userId'>
             <option></option>
-            <option value='628e47522adc3dfc24e0d887'>Lloyd Doyley</option>
-            <option>Option 2</option>
-            <option>Option 3</option>
+            {usersOptionsList}
           </SelectField>
         </FormStep>
       </MultiStepForm>
