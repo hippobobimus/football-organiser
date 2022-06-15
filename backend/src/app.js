@@ -1,9 +1,9 @@
 import express from 'express';
-import cors from 'cors';
 import createError from 'http-errors';
 import morgan from 'morgan';
 
 import db from './config/db';
+import corsMiddleware from './middleware/cors';
 import { errorHandler } from './middleware/errorMiddleware';
 import { eventsRouter, usersRouter } from './routes';
 
@@ -19,7 +19,7 @@ db.connect();
  * Middleware
  */
 
-app.use(cors());
+app.use(corsMiddleware);
 
 // logging
 app.use(morgan('dev'));
