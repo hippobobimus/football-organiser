@@ -10,14 +10,12 @@ router
   .get(protect, userController.readUsers)
   .post(userController.createUser);
 
-router
-  .route('/login')
-  .post(userController.loginUser);
+router.route('/login').post(userController.loginUser);
 
 router
   .route('/me')
-  .get(protect, userController.readCurrentUser)
-  .put(protect, userController.updateCurrentUser)
+  .get(protect, userController.readAuthUser)
+  .put(protect, userController.updateAuthUser);
 
 // TODO currently unused
 //

@@ -1,57 +1,30 @@
 import { validationResult } from 'express-validator';
 import createError from 'http-errors';
 
+import * as userServices from '../services/userServices.js';
 import { User } from '../models';
-import validate from '../middleware/validation/userValidation';
-import {
-  authenticatePassword,
-  generatePassword,
-  issueJWT,
-} from '../utils/password';
+import { validateUser, processValidation } from '../middleware/validation';
+import { authenticatePassword, generatePassword } from '../utils/password';
 
 // @desc    Create user
 // @route   POST /api/users
 // @access  Public
 const createUser = [
-  validate.firstName(),
-  validate.lastName(),
-  validate.email(),
-  validate.newPassword(),
+  validateUser.firstName(),
+  validateUser.lastName(),
+  validateUser.email(),
+  validateUser.newPassword(),
+  processValidation,
   async (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return next(
-        createError(400, 'Field validation failed.', {
-          fieldValidationErrors: errors.errors,
-        })
-      );
-    }
-
     try {
-      const foundUser = await User.findOne({ email: req.body.email });
-      if (foundUser) {
-        return next(createError(400, 'User already exists.'));
-      }
-    } catch (err) {
-      return next(err);
-    }
-
-    const { hash, salt } = generatePassword(req.body.newPassword);
-
-    try {
-      const user = await User.create({
+      const token = await userServices.createUser({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         email: req.body.email,
-        password: { hash, salt },
+        newPassword: req.body.newPassword,
       });
 
-      const { token } = issueJWT(user.id);
-
-      return res.status(200).json({
-        token,
-      });
+      return res.status(200).json({ token });
     } catch (err) {
       return next(err);
     }
@@ -62,54 +35,28 @@ const createUser = [
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = [
-  validate.email(),
-  validate.currentPassword(),
+  validateUser.email(),
+  validateUser.currentPassword(),
+  processValidation,
   async (req, res, next) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return next(
-        createError(400, 'Field validation failed.', {
-          fieldValidationErrors: errors.errors,
-        })
-      );
-    }
-
-    let user;
     try {
-      user = await User.findOne({ email: req.body.email });
+      const token = await userServices.login({
+        email: req.body.email,
+        currentPassword: req.body.currentPassword,
+      });
+      return res.status(200).json({ token });
     } catch (err) {
       return next(err);
     }
-
-    if (!user) {
-      return next(createError(401, 'Invalid email or password'));
-    }
-
-    const authenticated = authenticatePassword(
-      req.body.currentPassword,
-      user.password.hash,
-      user.password.salt
-    );
-
-    if (!authenticated) {
-      return next(createError(401, 'Invalid email or password'));
-    }
-
-    const { token } = issueJWT(user);
-
-    return res.status(200).json({
-      token,
-    });
   },
 ];
 
 // @desc    Get current user
 // @route   GET /api/users/me
 // @access  Private
-const readCurrentUser = async (req, res, next) => {
+const readAuthUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await userServices.getUser(req.user.id);
     return res.status(200).json(user);
   } catch (err) {
     return next(err);
@@ -119,67 +66,29 @@ const readCurrentUser = async (req, res, next) => {
 // @desc    Edit current user
 // @route   PUT /api/users/me
 // @access  Private
-const updateCurrentUser = [
-  validate.firstName().optional({ checkFalsy: true }),
-  validate.lastName().optional({ checkFalsy: true }),
-  validate.email().optional({ checkFalsy: true }),
-  validate.newPassword().optional({ checkFalsy: true }),
-  validate.currentPassword(),
+const updateAuthUser = [
+  validateUser.firstName().optional({ checkFalsy: true }),
+  validateUser.lastName().optional({ checkFalsy: true }),
+  validateUser.email().optional({ checkFalsy: true }),
+  validateUser.newPassword().optional({ checkFalsy: true }),
+  validateUser.currentPassword(),
+  processValidation,
   async (req, res, next) => {
-    const errors = validationResult(req);
+    let update = {
+      firstName: req.body.firstName || null,
+      lastName: req.body.lastName || null,
+      email: req.body.email || null,
+      newPassword: req.body.newPassword || null,
+      currentPassword: req.body.currentPassword || null,
+    };
 
-    if (!errors.isEmpty()) {
-      const message = errors.errors.map((err) => err.msg).join(' ');
-      return next(
-        createError(400, message, {
-          fieldValidationErrors: errors.errors,
-        })
-      );
-    }
-
-    let user;
     try {
-      user = await User.findById(req.user.id);
+      const user = await userServices.updateUser(req.user.id, update);
+      // return updated user.
+      return res.status(200).json(user);
     } catch (err) {
       return next(err);
     }
-
-    if (!user) {
-      return next(createError(401, 'User does not exist.'));
-    }
-
-    // Re-authenticate user.
-    const authenticated = authenticatePassword(
-      req.body.currentPassword,
-      user.password.hash,
-      user.password.salt
-    );
-    if (!authenticated) {
-      return next(createError(401, 'Invalid password.'));
-    }
-
-    // Update fields.
-    if (req.body.firstName) {
-      user.firstName = req.body.firstName;
-    }
-    if (req.body.lastName) {
-      user.lastName = req.body.lastName;
-    }
-    if (req.body.email) {
-      user.email = req.body.email;
-    }
-    if (req.body.newPassword) {
-      user.password = generatePassword(req.body.newPassword);
-    }
-
-    try {
-      user = await user.save();
-    } catch (err) {
-      return next(err);
-    }
-
-    // return updated user.
-    return res.status(200).json(user);
   },
 ];
 
@@ -188,7 +97,7 @@ const updateCurrentUser = [
 // @access  Private
 const readUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await userServices.getUsers();
     return res.status(200).json(users);
   } catch (err) {
     return next(err);
@@ -250,7 +159,7 @@ const readUsers = async (req, res, next) => {
 export default {
   createUser,
   loginUser,
-  readCurrentUser,
-  updateCurrentUser,
+  readAuthUser,
+  updateAuthUser,
   readUsers,
 };

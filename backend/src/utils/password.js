@@ -6,24 +6,24 @@ const PRIV_KEY =
   process.env.JWT_PRIVATE_KEY ||
   fs.readFileSync(new URL('../../id_rsa_priv.pem', import.meta.url), 'utf8');
 
-function generateHash(password, salt) {
+const generateHash = (password, salt) => {
   return pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
-}
+};
 
-function generatePassword(password) {
+export const generatePassword = (password) => {
   const salt = randomBytes(32).toString('hex');
   const hash = generateHash(password, salt);
 
   return { hash, salt };
-}
+};
 
-function authenticatePassword(password, storedHash, salt) {
+export const authenticatePassword = (password, storedHash, salt) => {
   const hash = generateHash(password, salt);
 
   return hash === storedHash;
-}
+};
 
-function issueJWT(userId) {
+export const issueJWT = (userId) => {
   const expiresIn = '1d';
 
   const payload = {
@@ -40,6 +40,6 @@ function issueJWT(userId) {
     token: 'Bearer ' + signedToken,
     expires: expiresIn,
   };
-}
+};
 
-export { issueJWT, generatePassword, authenticatePassword };
+export default { issueJWT, generatePassword, authenticatePassword };
