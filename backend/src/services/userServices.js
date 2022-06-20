@@ -90,7 +90,7 @@ export const updateUser = async (id, update) => {
   }
 
   if (!update.currentPassword) {
-    throw createError(401, 'You must provide a password.');
+    throw createError(401, 'You must provide the current password.');
   }
 
   // Re-authenticate user.
