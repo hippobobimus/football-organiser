@@ -9,14 +9,14 @@ const eventId = () => {
     .trim()
     .custom((id) => mongoose.isObjectIdOrHexString(id))
     .withMessage('A valid event id must be given.');
-}
+};
 
 const userId = () => {
   return param('userId')
     .trim()
     .custom((id) => mongoose.isObjectIdOrHexString(id))
     .withMessage('A valid user id must be given.');
-}
+};
 
 const guests = () => {
   return body('guests')
@@ -135,7 +135,7 @@ const capacity = () => {
     .isInt()
     .withMessage('Capacity must be a valid integer value.')
     .toInt();
-}
+};
 
 const isCancelled = () => {
   return body('isCancelled')
@@ -143,7 +143,7 @@ const isCancelled = () => {
     .isBoolean()
     .withMessage('A boolean value must be supplied.')
     .toBoolean();
-}
+};
 
 export default {
   eventId,

@@ -5,7 +5,7 @@ const AttendeeSchema = new Schema(
   {
     event: { type: Schema.Types.ObjectId, ref: 'Event', required: true },
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    guests: { type: Number, default: 0 }
+    guests: { type: Number, default: 0 },
   },
   {
     timestamps: true,

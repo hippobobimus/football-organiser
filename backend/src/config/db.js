@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
 import logger from '../config/logger';
 
-mongoose.connection.on('error', (err) =>
-  logger.error(err)
-);
+mongoose.connection.on('error', (err) => logger.error(err));
 
 mongoose.connection.on('connecting', () =>
   logger.info('MongoDB: Attempting connection...')

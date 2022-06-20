@@ -52,7 +52,7 @@ const populateEvent = async (event, authUserId) => {
 };
 
 const getPopulatedEvent = async (eventId, authUserId) => {
-  let event = await Event.findById(eventId)
+  let event = await Event.findById(eventId);
 
   if (!event) {
     throw createError(400, 'Event not found.');

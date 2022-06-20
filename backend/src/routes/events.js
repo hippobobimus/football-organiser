@@ -10,9 +10,7 @@ router
   .get(protect, eventController.readEvents)
   .post(protectAdmin, eventController.createEvent);
 
-router
-  .route('/next-match')
-  .get(protect, eventController.readNextMatch);
+router.route('/next-match').get(protect, eventController.readNextMatch);
 
 router
   .route('/:eventId')

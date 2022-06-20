@@ -20,7 +20,7 @@ const EventSchema = new Schema(
       town: { type: String, required: true },
       postcode: { type: String, required: true },
     },
-    capacity: {type: Number, default: -1 },
+    capacity: { type: Number, default: -1 },
     isCancelled: { type: Boolean, default: false },
   },
   {
@@ -44,11 +44,11 @@ EventSchema.virtual('numAttendees', {
     attendees ? attendees.reduce((prev, curr) => prev + curr.guests + 1, 0) : 0,
 });
 
-EventSchema.virtual('isFinished').get((value, virtual, doc) =>{
+EventSchema.virtual('isFinished').get((value, virtual, doc) => {
   return isPast(doc.time.end);
 });
 
-EventSchema.virtual('isFull').get((value, virtual, doc) =>{
+EventSchema.virtual('isFull').get((value, virtual, doc) => {
   return doc.capacity >= 0 && doc.numAttendees >= doc.capacity;
 });
 
