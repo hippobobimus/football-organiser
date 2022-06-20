@@ -1,4 +1,5 @@
 import app from '../src/app';
+import db from '../src/config/db';
 import debugLib from 'debug';
 import http from 'http';
 
@@ -30,6 +31,12 @@ app.set('port', port);
 const server = http.createServer(app);
 
 server.listen(port);
+
+/*
+ * Connect to database.
+ */
+
+db.connect();
 
 /*
  * Event handling.

@@ -13,7 +13,7 @@ const app = express();
  * Connect to database
  */
 
-db.connect();
+//db.connect();
 
 /*
  * Middleware

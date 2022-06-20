@@ -67,6 +67,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.5.3",
     "jest": "^28.1.1",
+    "mongodb-memory-server": "^8.7.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "supertest": "^6.2.3"
