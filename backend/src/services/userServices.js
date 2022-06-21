@@ -35,7 +35,7 @@ export const login = async (input) => {
   const { email, currentPassword } = input;
 
   if (!email || !currentPassword) {
-    throw createError(400, 'Missing user input data.');
+    throw createError(401, 'Missing user input data.');
   }
 
   const user = await User.findOne({ email });
