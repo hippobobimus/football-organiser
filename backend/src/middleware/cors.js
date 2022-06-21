@@ -2,9 +2,9 @@ import cors from 'cors';
 
 let origin;
 if (process.env.NODE_ENV === 'development') {
-  origin = ['http://localhost:3000']
+  origin = ['http://localhost:3000'];
 } else {
-  origin = false // disallow all cors requests
+  origin = false; // disallow all cors requests
 }
 
 const corsOptions = {

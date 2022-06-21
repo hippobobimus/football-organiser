@@ -17,12 +17,4 @@ router
   .get(protect, userController.readAuthUser)
   .put(protect, userController.updateAuthUser);
 
-// TODO currently unused
-//
-// router
-//   .route('/:id')
-//   .get(userController.readUser)
-//   .put(userController.updateUser)
-//   .delete(userController.deleteUser);
-
 export default router;

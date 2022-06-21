@@ -11,17 +11,22 @@
     "dev": "nodemon --exec 'node --experimental-specifier-resolution=node -r dotenv/config ./bin/www'",
     "devdebug": "DEBUG=backend:\\* yarn run dev",
     "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest",
+    "test:watch": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest --watchAll",
     "test:debug": "NODE_OPTIONS='--inspect-brk --experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand"
   },
   "type": "module",
   "eslintConfig": {
     "env": {
       "browser": true,
-      "es2021": true
+      "es2021": true,
+      "jest/globals": true
     },
     "extends": [
       "airbnb-base/legacy",
       "prettier"
+    ],
+    "plugins": [
+      "jest"
     ],
     "parserOptions": {
       "ecmaVersion": "latest",
@@ -60,7 +65,9 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.5.3",
     "jest": "^28.1.1",
+    "mongodb-memory-server": "^8.7.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "supertest": "^6.2.3"

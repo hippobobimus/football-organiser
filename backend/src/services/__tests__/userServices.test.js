@@ -279,19 +279,21 @@ describe('userServices', () => {
 
     it('should throw if a valid user id or password are not given', async () => {
       jest.spyOn(User, 'findById').mockResolvedValue(testUserDoc);
-      const UserSaveMock = jest.spyOn(User.prototype, 'save').mockResolvedValue(null);
+      const UserSaveMock = jest
+        .spyOn(User.prototype, 'save')
+        .mockResolvedValue(null);
 
       const { currentPassword, ...noPassword } = testUserUpdate;
 
-      await expect(userServices.updateUser(null, testUserUpdate)).rejects.toThrow(
-        'Invalid user id.'
-      );
-      await expect(userServices.updateUser('not a user id', testUserUpdate)).rejects.toThrow(
-        'Invalid user id.'
-      );
-      await expect(userServices.updateUser(testUserDoc.id, noPassword)).rejects.toThrow(
-        'You must provide the current password.'
-      );
+      await expect(
+        userServices.updateUser(null, testUserUpdate)
+      ).rejects.toThrow('Invalid user id.');
+      await expect(
+        userServices.updateUser('not a user id', testUserUpdate)
+      ).rejects.toThrow('Invalid user id.');
+      await expect(
+        userServices.updateUser(testUserDoc.id, noPassword)
+      ).rejects.toThrow('You must provide the current password.');
 
       expect(UserSaveMock).not.toHaveBeenCalled();
     });
