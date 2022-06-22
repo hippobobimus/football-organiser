@@ -11,7 +11,7 @@ const EventCarousel = ({ event }) => {
   return (
     <Styled.CarouselContainer>
       <Styled.ContentCarousel
-        headings={['Me', 'Lineup', 'Location', 'Weather']}
+        headings={['Me', 'Lineup', 'Location']}
       >
         <Styled.ContentCarouselItem>
           <UserAttendanceSummary event={event} />
@@ -27,10 +27,6 @@ const EventCarousel = ({ event }) => {
 
         <Styled.ContentCarouselItem>
           <EventLocation event={event} />
-        </Styled.ContentCarouselItem>
-
-        <Styled.ContentCarouselItem>
-          <div>Weather</div>
         </Styled.ContentCarouselItem>
       </Styled.ContentCarousel>
     </Styled.CarouselContainer>
