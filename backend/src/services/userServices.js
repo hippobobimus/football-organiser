@@ -83,6 +83,10 @@ export const updateUser = async (id, update) => {
     throw createError(401, 'Invalid user id.');
   }
 
+  if (update.newPassword && process.env.APP_DEMO_MODE === 'true') {
+    throw createError(400, 'Password editing is disabled in demo mode.');
+  }
+
   let user = await User.findById(id);
 
   if (!user) {
