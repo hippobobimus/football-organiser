@@ -1,8 +1,24 @@
+![bibgameplayers](https://user-images.githubusercontent.com/25724314/174857587-8ff1e362-0e15-42fe-a80c-c30895f12020.png)
+
 # Event Organisation
 
 A web app designed to manage group events, currently adapted for football matches and associated socials.
 
-![bibgameplayers](https://user-images.githubusercontent.com/25724314/174857587-8ff1e362-0e15-42fe-a80c-c30895f12020.png)
+## Demo website
+
+A demo version of the website is available here: [Demo site](https://demo.bibgameplayers.com)
+
+__NB__ - the website is hosted on a free tier platform that puts the server to sleep after a period of inactivity, so you may encounter a lag of a few seconds on the first page load while the server wakes.
+
+#### Login details:
+
+##### Admin account: 
+- Username: demo-admin@bibgameplayers.com
+- Password: Demoadmin1!
+
+##### Standard user account
+- Username: demo-user@bibgameplayers.com
+- Password: Demouser1!
 
 ## User Features
 
