@@ -9,7 +9,7 @@ const initialState = {
   authUser: null,
   authUserStatus: 'idle',
   authUserMessage: '',
-  updateStatus: '',
+  updateStatus: 'idle',
   updateMessage: '',
   token,
   isLoggedIn,

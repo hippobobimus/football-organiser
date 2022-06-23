@@ -59,7 +59,6 @@ const Profile = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
-    dispatch(reset());
   };
 
   return (
