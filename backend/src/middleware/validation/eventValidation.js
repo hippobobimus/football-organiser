@@ -1,8 +1,11 @@
 import { body, param } from 'express-validator';
 import mongoose from 'mongoose';
+import { zonedTimeToUtc } from 'date-fns-tz/esm';
 
 // If the validator is exported directly the '.exists()' check will fail.
 // Hence exported as an arrow function!
+
+const TIMEZONE = 'Europe/London';
 
 const eventId = () => {
   return param('eventId')
@@ -31,6 +34,7 @@ const buildUpTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid build up date and time must be supplied.')
+    .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
     .isAfter()
     .withMessage('Cannot be in the past.')
     .toDate();
@@ -41,6 +45,7 @@ const startTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid start date and time must be supplied.')
+    .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
     .isAfter()
     .withMessage('Cannot be in the past.')
     .toDate();
@@ -51,6 +56,7 @@ const endTime = () => {
     .trim()
     .isISO8601()
     .withMessage('A valid end date and time must be supplied.')
+    .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
     .isAfter()
     .withMessage('Cannot be in the past.')
     .toDate();
