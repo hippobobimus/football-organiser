@@ -97,7 +97,7 @@ const UserAttendanceSummary = ({ event }) => {
         </Styled.GuestsContainer>
       ) : (
         <SmallButton type='button' onClick={handleAddGuest} disabled={event.isFull}>
-          I'm Bringing a Guest
+          Add a Guest
         </SmallButton>
       )}
       <SmallButton type='button' onClick={handleLeave}>
