@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { mdiMenu } from '@mdi/js';
 
 import * as Styled from './Navbar.styles';
 import { Container } from '../styles';
 import Menu from '../menu/Menu';
+import { reset } from '../../features/events/eventsSlice';
 
 const Navbar = ({ title, menuItems, widthBreakpoint }) => {
+  const dispatch = useDispatch();
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [isMobile, setIsMobile] = useState(false);
@@ -34,7 +37,8 @@ const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   useEffect(() => {
     // close menu on path change.
     setMenuIsVisible(false);
-  }, [pathname]);
+    dispatch(reset());
+  }, [dispatch, pathname]);
 
   const toggleMenu = () => {
     setMenuIsVisible(!menuIsVisible);
