@@ -8,7 +8,7 @@ const newPasswordSchema = Yup.object({
   newPassword: Yup.string()
     .matches(
       /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/,
-      'Please enter a strong password of at least 8 characters, containing a minimum of 1 upper case character, 1 lower case character and 1 symbol.'
+      'Please enter a strong password of at least 8 characters, containing a minimum of 1 upper case character, 1 lower case character, 1 symbol and 1 number.'
     )
     .required('Required'),
   confirmPassword: Yup.string()
