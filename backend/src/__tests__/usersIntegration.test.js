@@ -71,10 +71,10 @@ describe('users', () => {
       const { email, ...noEmail } = newUserInput;
       const { newPassword, ...noPassword } = newUserInput;
 
-      [noFirstName, noLastName, noEmail, noPassword].forEach(async (body) => {
+      for (const body of [noFirstName, noLastName, noEmail, noPassword]) {
         const { statusCode } = await request(app).post(path).send(body);
         expect(statusCode).toBe(400);
-      });
+      }
     });
 
     it('should return 400 if a weak password is provided', async () => {

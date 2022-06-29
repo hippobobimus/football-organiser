@@ -1,32 +1,13 @@
-import { validationResult } from 'express-validator';
 import mongoose from 'mongoose';
 import createError from 'http-errors';
 
 import { Attendee, Event, User } from '../models';
-import validate from '../middleware/validation/eventValidation';
-
-const { ObjectId } = mongoose.Types;
+import { validateEvent, processValidation } from '../middleware/validation';
+import * as eventServices from '../services/eventServices';
 
 /*
  * Helper functions
  */
-const processValidation = (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const msg = errors.errors
-      .map((err) => `'${err.param}': ${err.msg}`)
-      .join(' ');
-
-    return next(
-      createError(400, 'Field validation failed. ' + msg, {
-        fieldValidationErrors: errors.errors,
-      })
-    );
-  }
-
-  return next();
-};
 
 const populateEvent = async (event, authUserId) => {
   await event.populate('numAttendees');
@@ -38,8 +19,8 @@ const populateEvent = async (event, authUserId) => {
     },
   });
 
-  // determine whether the auth user is registered for this event and, if so, attach their attendee
-  // separately.
+  // determine whether the auth user is registered for this event and, if so,
+  // attach their attendee separately.
   const authUserAttendee = event.attendees?.find((attendee) => {
     return attendee.user.id === authUserId;
   });
@@ -71,57 +52,8 @@ const getPopulatedEvent = async (eventId, authUserId) => {
 // @route   GET /api/events
 // @access  Private
 const readEvents = async (req, res, next) => {
-  const page = req.query?.page > 0 ? req.query.page : 1;
-
-  let options = {
-    page,
-    limit: 4,
-    populate: [
-      'numAttendees',
-      {
-        path: 'attendees',
-        populate: {
-          path: 'user',
-          select: ['firstName', 'lastName'],
-        },
-      },
-    ],
-  };
-
-  let query;
-
-  if (req.query?.finished.toLowerCase() === 'true') {
-    // past events.
-    query = {
-      'time.end': { $lt: Date.now() },
-    };
-    // show most recent first.
-    options.sort = { 'time.start': 'desc' };
-  } else {
-    // upcoming and in-progress events.
-    query = {
-      'time.end': { $gte: Date.now() },
-    };
-    // show most recent first.
-    options.sort = { 'time.start': 'asc' };
-  }
-
   try {
-    let results = await Event.paginate(query, options);
-
-    // identify the attendee associated with the auth user and add as an extra field.
-    results.docs = results.docs.map((event) => {
-      const authUserAttendee = event.attendees?.find((attendee) => {
-        return attendee.user.id === req.user.id;
-      });
-
-      event.set('authUserAttendee', authUserAttendee || null, {
-        strict: false,
-      });
-
-      return event;
-    });
-
+    let results = await eventServices.getEvents(req.user.id, req.query);
     return res.status(200).json(results);
   } catch (err) {
     return next(err);
@@ -132,37 +64,21 @@ const readEvents = async (req, res, next) => {
 // @route   POST /api/events
 // @access  Private, admin only
 const createEvent = [
-  validate.buildUpTime(),
-  validate.startTime(),
-  validate.endTime(),
-  validate.category(),
-  validate.name().optional({ checkFalsy: true }),
-  validate.locationName().optional({ checkFalsy: true }),
-  validate.locationLine1(),
-  validate.locationLine2().optional({ checkFalsy: true }),
-  validate.locationTown(),
-  validate.locationPostcode(),
-  validate.capacity().optional({ checkFalsy: true }),
+  validateEvent.buildUpTime(),
+  validateEvent.startTime(),
+  validateEvent.endTime(),
+  validateEvent.category(),
+  validateEvent.name().optional({ checkFalsy: true }),
+  validateEvent.locationName().optional({ checkFalsy: true }),
+  validateEvent.locationLine1(),
+  validateEvent.locationLine2().optional({ checkFalsy: true }),
+  validateEvent.locationTown(),
+  validateEvent.locationPostcode(),
+  validateEvent.capacity().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
     try {
-      const event = await Event.create({
-        category: req.body.category,
-        name: req.body.name || 'Event',
-        time: {
-          buildUp: req.body.buildUpTime,
-          start: req.body.startTime,
-          end: req.body.endTime,
-        },
-        location: {
-          name: req.body.locationName || '',
-          line1: req.body.locationLine1,
-          line2: req.body.locationLine2 || '',
-          town: req.body.locationTown,
-          postcode: req.body.locationPostcode,
-        },
-        capacity: req.body.capacity || -1,
-      });
+      const event = await eventServices.createEvent(req.user.id, req.body);
       return res.status(200).json(event);
     } catch (err) {
       return next(err);
@@ -174,7 +90,7 @@ const createEvent = [
 // @route   GET /api/events/:eventId
 // @access  Private
 const readEvent = [
-  validate.eventId(),
+  validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -220,19 +136,19 @@ const readNextMatch = async (req, res, next) => {
 // @route   PUT /api/events/:eventId
 // @access  Private, admin only
 const updateEvent = [
-  validate.eventId(),
-  validate.buildUpTime().optional({ checkFalsy: true }),
-  validate.startTime().optional({ checkFalsy: true }),
-  validate.endTime().optional({ checkFalsy: true }),
-  validate.category().optional({ checkFalsy: true }),
-  validate.name().optional({ checkFalsy: true }),
-  validate.locationName().optional({ checkFalsy: true }),
-  validate.locationLine1().optional({ checkFalsy: true }),
-  validate.locationLine2().optional({ checkFalsy: true }),
-  validate.locationTown().optional({ checkFalsy: true }),
-  validate.locationPostcode().optional({ checkFalsy: true }),
-  validate.capacity().optional({ checkFalsy: true }),
-  validate.isCancelled().optional({ checkFalsy: false }),
+  validateEvent.eventId(),
+  validateEvent.buildUpTime().optional({ checkFalsy: true }),
+  validateEvent.startTime().optional({ checkFalsy: true }),
+  validateEvent.endTime().optional({ checkFalsy: true }),
+  validateEvent.category().optional({ checkFalsy: true }),
+  validateEvent.name().optional({ checkFalsy: true }),
+  validateEvent.locationName().optional({ checkFalsy: true }),
+  validateEvent.locationLine1().optional({ checkFalsy: true }),
+  validateEvent.locationLine2().optional({ checkFalsy: true }),
+  validateEvent.locationTown().optional({ checkFalsy: true }),
+  validateEvent.locationPostcode().optional({ checkFalsy: true }),
+  validateEvent.capacity().optional({ checkFalsy: true }),
+  validateEvent.isCancelled().optional({ checkFalsy: false }),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -300,7 +216,7 @@ const updateEvent = [
 // @route   DELETE /api/events/:eventId
 // @access  Private, admin only
 const deleteEvent = [
-  validate.eventId(),
+  validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -319,7 +235,7 @@ const deleteEvent = [
 // @route   POST /api/events/:eventId/attendees/me
 // @access  Private
 const createAuthUserAttendee = [
-  validate.eventId(),
+  validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -355,8 +271,8 @@ const createAuthUserAttendee = [
     }
 
     attendee = new Attendee({
-      event: new ObjectId(req.params.eventId),
-      user: new ObjectId(req.user.id),
+      event: new mongoose.Types.ObjectId(req.params.eventId),
+      user: new mongoose.Types.ObjectId(req.user.id),
       guests: 0,
     });
 
@@ -382,7 +298,7 @@ const createAuthUserAttendee = [
 // @route   DELETE /api/events/:eventId/attendees/me
 // @access  Private
 const deleteAuthUserAttendee = [
-  validate.eventId(),
+  validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -440,8 +356,8 @@ const deleteAuthUserAttendee = [
 // @route   PUT /api/events/:eventId/attendees/me
 // @access  Private
 const updateAuthUserAttendee = [
-  validate.eventId(),
-  validate.guests().optional({ checkFalsy: true }),
+  validateEvent.eventId(),
+  validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
     let event;
@@ -500,9 +416,9 @@ const updateAuthUserAttendee = [
 // @route   POST /api/events/:eventId/attendees/:userId
 // @access  Private, admin only
 const createAttendee = [
-  validate.eventId(),
-  validate.userId(),
-  validate.guests().optional({ checkFalsy: true }),
+  validateEvent.eventId(),
+  validateEvent.userId(),
+  validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
     let attendee;
@@ -569,9 +485,9 @@ const createAttendee = [
 // @route   PUT /api/events/:eventId/attendees/:userId
 // @access  Private, admin only
 const updateAttendee = [
-  validate.eventId(),
-  validate.userId(),
-  validate.guests().optional({ checkFalsy: true }),
+  validateEvent.eventId(),
+  validateEvent.userId(),
+  validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
     let attendee;
@@ -614,8 +530,8 @@ const updateAttendee = [
 // @route   DELETE /api/events/:eventId/attendees/:userId
 // @access  Private, admin only
 const deleteAttendee = [
-  validate.eventId(),
-  validate.userId(),
+  validateEvent.eventId(),
+  validateEvent.userId(),
   processValidation,
   async (req, res, next) => {
     let attendee;

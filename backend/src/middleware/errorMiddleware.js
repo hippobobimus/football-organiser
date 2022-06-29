@@ -1,13 +1,12 @@
 import logger from '../config/logger';
 
 const errorHandler = (err, req, res, next) => {
-  if (err.statusCode < 400 || !err.statusCode) {
-    err.statusCode = 500;
-  }
+  const statusCode =
+    err.statusCode < 400 || !err.statusCode ? 500 : err.statusCode;
 
-  logger.error(err);
+  logger.error(err.message, { name: err.name, statusCode, stack: err.stack });
 
-  res.status(err.statusCode);
+  res.status(statusCode);
 
   res.json({
     message: err.message,
