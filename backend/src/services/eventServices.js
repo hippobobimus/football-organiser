@@ -1,3 +1,6 @@
+import createError from 'http-errors';
+import mongoose from 'mongoose';
+
 import { Attendee, Event, User } from '../models';
 
 /*
@@ -23,18 +26,6 @@ const populateEvent = async (event, authUserId) => {
   event.set('authUserAttendee', authUserAttendee || null, {
     strict: false,
   });
-
-  return event;
-};
-
-const getPopulatedEvent = async (eventId, authUserId) => {
-  let event = await Event.findById(eventId);
-
-  if (!event) {
-    throw createError(400, 'Event not found.');
-  }
-
-  await populateEvent(event, authUserId);
 
   return event;
 };
@@ -110,6 +101,22 @@ export const createEvent = async (authUserId, eventData) => {
   });
 
   populateEvent(event, authUserId);
+
+  return event;
+};
+
+export const getEvent = async (authUserId, eventId) => {
+  if (!mongoose.isObjectIdOrHexString(eventId)) {
+    throw createError(401, 'Invalid event id.');
+  }
+
+  let event = await Event.findById(eventId);
+
+  if (!event) {
+    throw createError(401, 'Event does not exist.');
+  }
+
+  event = populateEvent(event, authUserId);
 
   return event;
 };

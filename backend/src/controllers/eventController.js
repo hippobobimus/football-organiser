@@ -93,9 +93,11 @@ const readEvent = [
   validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
-    let event;
     try {
-      event = await getPopulatedEvent(req.params.eventId, req.user.id);
+      const event = await eventServices.getEvent(
+        req.user.id,
+        req.params.eventId
+      );
       return res.status(200).json(event);
     } catch (err) {
       return next(err);

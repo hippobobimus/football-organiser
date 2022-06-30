@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { isAfter, isBefore, isEqual, parseISO, add, sub } from 'date-fns';
+import mongoose from 'mongoose';
 
 import app from '../app';
 import * as db from '../config/testDb';
@@ -345,8 +346,99 @@ describe('events', () => {
     });
   });
 
+  describe('GET /api/events/:id', () => {
+    const path = '/api/events/';
+    let authUser;
+    let authToken;
+    let events;
+    let event;
+
+    beforeEach(async () => {
+      authUser = await data.standardUser().save();
+      authToken = pwUtils.issueJWT(authUser.id).token;
+
+      events = await Promise.all(data.events().map((e) => e.save()));
+      event = events[0];
+    });
+
+    it('should return 401 without authorization', async () => {
+      const { statusCode } = await request(app).get(path + event.id);
+
+      expect(statusCode).toBe(401);
+    });
+
+    it('should return 200 with authorization', async () => {
+      const { statusCode } = await request(app)
+        .get(path + event.id)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+    });
+
+    it('should return 400 with an invalid event id', async () => {
+      const { statusCode } = await request(app)
+        .get(path + 'notanid')
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(400);
+    });
+
+    it('should return 400 if the event is not found', async () => {
+      const { statusCode } = await request(app)
+        .get(path + new mongoose.Types.ObjectId().toString())
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(401);
+    });
+
+    it('should return json', async () => {
+      const { statusCode, headers } = await request(app)
+        .get(path + event.id)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+      expect(headers['content-type']).toMatch(/json/);
+    });
+
+    it('should return event with correct fields', async () => {
+      const { statusCode, body } = await request(app)
+        .get(path + event.id)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+
+      expect(body).toEqual({
+        __v: 0,
+        _id: event.id,
+        attendees: [],
+        authUserAttendee: null,
+        capacity: event.capacity,
+        category: event.category,
+        createdAt: expect.any(String),
+        id: event.id,
+        isCancelled: false,
+        isFinished: false,
+        isFull: false,
+        location: {
+          name: event.location.name,
+          line1: event.location.line1,
+          line2: event.location.line2,
+          town: event.location.town,
+          postcode: event.location.postcode,
+        },
+        name: event.name,
+        numAttendees: 0,
+        time: {
+          buildUp: event.time.buildUp.toISOString(),
+          start: event.time.start.toISOString(),
+          end: event.time.end.toISOString(),
+        },
+        updatedAt: expect.any(String),
+      });
+    });
+  });
+
   // TODO
-  // GET /api/events/:id
   // GET /api/events/next-match
   // PUT /api/events/:eventId
   // DELETE /api/events/:eventId
