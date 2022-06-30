@@ -110,24 +110,7 @@ const readEvent = [
 // @access  Private
 const readNextMatch = async (req, res, next) => {
   try {
-    const query = await Event.find({
-      category: 'match',
-      'time.end': { $gte: new Date() },
-    })
-      .sort({
-        'time.end': 'asc',
-      })
-      .limit(1);
-
-    if (query.length === 0) {
-      // no upcoming matches
-      return res.status(200).json(null);
-    }
-
-    const nextMatch = query[0];
-
-    await populateEvent(nextMatch, req.user.id);
-
+    const nextMatch = await eventServices.getNextMatch(req.user.id);
     return res.status(200).json(nextMatch);
   } catch (err) {
     return next(err);

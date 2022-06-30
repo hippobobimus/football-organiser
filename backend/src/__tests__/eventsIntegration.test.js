@@ -6,6 +6,7 @@ import app from '../app';
 import * as db from '../config/testDb';
 import pwUtils from '../utils/password';
 import * as data from '../testData';
+import { Event } from '../models';
 
 describe('events', () => {
   beforeAll(async () => {
@@ -438,8 +439,99 @@ describe('events', () => {
     });
   });
 
+  describe('GET /api/events/next-match', () => {
+    const path = '/api/events/next-match';
+    let authUser;
+    let authToken;
+    let events;
+    let event;
+
+    beforeEach(async () => {
+      authUser = await data.standardUser().save();
+      authToken = pwUtils.issueJWT(authUser.id).token;
+
+      events = await Promise.all(data.events().map((e) => e.save()));
+      event = events.find((e) => e.name === 'Future Event E');
+    });
+
+    it('should return 401 without authorization', async () => {
+      const { statusCode } = await request(app).get(path);
+
+      expect(statusCode).toBe(401);
+    });
+
+    it('should return 200 with authorization', async () => {
+      const { statusCode } = await request(app)
+        .get(path)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+    });
+
+    it('should return null if no upcoming match is found', async () => {
+      // remove all upcoming matches
+      await Event.deleteMany({
+        category: 'match',
+        'time.end': { $gte: sub(new Date(), { hours: 1 }) },
+      });
+
+      const { statusCode, body } = await request(app)
+        .get(path)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+      expect(body).toBe(null);
+    });
+
+    it('should return json', async () => {
+      const { statusCode, headers } = await request(app)
+        .get(path)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+      expect(headers['content-type']).toMatch(/json/);
+    });
+
+    it('should return correct event with correct fields', async () => {
+      const { statusCode, body } = await request(app)
+        .get(path)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(200);
+
+      expect(body).toEqual({
+        __v: 0,
+        _id: event.id,
+        attendees: [],
+        authUserAttendee: null,
+        capacity: event.capacity,
+        category: event.category,
+        createdAt: expect.any(String),
+        id: event.id,
+        isCancelled: false,
+        isFinished: false,
+        isFull: false,
+        location: {
+          name: event.location.name,
+          line1: event.location.line1,
+          line2: event.location.line2,
+          town: event.location.town,
+          postcode: event.location.postcode,
+        },
+        name: event.name,
+        numAttendees: 0,
+        time: {
+          buildUp: event.time.buildUp.toISOString(),
+          start: event.time.start.toISOString(),
+          end: event.time.end.toISOString(),
+        },
+        updatedAt: expect.any(String),
+      });
+    });
+  });
+
   // TODO
-  // GET /api/events/next-match
+  //
   // PUT /api/events/:eventId
   // DELETE /api/events/:eventId
   // POST /api/events/:eventId/attendees/me

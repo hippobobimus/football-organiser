@@ -105,7 +105,7 @@ export const events = () => {
       category: 'match',
       time: {
         buildUp: add(now, { hours: 1 }),
-        start: add(now, { hourss: 1, minutes: 15 }),
+        start: add(now, { hours: 1, minutes: 15 }),
         end: add(now, { hours: 2, minutes: 15 }),
       },
       location: {
@@ -138,7 +138,7 @@ export const events = () => {
     }),
     new Event({
       name: 'Future Event D',
-      category: 'match',
+      category: 'social',
       time: {
         buildUp: sub(now, { minutes: 10 }),
         start: sub(now, { minutes: 5 }),
@@ -160,7 +160,7 @@ export const events = () => {
       time: {
         buildUp: sub(now, { minutes: 10 }),
         start: add(now, { minutes: 5 }),
-        end: add(now, { hours: 1 }),
+        end: add(now, { hours: 1, minutes: 1 }),
       },
       location: {
         name: 'Location name E',

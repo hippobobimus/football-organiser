@@ -120,3 +120,23 @@ export const getEvent = async (authUserId, eventId) => {
 
   return event;
 };
+
+export const getNextMatch = async (authUserId) => {
+  const query = await Event.find({
+    category: 'match',
+    'time.end': { $gte: new Date() },
+  })
+    .sort({
+      'time.end': 'asc',
+    })
+    .limit(1);
+
+  if (query.length === 0) {
+    // no upcoming matches
+    return null;
+  }
+
+  const nextMatch = await populateEvent(query[0], authUserId);
+
+  return nextMatch;
+};
