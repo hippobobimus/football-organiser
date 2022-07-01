@@ -136,60 +136,8 @@ const updateEvent = [
   validateEvent.isCancelled().optional({ checkFalsy: false }),
   processValidation,
   async (req, res, next) => {
-    let event;
     try {
-      event = await Event.findById(req.params.eventId);
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!event) {
-      return next(createError(404, 'Event not found'));
-    }
-
-    // whitelist request body.
-    if (req.body.buildUpTime) {
-      event.time.buildUp = req.body.buildUpTime;
-    }
-    if (req.body.startTime) {
-      event.time.start = req.body.startTime;
-    }
-    if (req.body.endTime) {
-      event.time.end = req.body.endTime;
-    }
-    if (req.body.category) {
-      event.category = req.body.category;
-    }
-    if (req.body.name) {
-      event.name = req.body.name;
-    }
-    if (req.body.locationName) {
-      event.location.name = req.body.locationName;
-    }
-    if (req.body.locationLine1) {
-      event.location.line1 = req.body.locationLine1;
-    }
-    if (req.body.locationLine2) {
-      event.location.line2 = req.body.locationLine2;
-    }
-    if (req.body.locationTown) {
-      event.location.town = req.body.locationTown;
-    }
-    if (req.body.locationPostcode) {
-      event.location.postcode = req.body.locationPostcode;
-    }
-    if (req.body.capacity) {
-      event.capacity = req.body.capacity;
-    }
-    if (typeof req.body.isCancelled !== 'undefined') {
-      event.isCancelled = req.body.isCancelled;
-    }
-
-    try {
-      event = await event.save();
-
-      event = await populateEvent(event, req.user.id);
-
+      const event = await eventServices.updateEvent(req.user.id, req.params.eventId, req.body);
       return res.status(200).json(event);
     } catch (err) {
       return next(err);
@@ -204,11 +152,8 @@ const deleteEvent = [
   validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
-    let event;
     try {
-      event = await Event.findByIdAndDelete(req.params.eventId);
-      // remove related attendee records.
-      await Attendee.deleteMany({ event: req.params.eventId });
+      const event = await eventServices.deleteEvent(req.user.id, req.params.eventId);
       return res.status(200).json(event);
     } catch (err) {
       return next(err);

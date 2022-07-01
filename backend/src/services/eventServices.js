@@ -140,3 +140,69 @@ export const getNextMatch = async (authUserId) => {
 
   return nextMatch;
 };
+
+export const updateEvent = async (authUserId, eventId, update) => {
+  if (!authUserId || !eventId || !update) {
+    throw createError(400, 'Missing function argument(s).');
+  }
+
+  let event = await Event.findById(eventId);
+
+  if (!event) {
+    throw createError(404, 'Event not found');
+  }
+
+  // whitelist request body.
+  if (update.buildUpTime) {
+    event.time.buildUp = update.buildUpTime;
+  }
+  if (update.startTime) {
+    event.time.start = update.startTime;
+  }
+  if (update.endTime) {
+    event.time.end = update.endTime;
+  }
+  if (update.category) {
+    event.category = update.category;
+  }
+  if (update.name) {
+    event.name = update.name;
+  }
+  if (update.locationName) {
+    event.location.name = update.locationName;
+  }
+  if (update.locationLine1) {
+    event.location.line1 = update.locationLine1;
+  }
+  if (update.locationLine2) {
+    event.location.line2 = update.locationLine2;
+  }
+  if (update.locationTown) {
+    event.location.town = update.locationTown;
+  }
+  if (update.locationPostcode) {
+    event.location.postcode = update.locationPostcode;
+  }
+  if (update.capacity) {
+    event.capacity = update.capacity;
+  }
+  if (typeof update.isCancelled !== 'undefined') {
+    event.isCancelled = update.isCancelled;
+  }
+
+  event = await event.save();
+
+  event = await populateEvent(event, authUserId);
+
+  return event;
+};
+
+export const deleteEvent = async (authUserId, eventId) => {
+  let event = await Event.findByIdAndDelete(eventId);
+  event = await populateEvent(event, authUserId);
+
+  // remove related attendee records.
+  await Attendee.deleteMany({ event: eventId });
+
+  return event;
+};

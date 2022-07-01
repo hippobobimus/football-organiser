@@ -78,6 +78,24 @@ export const fullEventInput = () => {
   };
 };
 
+export const eventUpdate = () => {
+  const now = new Date();
+
+  return {
+    name: 'Updated Event',
+    category: 'social',
+    buildUpTime: add(now, { days: 3 }),
+    startTime: add(now, { days: 3, minutes: 15 }),
+    endTime: add(now, { days: 3, hours: 1, minutes: 15 }),
+    locationName: 'Updated Location',
+    locationLine1: 'Updated Location test line1',
+    locationLine2: 'Updated Location test line2',
+    locationTown: 'Updated Location test town',
+    locationPostcode: 'W2A 2AA',
+    capacity: 12,
+  };
+};
+
 export const events = () => {
   const now = new Date();
 

@@ -530,10 +530,203 @@ describe('events', () => {
     });
   });
 
+  describe('PUT /api/events/:eventId', () => {
+    const path = '/api/events/';
+    let authUser;
+    let authToken;
+    let adminUser;
+    let adminToken;
+    let events;
+    let event;
+
+    beforeEach(async () => {
+      authUser = await data.standardUser().save();
+      authToken = pwUtils.issueJWT(authUser.id).token;
+
+      adminUser = await data.adminUser().save();
+      adminToken = pwUtils.issueJWT(adminUser.id).token;
+
+      events = await Promise.all(data.events().map((e) => e.save()));
+      event = events.find((e) => e.name === 'Future Event E');
+    });
+
+    it('should return 401 without authentication', async () => {
+      const { statusCode } = await request(app).put(path + event.id);
+
+      expect(statusCode).toBe(401);
+    });
+
+    it('should return 403 without admin rights', async () => {
+      const { statusCode } = await request(app)
+        .put(path + event.id)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(403);
+    });
+
+    it('should return 200 with authentication and admin rights', async () => {
+      const { statusCode } = await request(app)
+        .put(path + event.id)
+        .set('Authorization', adminToken)
+        .send({});
+
+      expect(statusCode).toBe(200);
+    });
+
+    it('should return json', async () => {
+      const { statusCode, headers } = await request(app)
+        .put(path + event.id)
+        .set('Authorization', adminToken)
+        .send({});
+
+      expect(statusCode).toBe(200);
+      expect(headers['content-type']).toMatch(/json/);
+    });
+
+    it('should return updated event with correct fields', async () => {
+      const update = data.eventUpdate();
+
+      const { statusCode, body } = await request(app)
+        .put(path + event.id)
+        .set('Authorization', adminToken)
+        .send(update);
+
+      expect(statusCode).toBe(200);
+
+      expect(body).toEqual({
+        __v: 0,
+        _id: event.id,
+        attendees: [],
+        authUserAttendee: null,
+        capacity: update.capacity,
+        category: update.category,
+        createdAt: expect.any(String),
+        id: event.id,
+        isCancelled: false,
+        isFinished: false,
+        isFull: false,
+        location: {
+          name: update.locationName,
+          line1: update.locationLine1,
+          line2: update.locationLine2,
+          town: update.locationTown,
+          postcode: update.locationPostcode,
+        },
+        name: update.name,
+        numAttendees: 0,
+        time: {
+          buildUp: update.buildUpTime.toISOString(),
+          start: update.startTime.toISOString(),
+          end: update.endTime.toISOString(),
+        },
+        updatedAt: expect.any(String),
+      });
+    });
+  });
+
+  describe('DELETE /api/events/:eventId', () => {
+    const path = '/api/events/';
+    let authUser;
+    let authToken;
+    let adminUser;
+    let adminToken;
+    let events;
+    let event;
+
+    beforeEach(async () => {
+      authUser = await data.standardUser().save();
+      authToken = pwUtils.issueJWT(authUser.id).token;
+
+      adminUser = await data.adminUser().save();
+      adminToken = pwUtils.issueJWT(adminUser.id).token;
+
+      events = await Promise.all(data.events().map((e) => e.save()));
+      event = events.find((e) => e.name === 'Future Event E');
+    });
+
+    it('should return 401 without authentication', async () => {
+      const { statusCode } = await request(app).delete(path + event.id);
+
+      expect(statusCode).toBe(401);
+    });
+
+    it('should return 403 without admin rights', async () => {
+      const { statusCode } = await request(app)
+        .delete(path + event.id)
+        .set('Authorization', authToken);
+
+      expect(statusCode).toBe(403);
+    });
+
+    it('should return 200 with authentication and admin rights', async () => {
+      const { statusCode } = await request(app)
+        .delete(path + event.id)
+        .set('Authorization', adminToken);
+
+      expect(statusCode).toBe(200);
+    });
+
+    it('should remove event from database', async () => {
+      const { statusCode } = await request(app)
+        .delete(path + event.id)
+        .set('Authorization', adminToken);
+
+      expect(statusCode).toBe(200);
+
+      const found = await Event.findById(event.id);
+
+      expect(found).toBeFalsy();
+    });
+
+    it('should return json', async () => {
+      const { statusCode, headers } = await request(app)
+        .delete(path + event.id)
+        .set('Authorization', adminToken);
+
+      expect(statusCode).toBe(200);
+      expect(headers['content-type']).toMatch(/json/);
+    });
+
+    it('should return updated event with correct fields', async () => {
+      const { statusCode, body } = await request(app)
+        .delete(path + event.id)
+        .set('Authorization', adminToken);
+
+      expect(statusCode).toBe(200);
+
+      expect(body).toEqual({
+        __v: 0,
+        _id: event.id,
+        attendees: [],
+        authUserAttendee: null,
+        capacity: event.capacity,
+        category: event.category,
+        createdAt: expect.any(String),
+        id: event.id,
+        isCancelled: false,
+        isFinished: false,
+        isFull: false,
+        location: {
+          name: event.location.name,
+          line1: event.location.line1,
+          line2: event.location.line2,
+          town: event.location.town,
+          postcode: event.location.postcode,
+        },
+        name: event.name,
+        numAttendees: 0,
+        time: {
+          buildUp: event.time.buildUp.toISOString(),
+          start: event.time.start.toISOString(),
+          end: event.time.end.toISOString(),
+        },
+        updatedAt: expect.any(String),
+      });
+    });
+  });
+
   // TODO
   //
-  // PUT /api/events/:eventId
-  // DELETE /api/events/:eventId
   // POST /api/events/:eventId/attendees/me
   // DELETE /api/events/:eventId/attendees/me
   // PUT /api/events/:eventId/attendees/me
