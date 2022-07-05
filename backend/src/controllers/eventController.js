@@ -1,52 +1,5 @@
-import mongoose from 'mongoose';
-import createError from 'http-errors';
-
-import { Attendee, Event, User } from '../models';
 import { validateEvent, processValidation } from '../middleware/validation';
 import * as eventServices from '../services/eventServices';
-
-/*
- * Helper functions
- */
-
-const populateEvent = async (event, authUserId) => {
-  await event.populate('numAttendees');
-  await event.populate({
-    path: 'attendees',
-    populate: {
-      path: 'user',
-      select: ['firstName', 'lastName'],
-    },
-  });
-
-  // determine whether the auth user is registered for this event and, if so,
-  // attach their attendee separately.
-  const authUserAttendee = event.attendees?.find((attendee) => {
-    return attendee.user.id === authUserId;
-  });
-
-  event.set('authUserAttendee', authUserAttendee || null, {
-    strict: false,
-  });
-
-  return event;
-};
-
-const getPopulatedEvent = async (eventId, authUserId) => {
-  let event = await Event.findById(eventId);
-
-  if (!event) {
-    throw createError(400, 'Event not found.');
-  }
-
-  await populateEvent(event, authUserId);
-
-  return event;
-};
-
-/*
- * Exported functions
- */
 
 // @desc    Get all events
 // @route   GET /api/events
@@ -137,7 +90,11 @@ const updateEvent = [
   processValidation,
   async (req, res, next) => {
     try {
-      const event = await eventServices.updateEvent(req.user.id, req.params.eventId, req.body);
+      const event = await eventServices.updateEvent(
+        req.user.id,
+        req.params.eventId,
+        req.body
+      );
       return res.status(200).json(event);
     } catch (err) {
       return next(err);
@@ -153,7 +110,10 @@ const deleteEvent = [
   processValidation,
   async (req, res, next) => {
     try {
-      const event = await eventServices.deleteEvent(req.user.id, req.params.eventId);
+      const event = await eventServices.deleteEvent(
+        req.user.id,
+        req.params.eventId
+      );
       return res.status(200).json(event);
     } catch (err) {
       return next(err);
@@ -168,112 +128,12 @@ const createAuthUserAttendee = [
   validateEvent.eventId(),
   processValidation,
   async (req, res, next) => {
-    let event;
-    let attendee;
     try {
-      event = await Event.findById(req.params.eventId);
-      attendee = await Attendee.findOne({
-        user: req.user.id,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!event) {
-      return next(createError(404, 'Event not found'));
-    }
-
-    if (attendee) {
-      return next(
-        createError(400, 'Cannot join event, you are already registered.')
-      );
-    }
-
-    if (event.isFinished) {
-      return next(createError(400, 'This event has finished.'));
-    }
-    if (event.isCancelled) {
-      return next(createError(400, 'This event has been cancelled.'));
-    }
-    if (event.isFull) {
-      return next(createError(400, 'This event is full.'));
-    }
-
-    attendee = new Attendee({
-      event: new mongoose.Types.ObjectId(req.params.eventId),
-      user: new mongoose.Types.ObjectId(req.user.id),
-      guests: 0,
-    });
-
-    try {
-      attendee = await attendee.save();
-    } catch (err) {
-      return next(err);
-    }
-
-    try {
-      const updatedEvent = await getPopulatedEvent(
+      const updatedEvent = await eventServices.createAttendee(
+        req.user.id,
+        req.user.id,
         req.params.eventId,
-        req.user.id
-      );
-      return res.status(200).json(updatedEvent);
-    } catch (err) {
-      return next(err);
-    }
-  },
-];
-
-// @desc    De-register the authenticated user from an event
-// @route   DELETE /api/events/:eventId/attendees/me
-// @access  Private
-const deleteAuthUserAttendee = [
-  validateEvent.eventId(),
-  processValidation,
-  async (req, res, next) => {
-    let event;
-    let attendee;
-    try {
-      event = await Event.findById(req.params.eventId);
-      attendee = await Attendee.findOne({
-        user: req.user.id,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!event) {
-      return next(createError(404, 'Event not found'));
-    }
-
-    if (!attendee) {
-      return next(
-        createError(
-          409,
-          'You cannot de-register from an event you are not already registered for.'
-        )
-      );
-    }
-
-    if (event.isFinished) {
-      return next(createError(400, 'This event has finished.'));
-    }
-    if (event.isCancelled) {
-      return next(createError(400, 'This event has been cancelled.'));
-    }
-
-    // Remove attendee document from collection.
-    try {
-      attendee = await Attendee.findByIdAndDelete(attendee.id);
-    } catch (err) {
-      return next(err);
-    }
-
-    try {
-      const updatedEvent = await getPopulatedEvent(
-        req.params.eventId,
-        req.user.id
+        false
       );
       return res.status(200).json(updatedEvent);
     } catch (err) {
@@ -290,50 +150,34 @@ const updateAuthUserAttendee = [
   validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
-    let event;
-    let attendee;
     try {
-      event = await Event.findById(req.params.eventId);
-      attendee = await Attendee.findOne({
-        user: req.user.id,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!event) {
-      return next(createError(404, 'Event not found'));
-    }
-
-    if (!attendee) {
-      return next(createError(409, 'You are not registered for this event.'));
-    }
-
-    if (event.isFinished) {
-      return next(createError(400, 'This event has finished.'));
-    }
-    if (event.isCancelled) {
-      return next(createError(400, 'This event has been cancelled.'));
-    }
-    if (event.isFull) {
-      return next(createError(400, 'This event is full.'));
-    }
-
-    if (req.body.guests >= 0) {
-      attendee.guests = req.body.guests;
-    }
-
-    try {
-      attendee = await attendee.save();
-    } catch (err) {
-      return next(err);
-    }
-
-    try {
-      const updatedEvent = await getPopulatedEvent(
+      const updatedEvent = await eventServices.updateAttendee(
+        req.user.id,
+        req.user.id,
         req.params.eventId,
-        req.user.id
+        req.body,
+        false
+      );
+      return res.status(200).json(updatedEvent);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
+
+// @desc    De-register the authenticated user from an event
+// @route   DELETE /api/events/:eventId/attendees/me
+// @access  Private
+const deleteAuthUserAttendee = [
+  validateEvent.eventId(),
+  processValidation,
+  async (req, res, next) => {
+    try {
+      const updatedEvent = await eventServices.deleteAttendee(
+        req.user.id,
+        req.user.id,
+        req.params.eventId,
+        false
       );
       return res.status(200).json(updatedEvent);
     } catch (err) {
@@ -351,58 +195,12 @@ const createAttendee = [
   validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
-    let attendee;
     try {
-      attendee = await Attendee.findOne({
-        user: req.params.userId,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (attendee) {
-      return next(
-        createError(400, 'The user is already registered for this event')
-      );
-    }
-
-    let event;
-    try {
-      event = await getPopulatedEvent(req.params.eventId, req.params.userId);
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!event) {
-      return next(createError(404, 'Event not found'));
-    }
-
-    if (event.isFull) {
-      return next(createError(400, 'Event is full'));
-    }
-
-    let user;
-    try {
-      user = await User.findById(req.params.userId);
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!user) {
-      return next(createError(404, 'User not found'));
-    }
-
-    try {
-      await Attendee.create({
-        user: req.params.userId,
-        event: req.params.eventId,
-        guests: req.body?.guests || 0,
-      });
-
-      const updatedEvent = await getPopulatedEvent(
+      const updatedEvent = await eventServices.createAttendee(
+        req.user.id,
+        req.params.userId,
         req.params.eventId,
-        req.user.id
+        true
       );
       return res.status(200).json(updatedEvent);
     } catch (err) {
@@ -420,34 +218,13 @@ const updateAttendee = [
   validateEvent.guests().optional({ checkFalsy: true }),
   processValidation,
   async (req, res, next) => {
-    let attendee;
     try {
-      attendee = await Attendee.findOne({
-        user: req.params.userId,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!attendee) {
-      return next(createError(404, 'Attendance record not found'));
-    }
-
-    if (req.body.guests >= 0) {
-      attendee.guests = req.body.guests;
-    }
-
-    try {
-      attendee = await attendee.save();
-    } catch (err) {
-      return next(err);
-    }
-
-    try {
-      const updatedEvent = await getPopulatedEvent(
+      const updatedEvent = await eventServices.updateAttendee(
+        req.user.id,
+        req.params.userId,
         req.params.eventId,
-        req.user.id
+        req.body,
+        true
       );
       return res.status(200).json(updatedEvent);
     } catch (err) {
@@ -464,24 +241,12 @@ const deleteAttendee = [
   validateEvent.userId(),
   processValidation,
   async (req, res, next) => {
-    let attendee;
     try {
-      attendee = await Attendee.findOneAndDelete({
-        user: req.params.userId,
-        event: req.params.eventId,
-      });
-    } catch (err) {
-      return next(err);
-    }
-
-    if (!attendee) {
-      return next(createError(404, 'Attendance record not found'));
-    }
-
-    try {
-      const updatedEvent = await getPopulatedEvent(
+      const updatedEvent = await eventServices.deleteAttendee(
+        req.user.id,
+        req.params.userId,
         req.params.eventId,
-        req.user.id
+        true
       );
       return res.status(200).json(updatedEvent);
     } catch (err) {

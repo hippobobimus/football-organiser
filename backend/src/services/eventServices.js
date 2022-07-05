@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import mongoose from 'mongoose';
 
-import { Attendee, Event, User } from '../models';
+import { Attendee, Event } from '../models';
 
 /*
  * Helper functions
@@ -203,6 +203,124 @@ export const deleteEvent = async (authUserId, eventId) => {
 
   // remove related attendee records.
   await Attendee.deleteMany({ event: eventId });
+
+  return event;
+};
+
+export const createAttendee = async (authUserId, userId, eventId, isAdmin) => {
+  let event = await Event.findById(eventId);
+
+  if (!event) {
+    throw createError(404, 'Event not found');
+  }
+
+  await populateEvent(event, authUserId);
+
+  if (!isAdmin && event.isFinished) {
+    throw createError(400, 'This event has finished.');
+  }
+  if (!isAdmin && event.isCancelled) {
+    throw createError(400, 'This event has been cancelled.');
+  }
+  if (!isAdmin && event.isFull) {
+    throw createError(400, 'This event is full.');
+  }
+
+  let attendee = await Attendee.findOne({
+    user: userId,
+    event: eventId,
+  });
+
+  if (attendee) {
+    throw createError(400, 'Attendance record already exists.');
+  }
+
+  attendee = new Attendee({
+    event: new mongoose.Types.ObjectId(eventId),
+    user: new mongoose.Types.ObjectId(userId),
+    guests: 0,
+  });
+
+  attendee = await attendee.save();
+
+  event = populateEvent(event, authUserId);
+
+  return event;
+};
+
+export const updateAttendee = async (authUserId, userId, eventId, update, isAdmin) => {
+  let event = await Event.findById(eventId);
+
+  if (!event) {
+    throw createError(404, 'Event not found');
+  }
+
+  await populateEvent(event, authUserId);
+
+  // only admin can edit attendees registered to finished or cancelled events.
+  if (!isAdmin && event.isFinished) {
+    throw createError(400, 'This event has finished.');
+  }
+  if (!isAdmin && event.isCancelled) {
+    throw createError(400, 'This event has been cancelled.');
+  }
+
+  let attendee = await Attendee.findOne({
+    user: userId,
+    event: eventId,
+  });
+
+  if (!attendee) {
+    throw createError(400, 'No attendance record found.');
+  }
+
+  if (update?.guests) {
+    if (update.guests < 0) {
+      throw createError(400, 'Invalid guests value.');
+    }
+
+    const attendeesIncrease = update.guests - attendee.guests;
+    const space = event.capacity - event.numAttendees;
+
+    if (event.capacity < 0 || attendeesIncrease <= space) {
+      attendee.guests = update.guests;
+    } else {
+      throw createError(400, 'Insufficient event capacity.');
+    }
+  }
+
+  await attendee.save();
+
+  event = populateEvent(event, authUserId);
+
+  return event;
+};
+
+export const deleteAttendee = async (authUserId, userId, eventId, isAdmin) => {
+  let event = await Event.findById(eventId);
+
+  if (!event) {
+    throw createError(404, 'Event not found');
+  }
+
+  // onlu admins can delete attendees from cancelled or finished events.
+  if (!isAdmin && event.isFinished) {
+    throw createError(400, 'This event has finished.');
+  }
+  if (!isAdmin && event.isCancelled) {
+    throw createError(400, 'This event has been cancelled.');
+  }
+
+  const attendee = await Attendee.findOneAndDelete({
+    user: userId,
+    event: eventId,
+  });
+
+  if (!attendee) {
+    throw createError(400, 'No attendance record found.');
+  }
+
+  event = populateEvent(event, authUserId);
 
   return event;
 };

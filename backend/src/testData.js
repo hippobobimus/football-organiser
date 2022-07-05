@@ -1,8 +1,7 @@
-import mongoose from 'mongoose';
 import { add, sub } from 'date-fns';
 
 import pwUtils from './utils/password';
-import { Attendee, Event, User } from './models';
+import { Event, User } from './models';
 
 export const standardUser = () => {
   return new User({
@@ -187,7 +186,7 @@ export const events = () => {
         town: 'Location town E',
         postcode: 'Location postcode E',
       },
-      capacity: 8,
+      capacity: 3,
       isCancelled: false,
     }),
     new Event({
