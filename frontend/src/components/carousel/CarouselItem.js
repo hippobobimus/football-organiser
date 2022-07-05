@@ -1,4 +1,4 @@
-import * as Styled from './CarouselItem.styles';
+import * as Styled from "./CarouselItem.styles";
 
 const CarouselItem = ({ children, className, width }) => {
   return (

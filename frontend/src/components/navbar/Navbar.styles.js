@@ -1,7 +1,7 @@
-import styled, { css, keyframes } from 'styled-components';
-import Icon from '@mdi/react';
+import styled, { css, keyframes } from "styled-components";
+import Icon from "@mdi/react";
 
-import { Button, Container, Title } from '../styles';
+import { Button, Container, Title } from "../styles";
 
 const rotateX = keyframes`
   0% {
@@ -35,9 +35,9 @@ const Nav = styled.nav`
   position: relative;
 
   display: flex;
-  flex-direction: ${(props) => (props.isMobile ? 'column' : 'row')};
+  flex-direction: ${(props) => (props.isMobile ? "column" : "row")};
   justify-content: ${(props) =>
-    props.isMobile ? 'flex-start' : 'space-around'};
+    props.isMobile ? "flex-start" : "space-around"};
   align-items: center;
   gap: 30px;
 
@@ -49,7 +49,7 @@ const Nav = styled.nav`
 const MenuContainer = styled(Container)`
   background-color: ${(props) => props.theme.bgClr};
 
-  flex-direction: ${(props) => (props.isRow ? 'row' : 'column')};
+  flex-direction: ${(props) => (props.isRow ? "row" : "column")};
   justify-content: flex-start;
   gap: 30px;
   z-index: 999;

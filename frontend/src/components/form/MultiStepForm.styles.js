@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { Form as FormikForm } from 'formik';
+import styled from "styled-components";
+import { Form as FormikForm } from "formik";
 
-import { Button } from '../styles';
+import { Button } from "../styles";
 
 export const Form = styled(FormikForm)`
   display: flex;
@@ -14,7 +14,7 @@ export const FormButtonContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px
+  gap: 10px;
 `;
 
 export const FormButton = styled(Button)`

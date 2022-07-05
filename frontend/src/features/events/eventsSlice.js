@@ -2,25 +2,25 @@ import {
   createAsyncThunk,
   createEntityAdapter,
   createSlice,
-} from '@reduxjs/toolkit';
+} from "@reduxjs/toolkit";
 
-import eventsService from './eventsService';
+import eventsService from "./eventsService";
 
 const eventsAdapter = createEntityAdapter();
 
 const initialState = eventsAdapter.getInitialState({
   eventDetails: null,
-  fetchStatus: 'idle',
-  fetchMessage: '',
-  deleteStatus: 'idle',
-  deleteMessage: '',
-  updateStatus: 'idle',
-  updateMessage: '',
+  fetchStatus: "idle",
+  fetchMessage: "",
+  deleteStatus: "idle",
+  deleteMessage: "",
+  updateStatus: "idle",
+  updateMessage: "",
   pagination: null,
 });
 
 export const fetchEvents = createAsyncThunk(
-  'events/fetchEvents',
+  "events/fetchEvents",
   async (queryParams, thunkAPI) => {
     try {
       return await eventsService.getEvents(
@@ -34,7 +34,7 @@ export const fetchEvents = createAsyncThunk(
 );
 
 export const fetchOneEvent = createAsyncThunk(
-  'events/fetchOneEvent',
+  "events/fetchOneEvent",
   async (eventId, thunkAPI) => {
     try {
       return await eventsService.getOneEvent(
@@ -48,7 +48,7 @@ export const fetchOneEvent = createAsyncThunk(
 );
 
 export const fetchNextMatch = createAsyncThunk(
-  'events/fetchNextMatch',
+  "events/fetchNextMatch",
   async (_, thunkAPI) => {
     try {
       return await eventsService.getNextMatch(thunkAPI.getState().auth.token);
@@ -59,7 +59,7 @@ export const fetchNextMatch = createAsyncThunk(
 );
 
 export const createEvent = createAsyncThunk(
-  'events/createMatch',
+  "events/createMatch",
   async (eventData, thunkAPI) => {
     try {
       return await eventsService.createEvent(
@@ -73,7 +73,7 @@ export const createEvent = createAsyncThunk(
 );
 
 export const updateEvent = createAsyncThunk(
-  'events/updateEvent',
+  "events/updateEvent",
   async (eventData, thunkAPI) => {
     try {
       return await eventsService.updateEvent(
@@ -87,7 +87,7 @@ export const updateEvent = createAsyncThunk(
 );
 
 export const deleteEvent = createAsyncThunk(
-  'events/deleteEvent',
+  "events/deleteEvent",
   async (eventId, thunkAPI) => {
     try {
       return await eventsService.deleteEvent(
@@ -101,7 +101,7 @@ export const deleteEvent = createAsyncThunk(
 );
 
 export const addAuthUserToEvent = createAsyncThunk(
-  'events/addAuthUserToEvent',
+  "events/addAuthUserToEvent",
   async (eventId, thunkAPI) => {
     try {
       return await eventsService.addAuthUserToEvent(
@@ -115,7 +115,7 @@ export const addAuthUserToEvent = createAsyncThunk(
 );
 
 export const removeAuthUserFromEvent = createAsyncThunk(
-  'events/removeAuthUserFromEvent',
+  "events/removeAuthUserFromEvent",
   async (eventId, thunkAPI) => {
     try {
       return await eventsService.removeAuthUserFromEvent(
@@ -129,7 +129,7 @@ export const removeAuthUserFromEvent = createAsyncThunk(
 );
 
 export const updateAuthUserEventAttendee = createAsyncThunk(
-  'events/updateAuthUserEventAttendee',
+  "events/updateAuthUserEventAttendee",
   async (attendeeParams, thunkAPI) => {
     try {
       return await eventsService.updateAuthUserEventAttendee(
@@ -143,7 +143,7 @@ export const updateAuthUserEventAttendee = createAsyncThunk(
 );
 
 export const createAttendee = createAsyncThunk(
-  'events/createAttendee',
+  "events/createAttendee",
   async (attendeeParams, thunkAPI) => {
     try {
       return await eventsService.createAttendee(
@@ -157,7 +157,7 @@ export const createAttendee = createAsyncThunk(
 );
 
 export const updateAttendee = createAsyncThunk(
-  'events/updateAttendee',
+  "events/updateAttendee",
   async (attendeeParams, thunkAPI) => {
     try {
       return await eventsService.updateAttendee(
@@ -171,7 +171,7 @@ export const updateAttendee = createAsyncThunk(
 );
 
 export const deleteAttendee = createAsyncThunk(
-  'events/deleteAttendee',
+  "events/deleteAttendee",
   async (attendeeParams, thunkAPI) => {
     try {
       return await eventsService.deleteAttendee(
@@ -185,176 +185,176 @@ export const deleteAttendee = createAsyncThunk(
 );
 
 const eventsSlice = createSlice({
-  name: 'events',
+  name: "events",
   initialState,
   reducers: {
     reset: (state) => {
       eventsAdapter.removeAll(state);
       state.eventDetails = null;
-      state.fetchStatus = 'idle';
-      state.fetchMessage = '';
-      state.updateStatus = 'idle';
-      state.updateMessage = '';
-      state.deleteStatus = 'idle';
-      state.deleteMessage = '';
+      state.fetchStatus = "idle";
+      state.fetchMessage = "";
+      state.updateStatus = "idle";
+      state.updateMessage = "";
+      state.deleteStatus = "idle";
+      state.deleteMessage = "";
       state.pagination = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchEvents.pending, (state) => {
-        state.fetchStatus = 'loading';
+        state.fetchStatus = "loading";
       })
       .addCase(fetchEvents.fulfilled, (state, action) => {
-        state.fetchStatus = 'success';
+        state.fetchStatus = "success";
         const { docs, ...pagination } = action.payload;
         eventsAdapter.setAll(state, docs);
         state.pagination = pagination;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
-        state.fetchStatus = 'error';
+        state.fetchStatus = "error";
         state.fetchMessage = action.payload;
       })
 
       .addCase(fetchOneEvent.pending, (state) => {
-        state.fetchStatus = 'loading';
+        state.fetchStatus = "loading";
       })
       .addCase(fetchOneEvent.fulfilled, (state, action) => {
-        state.fetchStatus = 'success';
+        state.fetchStatus = "success";
         state.eventDetails = action.payload;
       })
       .addCase(fetchOneEvent.rejected, (state, action) => {
-        state.fetchStatus = 'error';
+        state.fetchStatus = "error";
         state.fetchMessage = action.payload;
       })
 
       .addCase(fetchNextMatch.pending, (state) => {
-        state.fetchStatus = 'loading';
+        state.fetchStatus = "loading";
       })
       .addCase(fetchNextMatch.fulfilled, (state, action) => {
-        state.fetchStatus = 'success';
+        state.fetchStatus = "success";
         state.eventDetails = action.payload;
       })
       .addCase(fetchNextMatch.rejected, (state, action) => {
-        state.fetchStatus = 'error';
+        state.fetchStatus = "error";
         state.fetchMessage = action.payload;
       })
 
       .addCase(createEvent.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(createEvent.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(createEvent.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(updateEvent.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(updateEvent.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateEvent.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(deleteEvent.pending, (state) => {
-        state.deleteStatus = 'loading';
+        state.deleteStatus = "loading";
       })
       .addCase(deleteEvent.fulfilled, (state, action) => {
-        state.deleteStatus = 'success';
+        state.deleteStatus = "success";
         state.eventDetails = null;
-        state.fetchStatus = 'idle';
+        state.fetchStatus = "idle";
         eventsAdapter.removeOne(state, action.payload.id);
       })
       .addCase(deleteEvent.rejected, (state, action) => {
-        state.deleteStatus = 'error';
+        state.deleteStatus = "error";
         state.deleteMessage = action.payload;
       })
 
       .addCase(addAuthUserToEvent.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(addAuthUserToEvent.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(addAuthUserToEvent.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(removeAuthUserFromEvent.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(removeAuthUserFromEvent.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(removeAuthUserFromEvent.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(updateAuthUserEventAttendee.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(updateAuthUserEventAttendee.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateAuthUserEventAttendee.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(createAttendee.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(createAttendee.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(createAttendee.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(updateAttendee.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(updateAttendee.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(updateAttendee.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       })
 
       .addCase(deleteAttendee.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(deleteAttendee.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.eventDetails = action.payload;
         eventsAdapter.upsertOne(state, action.payload);
       })
       .addCase(deleteAttendee.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       });
   },

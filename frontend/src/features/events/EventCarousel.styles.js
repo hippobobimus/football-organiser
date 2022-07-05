@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Carousel, CarouselItem } from '../../components/carousel';
+import styled from "styled-components";
+import { Carousel, CarouselItem } from "../../components/carousel";
 
 export const CarouselContainer = styled.div`
   background-color: ${(props) => props.theme.eventCarouselBgClr};

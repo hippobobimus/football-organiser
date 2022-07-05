@@ -1,18 +1,18 @@
-const API_URL = '/api/events/';
+const API_URL = "/api/events/";
 
 const getEvents = async (token, queryParams) => {
   const queryString = Object.entries(queryParams)
     .map(([key, val]) => `${key}=${val}`)
-    .join('&');
+    .join("&");
 
-  const url = `${API_URL}${queryString ? '?' : ''}${queryString}`;
+  const url = `${API_URL}${queryString ? "?" : ""}${queryString}`;
 
   const response = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -28,11 +28,11 @@ const getEvents = async (token, queryParams) => {
 
 const getOneEvent = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}`, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -48,11 +48,11 @@ const getOneEvent = async (token, eventId) => {
 
 const getNextMatch = async (token) => {
   const response = await fetch(`${API_URL}next-match`, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -68,11 +68,11 @@ const getNextMatch = async (token) => {
 
 const createEvent = async (token, eventData) => {
   const response = await fetch(API_URL, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(eventData),
   });
@@ -87,13 +87,13 @@ const createEvent = async (token, eventData) => {
   return data;
 };
 
-const updateEvent = async (token, {id, update}) => {
+const updateEvent = async (token, { id, update }) => {
   const response = await fetch(API_URL + id, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(update),
   });
@@ -110,11 +110,11 @@ const updateEvent = async (token, {id, update}) => {
 
 const deleteEvent = async (token, id) => {
   const response = await fetch(API_URL + id, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -130,11 +130,11 @@ const deleteEvent = async (token, id) => {
 
 const addAuthUserToEvent = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -150,11 +150,11 @@ const addAuthUserToEvent = async (token, eventId) => {
 
 const removeAuthUserFromEvent = async (token, eventId) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 
@@ -170,11 +170,11 @@ const removeAuthUserFromEvent = async (token, eventId) => {
 
 const updateAuthUserEventAttendee = async (token, { eventId, ...params }) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/me`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(params),
   });
@@ -191,11 +191,11 @@ const updateAuthUserEventAttendee = async (token, { eventId, ...params }) => {
 
 const createAttendee = async (token, { eventId, userId, ...params }) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/${userId}`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(params),
   });
@@ -212,11 +212,11 @@ const createAttendee = async (token, { eventId, userId, ...params }) => {
 
 const updateAttendee = async (token, { eventId, userId, ...params }) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/${userId}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(params),
   });
@@ -233,11 +233,11 @@ const updateAttendee = async (token, { eventId, userId, ...params }) => {
 
 const deleteAttendee = async (token, { eventId, userId }) => {
   const response = await fetch(`${API_URL}${eventId}/attendees/${userId}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 

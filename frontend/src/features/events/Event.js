@@ -1,17 +1,17 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { Button, Subtitle } from '../../components/styles';
-import { Spinner } from '../../components/spinner';
+import { Button, Subtitle } from "../../components/styles";
+import { Spinner } from "../../components/spinner";
 import {
   deleteEvent,
   fetchNextMatch,
   fetchOneEvent,
   reset,
   updateEvent,
-} from './eventsSlice';
-import EventView from './EventView';
+} from "./eventsSlice";
+import EventView from "./EventView";
 
 const Event = ({ nextMatch }) => {
   const dispatch = useDispatch();
@@ -38,9 +38,9 @@ const Event = ({ nextMatch }) => {
   }, [eventId, dispatch, nextMatch]);
 
   if (
-    fetchStatus === 'error' ||
-    updateStatus === 'error' ||
-    deleteStatus === 'error'
+    fetchStatus === "error" ||
+    updateStatus === "error" ||
+    deleteStatus === "error"
   ) {
     return (
       <>
@@ -52,13 +52,13 @@ const Event = ({ nextMatch }) => {
     );
   }
 
-  if (deleteStatus === 'success') {
+  if (deleteStatus === "success") {
     return (
       <>
         <Subtitle>Event deleted</Subtitle>
         <Button
           as={Link}
-          to='/calendar'
+          to="/calendar"
           onClick={() => {
             dispatch(reset());
             return true;
@@ -71,10 +71,10 @@ const Event = ({ nextMatch }) => {
   }
 
   if (
-    fetchStatus === 'idle' ||
-    fetchStatus === 'loading' ||
-    updateStatus === 'loading' ||
-    deleteStatus === 'loading'
+    fetchStatus === "idle" ||
+    fetchStatus === "loading" ||
+    updateStatus === "loading" ||
+    deleteStatus === "loading"
   ) {
     return <Spinner />;
   }
@@ -85,7 +85,7 @@ const Event = ({ nextMatch }) => {
   };
 
   const handleCancel = () => {
-    if (window.confirm('Are you sure you want to cancel this event?')) {
+    if (window.confirm("Are you sure you want to cancel this event?")) {
       dispatch(updateEvent({ id: eventId, update: { isCancelled: true } }));
     }
   };
@@ -95,12 +95,12 @@ const Event = ({ nextMatch }) => {
   };
 
   const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
+    if (window.confirm("Are you sure you want to delete this event?")) {
       dispatch(deleteEvent(eventId));
     }
   };
 
-  if (nextMatch && fetchStatus === 'success' && !eventDetails) {
+  if (nextMatch && fetchStatus === "success" && !eventDetails) {
     return (
       <>
         <Subtitle>No upcoming matches...</Subtitle>

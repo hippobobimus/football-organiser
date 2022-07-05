@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Icon from '@mdi/react';
-import { mdiArrowLeftBoldOutline, mdiArrowRightBoldOutline } from '@mdi/js';
+import React, { useState } from "react";
+import Icon from "@mdi/react";
+import { mdiArrowLeftBoldOutline, mdiArrowRightBoldOutline } from "@mdi/js";
 
-import { SmallButton } from '../styles';
-import * as Styled from './Carousel.styles';
+import { SmallButton } from "../styles";
+import * as Styled from "./Carousel.styles";
 
 const Carousel = ({ children, className, headings }) => {
   const [index, setIndex] = useState(0);
@@ -39,19 +39,19 @@ const Carousel = ({ children, className, headings }) => {
 
       <Styled.InnerCarouselContainer transform={transform}>
         {React.Children.map(children, (child) => {
-          return React.cloneElement(child, { width: '100%' });
+          return React.cloneElement(child, { width: "100%" });
         })}
       </Styled.InnerCarouselContainer>
 
       <Styled.ButtonRow>
         <SmallButton onClick={() => cycleLeft()} disabled={index === 0}>
-          <Icon path={mdiArrowLeftBoldOutline} size={0.75} title='Page left' />
+          <Icon path={mdiArrowLeftBoldOutline} size={0.75} title="Page left" />
         </SmallButton>
         <SmallButton onClick={() => cycleRight()} disabled={index === maxIndex}>
           <Icon
             path={mdiArrowRightBoldOutline}
             size={0.75}
-            title='Page right'
+            title="Page right"
           />
         </SmallButton>
       </Styled.ButtonRow>

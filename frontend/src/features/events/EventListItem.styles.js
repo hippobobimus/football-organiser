@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import Icon from '@mdi/react';
+import styled from "styled-components";
+import Icon from "@mdi/react";
 
-import { Button } from '../../components/styles';
+import { Button } from "../../components/styles";
 
 export const IconContainer = styled.div`
   display: flex;

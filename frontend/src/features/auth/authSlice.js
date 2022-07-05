@@ -1,24 +1,24 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import authService from './authService';
+import authService from "./authService";
 
-const token = JSON.parse(localStorage.getItem('token')) || null;
+const token = JSON.parse(localStorage.getItem("token")) || null;
 const isLoggedIn = Boolean(token);
 
 const initialState = {
   authUser: null,
-  authUserStatus: 'idle',
-  authUserMessage: '',
-  updateStatus: 'idle',
-  updateMessage: '',
+  authUserStatus: "idle",
+  authUserMessage: "",
+  updateStatus: "idle",
+  updateMessage: "",
   token,
   isLoggedIn,
-  status: 'idle',
-  message: '',
+  status: "idle",
+  message: "",
 };
 
 export const register = createAsyncThunk(
-  'auth/register',
+  "auth/register",
   async (user, thunkAPI) => {
     try {
       return await authService.register(user);
@@ -28,7 +28,7 @@ export const register = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {
     return await authService.login(user);
   } catch (err) {
@@ -36,18 +36,18 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   try {
     // purge store state and logout.
     await authService.logout();
-    thunkAPI.dispatch({ type: 'store/purge' });
+    thunkAPI.dispatch({ type: "store/purge" });
   } catch (err) {
     return thunkAPI.rejectWithValue(err.message);
   }
 });
 
 export const fetchAuthUser = createAsyncThunk(
-  'auth/fetchAuthUser',
+  "auth/fetchAuthUser",
   async (_, thunkAPI) => {
     try {
       return await authService.getAuthUser(thunkAPI.getState().auth.token);
@@ -58,7 +58,7 @@ export const fetchAuthUser = createAsyncThunk(
 );
 
 export const updateAuthUser = createAsyncThunk(
-  'auth/updateAuthUser',
+  "auth/updateAuthUser",
   async (user, thunkAPI) => {
     try {
       return await authService.updateAuthUser(
@@ -72,49 +72,49 @@ export const updateAuthUser = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     reset: (state) => {
       state.authUser = null;
-      state.authUserStatus = 'idle';
-      state.authUserMessage = '';
-      state.updateStatus = 'idle';
-      state.updateMessage = '';
-      state.status = 'idle';
-      state.message = '';
+      state.authUserStatus = "idle";
+      state.authUserMessage = "";
+      state.updateStatus = "idle";
+      state.updateMessage = "";
+      state.status = "idle";
+      state.message = "";
     },
     resetUpdate: (state) => {
-      state.updateStatus = 'idle';
-      state.updateMessage = '';
+      state.updateStatus = "idle";
+      state.updateMessage = "";
     },
   },
   extraReducers(builder) {
     builder
       .addCase(register.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = 'success';
+        state.status = "success";
         state.token = action.payload.token;
         state.isLoggedIn = true;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = 'error';
+        state.status = "error";
         state.message = action.payload;
         state.token = null;
       })
 
       .addCase(login.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = 'success';
+        state.status = "success";
         state.token = action.payload.token;
         state.isLoggedIn = true;
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = 'error';
+        state.status = "error";
         state.message = action.payload;
         state.token = null;
       })
@@ -125,27 +125,27 @@ const authSlice = createSlice({
       })
 
       .addCase(fetchAuthUser.pending, (state) => {
-        state.authUserStatus = 'loading';
+        state.authUserStatus = "loading";
       })
       .addCase(fetchAuthUser.fulfilled, (state, action) => {
-        state.authUserStatus = 'success';
+        state.authUserStatus = "success";
         state.authUser = action.payload;
       })
       .addCase(fetchAuthUser.rejected, (state, action) => {
-        state.authUserStatus = 'error';
+        state.authUserStatus = "error";
         state.authUserMessage = action.payload;
         state.authUser = null;
       })
 
       .addCase(updateAuthUser.pending, (state) => {
-        state.updateStatus = 'loading';
+        state.updateStatus = "loading";
       })
       .addCase(updateAuthUser.fulfilled, (state, action) => {
-        state.updateStatus = 'success';
+        state.updateStatus = "success";
         state.authUser = action.payload;
       })
       .addCase(updateAuthUser.rejected, (state, action) => {
-        state.updateStatus = 'error';
+        state.updateStatus = "error";
         state.updateMessage = action.payload;
       });
   },

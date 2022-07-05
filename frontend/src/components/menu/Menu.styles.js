@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components';
+import { NavLink } from "react-router-dom";
+import styled from "styled-components";
 
 const ListItem = styled.li`
   display: flex;
@@ -12,7 +12,7 @@ const ListItem = styled.li`
 
 const MenuList = styled.ul`
   display: flex;
-  flex-direction: ${(props) => (props.isRow ? 'row' : 'column')};
+  flex-direction: ${(props) => (props.isRow ? "row" : "column")};
   align-items: center;
   gap: 15px;
 

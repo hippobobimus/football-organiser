@@ -1,12 +1,12 @@
-const API_URL = '/api/users/';
+const API_URL = "/api/users/";
 
 const getUsers = async (token) => {
   const response = await fetch(API_URL, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: token,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+      Accept: "application/json",
+      "Content-Type": "application/json",
     },
   });
 

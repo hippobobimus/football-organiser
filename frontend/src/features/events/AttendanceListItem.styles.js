@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import MdiIcon from '@mdi/react';
+import styled from "styled-components";
+import MdiIcon from "@mdi/react";
 
 export const ListItem = styled.li`
   background-color: ${(props) => props.theme.playerListBgClr};

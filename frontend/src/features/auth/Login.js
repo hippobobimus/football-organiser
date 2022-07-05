@@ -1,30 +1,26 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import {
-  FormStep,
-  MultiStepForm,
-  TextInput,
-} from '../../components/form';
-import Spinner from '../../components/spinner/Spinner';
-import { Button, Container, Link, Subtitle } from '../../components/styles';
-import { login, reset } from './authSlice';
-import { loginSchema } from './authUserValidation';
+import { FormStep, MultiStepForm, TextInput } from "../../components/form";
+import Spinner from "../../components/spinner/Spinner";
+import { Button, Container, Link, Subtitle } from "../../components/styles";
+import { login, reset } from "./authSlice";
+import { loginSchema } from "./authUserValidation";
 
 const Login = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
 
   // page the user was trying to access.
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || "/";
 
   const { isLoggedIn, status, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (isLoggedIn || status === 'success') {
+    if (isLoggedIn || status === "success") {
       // return to page user was trying to access, do not store login page in history.
       navigate(from, { replace: true });
       dispatch(reset());
@@ -38,19 +34,19 @@ const Login = () => {
     dispatch(login(values));
   };
 
-  if (status === 'error') {
+  if (status === "error") {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button type='button' onClick={() => dispatch(reset())}>
+        <Button type="button" onClick={() => dispatch(reset())}>
           Back
         </Button>
       </>
     );
   }
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return <Spinner />;
   }
 
@@ -60,19 +56,19 @@ const Login = () => {
       <MultiStepForm
         initialValues={{
           email: userEmail,
-          currentPassword: '',
+          currentPassword: "",
         }}
         onSubmit={handleSubmit}
-        submitLabel='Login'
+        submitLabel="Login"
       >
         <FormStep validationSchema={loginSchema}>
-          <TextInput label='Email' name='email' type='email' />
-          <TextInput label='Password' name='currentPassword' type='password' />
+          <TextInput label="Email" name="email" type="email" />
+          <TextInput label="Password" name="currentPassword" type="password" />
         </FormStep>
       </MultiStepForm>
       <Container>
         <p>Not registered yet?</p>
-        <Link to='/register'>Create an account</Link>
+        <Link to="/register">Create an account</Link>
       </Container>
     </>
   );

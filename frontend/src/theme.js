@@ -1,15 +1,15 @@
 const colours = {
-  black: 'black',
-  grey: 'grey',
-  green: '#16ffbd',
-  darkGreen: '#12c998',
-  veryDarkGreen: '#439f76',
-  pink: '#f070a1',
-  darkPink: '#c34271',
-  white: 'white',
-  red: 'red',
-  darkRed: 'darkRed',
-}
+  black: "black",
+  grey: "grey",
+  green: "#16ffbd",
+  darkGreen: "#12c998",
+  veryDarkGreen: "#439f76",
+  pink: "#f070a1",
+  darkPink: "#c34271",
+  white: "white",
+  red: "red",
+  darkRed: "darkRed",
+};
 
 const theme = {
   bgClr: colours.pink,
@@ -48,10 +48,10 @@ const theme = {
   spinnerBgClr: colours.white,
   spinnerFgClr: colours.darkPink,
 
-  titleFont: '\'Bangers\', cursive',
-  subtitleFont: '\'Permanent Marker\', cursive',
-  buttonFont: '\'Permanent Marker\', cursive',
-  font: '\'Chilanka\', cursive',
-}
+  titleFont: "'Bangers', cursive",
+  subtitleFont: "'Permanent Marker', cursive",
+  buttonFont: "'Permanent Marker', cursive",
+  font: "'Chilanka', cursive",
+};
 
 export default theme;

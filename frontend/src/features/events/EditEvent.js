@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { format, isPast } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { format, isPast } from "date-fns";
 
-import { Button, SectionHeading, Subtitle } from '../../components/styles';
-import { Spinner } from '../../components/spinner';
-import { MultiStepForm, FormStep, TextInput } from '../../components/form';
-import { addressSchema, eventInfoSchema } from './eventValidation';
-import { updateEvent, fetchOneEvent, reset } from './eventsSlice';
+import { Button, SectionHeading, Subtitle } from "../../components/styles";
+import { Spinner } from "../../components/spinner";
+import { MultiStepForm, FormStep, TextInput } from "../../components/form";
+import { addressSchema, eventInfoSchema } from "./eventValidation";
+import { updateEvent, fetchOneEvent, reset } from "./eventsSlice";
 
 const EditEvent = () => {
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const EditEvent = () => {
   } = useSelector((state) => state.events);
 
   useEffect(() => {
-    if (updateStatus === 'success') {
+    if (updateStatus === "success") {
       navigate(`/events/${eventDetails.id}`);
       dispatch(reset());
     }
@@ -68,9 +68,9 @@ const EditEvent = () => {
   };
 
   if (
-    fetchStatus === 'loading' ||
-    fetchStatus === 'idle' ||
-    updateStatus === 'loading' ||
+    fetchStatus === "loading" ||
+    fetchStatus === "idle" ||
+    updateStatus === "loading" ||
     !formattedTime
   ) {
     return <Spinner />;
@@ -81,20 +81,20 @@ const EditEvent = () => {
       <>
         <Subtitle>Event in progress/finished</Subtitle>
         <p>Editing is no longer possible</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
     );
   }
 
-  if (fetchStatus === 'error' || updateStatus === 'error') {
+  if (fetchStatus === "error" || updateStatus === "error") {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
         {fetchMessage && <p>{fetchMessage}</p>}
         {updateMessage && <p>{updateMessage}</p>}
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
@@ -104,14 +104,14 @@ const EditEvent = () => {
   return (
     <>
       <Subtitle>
-        {eventDetails.category === 'match' && 'Edit Match'}
-        {eventDetails.category === 'social' && 'Edit Social'}
+        {eventDetails.category === "match" && "Edit Match"}
+        {eventDetails.category === "social" && "Edit Social"}
       </Subtitle>
       <MultiStepForm
         initialValues={{
           category: eventDetails.category,
           name: eventDetails.name,
-          timezone: 'europe/london',
+          timezone: "europe/london",
           buildUpTime: formattedTime.buildUp,
           startTime: formattedTime.start,
           endTime: formattedTime.end,
@@ -120,31 +120,31 @@ const EditEvent = () => {
           locationLine2: eventDetails.location.line2,
           locationTown: eventDetails.location.town,
           locationPostcode: eventDetails.location.postcode,
-          capacity: eventDetails.capacity > 0 ? eventDetails.capacity : '',
+          capacity: eventDetails.capacity > 0 ? eventDetails.capacity : "",
         }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >
         <FormStep validationSchema={eventInfoSchema}>
-          {eventDetails.category === 'social' && (
-            <TextInput label='Name' name='name' type='text' />
+          {eventDetails.category === "social" && (
+            <TextInput label="Name" name="name" type="text" />
           )}
-          <TextInput label='Warm Up' name='buildUpTime' type='datetime-local' />
-          <TextInput label='Kick Off' name='startTime' type='datetime-local' />
-          <TextInput label='Finish' name='endTime' type='datetime-local' />
+          <TextInput label="Warm Up" name="buildUpTime" type="datetime-local" />
+          <TextInput label="Kick Off" name="startTime" type="datetime-local" />
+          <TextInput label="Finish" name="endTime" type="datetime-local" />
           <TextInput
-            label='Maximum No. of Attendees (optional)'
-            name='capacity'
-            type='number'
+            label="Maximum No. of Attendees (optional)"
+            name="capacity"
+            type="number"
           />
         </FormStep>
         <FormStep validationSchema={addressSchema}>
           <SectionHeading>Address</SectionHeading>
-          <TextInput label='Name' name='locationName' type='text' />
-          <TextInput label='Address Line 1' name='locationLine1' type='text' />
-          <TextInput label='Address Line 2' name='locationLine2' type='text' />
-          <TextInput label='Town' name='locationTown' type='text' />
-          <TextInput label='Postcode' name='locationPostcode' type='text' />
+          <TextInput label="Name" name="locationName" type="text" />
+          <TextInput label="Address Line 1" name="locationLine1" type="text" />
+          <TextInput label="Address Line 2" name="locationLine2" type="text" />
+          <TextInput label="Town" name="locationTown" type="text" />
+          <TextInput label="Postcode" name="locationPostcode" type="text" />
         </FormStep>
       </MultiStepForm>
     </>

@@ -248,7 +248,13 @@ export const createAttendee = async (authUserId, userId, eventId, isAdmin) => {
   return event;
 };
 
-export const updateAttendee = async (authUserId, userId, eventId, update, isAdmin) => {
+export const updateAttendee = async (
+  authUserId,
+  userId,
+  eventId,
+  update,
+  isAdmin
+) => {
   let event = await Event.findById(eventId);
 
   if (!event) {

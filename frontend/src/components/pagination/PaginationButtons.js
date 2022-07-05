@@ -1,8 +1,8 @@
-import Icon from '@mdi/react';
-import { mdiArrowUpBoldOutline, mdiArrowDownBoldOutline } from '@mdi/js';
+import Icon from "@mdi/react";
+import { mdiArrowUpBoldOutline, mdiArrowDownBoldOutline } from "@mdi/js";
 
-import { SmallButton } from '../styles';
-import * as Styled from './PaginationButtons.styles';
+import { SmallButton } from "../styles";
+import * as Styled from "./PaginationButtons.styles";
 
 const PaginationButtons = ({
   onUpClick,
@@ -12,10 +12,10 @@ const PaginationButtons = ({
 }) => {
   return (
     <Styled.ButtonRow>
-      <SmallButton type='button' onClick={onUpClick} disabled={upDisabled}>
+      <SmallButton type="button" onClick={onUpClick} disabled={upDisabled}>
         <Icon path={mdiArrowUpBoldOutline} size={1} />
       </SmallButton>
-      <SmallButton type='button' onClick={onDownClick} disabled={downDisabled}>
+      <SmallButton type="button" onClick={onDownClick} disabled={downDisabled}>
         <Icon path={mdiArrowDownBoldOutline} size={1} />
       </SmallButton>
     </Styled.ButtonRow>
