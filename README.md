@@ -10,9 +10,9 @@ A demo version of the website is available here: [Demo site](https://demo.bibgam
 
 **NB** - the website is hosted on a free tier platform that puts the server to sleep after a period of inactivity, so you may encounter a lag of a few seconds on the first page load while the server wakes.
 
-#### Login details:
+#### Login details
 
-##### Admin account:
+##### Admin account
 
 - Username: demo-admin@bibgameplayers.com
 - Password: Demoadmin1!

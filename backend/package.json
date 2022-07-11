@@ -13,7 +13,8 @@
     "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand",
     "test:watch": "yarn test --watchAll",
     "test:debug": "NODE_OPTIONS='--inspect-brk --experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand",
-    "lint": "yarn eslint --cache"
+    "lint": "yarn eslint --cache .",
+    "lint:staged": "yarn eslint --cache"
   },
   "type": "module",
   "eslintConfig": {

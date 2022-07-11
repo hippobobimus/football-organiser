@@ -13,20 +13,18 @@
     "server": "yarn workspace backend devdebug",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn workspace frontend install && yarn workspace frontend run build",
-    "format:check": "prettier --check",
-    "format:write": "prettier --write",
-    "lint": "yarn workspace backend lint; yarn workspace frontend lint",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint": "yarn workspace backend lint",
     "postinstall": "husky install"
   },
   "prettier": {
     "singleQuote": true
   },
   "lint-staged": {
-    "*.js": [
-      "yarn format:check",
-      "yarn lint"
-    ],
-    "*.md": "yarn format:check"
+    "*.js": "prettier --write",
+    "*.md": "prettier --write",
+    "backend/**/*.js": "yarn workspace backend lint:staged"
   },
   "devDependencies": {
     "concurrently": "^7.1.0",
