@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Subtitle } from "../../components/styles";
-import { FormStep, MultiStepForm, TextInput } from "../../components/form";
-import Spinner from "../../components/spinner/Spinner";
-import { updateAuthUser, resetUpdate } from "./authSlice";
-import { userUpdateSchema } from "./authUserValidation";
+import { Button, Subtitle } from '../../components/styles';
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
+import Spinner from '../../components/spinner/Spinner';
+import { updateAuthUser, resetUpdate } from './authSlice';
+import { userUpdateSchema } from './authUserValidation';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -16,9 +16,9 @@ const EditProfile = () => {
   );
 
   useEffect(() => {
-    if (updateStatus === "success") {
+    if (updateStatus === 'success') {
       dispatch(resetUpdate());
-      navigate("/profile");
+      navigate('/profile');
     }
   }, [dispatch, navigate, updateStatus]);
 
@@ -28,15 +28,15 @@ const EditProfile = () => {
 
   const handleCancel = () => {
     dispatch(resetUpdate());
-    navigate("/profile");
+    navigate('/profile');
   };
 
   const handleBack = () => {
     dispatch(resetUpdate());
-    navigate("/profile");
+    navigate('/profile');
   };
 
-  if (updateStatus === "error") {
+  if (updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
@@ -48,7 +48,7 @@ const EditProfile = () => {
     );
   }
 
-  if (updateStatus === "loading") {
+  if (updateStatus === 'loading') {
     return <Spinner />;
   }
 
@@ -56,7 +56,7 @@ const EditProfile = () => {
     <>
       <Subtitle>Edit Your Info</Subtitle>
       <MultiStepForm
-        initialValues={{ currentPassword: "", ...authUser }}
+        initialValues={{ currentPassword: '', ...authUser }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >

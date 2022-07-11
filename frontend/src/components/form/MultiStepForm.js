@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Formik } from "formik";
+import React, { useState } from 'react';
+import { Formik } from 'formik';
 
-import * as Styled from "./MultiStepForm.styles";
+import * as Styled from './MultiStepForm.styles';
 
 const MultiStepForm = ({
   children,
@@ -64,7 +64,7 @@ const MultiStepForm = ({
               </Styled.FormButton>
             )}
             <Styled.FormButton type="submit" disabled={formik.isSubmitting}>
-              {isLastStep ? submitLabel || "Save" : "Next"}
+              {isLastStep ? submitLabel || 'Save' : 'Next'}
             </Styled.FormButton>
           </Styled.FormButtonContainer>
         </Styled.Form>

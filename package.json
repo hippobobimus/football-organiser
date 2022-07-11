@@ -22,11 +22,11 @@
     "singleQuote": true
   },
   "lint-staged": {
-    ".js": [
+    "*.js": [
       "yarn format:check",
       "yarn lint"
     ],
-    ".md": "yarn format:check"
+    "*.md": "yarn format:check"
   },
   "devDependencies": {
     "concurrently": "^7.1.0",

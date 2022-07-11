@@ -1,8 +1,8 @@
-import Icon from "@mdi/react";
-import { mdiArrowUpBoldOutline, mdiArrowDownBoldOutline } from "@mdi/js";
+import Icon from '@mdi/react';
+import { mdiArrowUpBoldOutline, mdiArrowDownBoldOutline } from '@mdi/js';
 
-import { SmallButton } from "../styles";
-import * as Styled from "./PaginationButtons.styles";
+import { SmallButton } from '../styles';
+import * as Styled from './PaginationButtons.styles';
 
 const PaginationButtons = ({
   onUpClick,

@@ -1,19 +1,19 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-import App from "./App";
-import PageNotFound from "./components/PageNotFound";
-import Protect from "./features/auth/Protect";
-import ProtectAdmin from "./features/auth/ProtectAdmin";
-import Login from "./features/auth/Login";
-import Register from "./features/auth/Register";
-import Profile from "./features/auth/Profile";
-import EditProfile from "./features/auth/EditProfile";
-import EditPassword from "./features/auth/EditPassword";
-import CreateEvent from "./features/events/CreateEvent";
-import Event from "./features/events/Event";
-import EditEvent from "./features/events/EditEvent";
-import AddAttendee from "./features/events/AddAttendee";
-import Calendar from "./features/events/Calendar";
+import App from './App';
+import PageNotFound from './components/PageNotFound';
+import Protect from './features/auth/Protect';
+import ProtectAdmin from './features/auth/ProtectAdmin';
+import Login from './features/auth/Login';
+import Register from './features/auth/Register';
+import Profile from './features/auth/Profile';
+import EditProfile from './features/auth/EditProfile';
+import EditPassword from './features/auth/EditPassword';
+import CreateEvent from './features/events/CreateEvent';
+import Event from './features/events/Event';
+import EditEvent from './features/events/EditEvent';
+import AddAttendee from './features/events/AddAttendee';
+import Calendar from './features/events/Calendar';
 
 const RouteSwitch = () => {
   return (

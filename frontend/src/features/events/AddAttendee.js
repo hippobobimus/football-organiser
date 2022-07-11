@@ -1,17 +1,17 @@
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { Button, Subtitle } from "../../components/styles";
-import { Spinner } from "../../components/spinner";
-import { MultiStepForm, FormStep, SelectField } from "../../components/form";
-import { createAttendee, reset as resetEvents } from "./eventsSlice";
+import { Button, Subtitle } from '../../components/styles';
+import { Spinner } from '../../components/spinner';
+import { MultiStepForm, FormStep, SelectField } from '../../components/form';
+import { createAttendee, reset as resetEvents } from './eventsSlice';
 import {
   fetchUsers,
   reset as resetUsers,
   selectAllUsers,
-} from "../users/usersSlice";
-import { attendeeUserSchema } from "./eventValidation";
+} from '../users/usersSlice';
+import { attendeeUserSchema } from './eventValidation';
 
 const AddAttendee = () => {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const AddAttendee = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (updateStatus === "success") {
+    if (updateStatus === 'success') {
       dispatch(resetEvents());
       dispatch(resetUsers());
       navigate(`/events/${eventId}`);
@@ -51,14 +51,14 @@ const AddAttendee = () => {
   };
 
   if (
-    fetchStatus === "idle" ||
-    fetchStatus === "loading" ||
-    updateStatus === "loading"
+    fetchStatus === 'idle' ||
+    fetchStatus === 'loading' ||
+    updateStatus === 'loading'
   ) {
     return <Spinner />;
   }
 
-  if (fetchStatus === "error" || updateStatus === "error") {
+  if (fetchStatus === 'error' || updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
@@ -82,7 +82,7 @@ const AddAttendee = () => {
       <Subtitle>Add User to Event</Subtitle>
       <MultiStepForm
         initialValues={{
-          userId: "",
+          userId: '',
           eventId,
           guests: 0,
         }}

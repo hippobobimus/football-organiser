@@ -1,14 +1,14 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
   Subtitle,
   SectionHeading,
   SmallButton,
-} from "../../components/styles";
-import * as Styled from "./Profile.styles";
-import { logout, reset, resetUpdate } from "../auth/authSlice";
+} from '../../components/styles';
+import * as Styled from './Profile.styles';
+import { logout, reset, resetUpdate } from '../auth/authSlice';
 
 const ProfileInfo = ({ user }) => {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const ProfileInfo = ({ user }) => {
 
   const handleEditClick = () => {
     dispatch(resetUpdate());
-    navigate("/edit-profile");
+    navigate('/edit-profile');
   };
 
   return (
@@ -52,13 +52,13 @@ const Profile = () => {
   }
 
   const handleChangePassword = () => {
-    navigate("/edit-password");
+    navigate('/edit-password');
     dispatch(resetUpdate());
   };
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate('/');
   };
 
   return (

@@ -1,11 +1,11 @@
-const API_URL = "/api/users/";
+const API_URL = '/api/users/';
 
 const register = async (userData) => {
   const response = await fetch(API_URL, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(userData),
   });
@@ -17,16 +17,16 @@ const register = async (userData) => {
     throw new Error(data.message);
   }
 
-  localStorage.setItem("token", JSON.stringify(data.token));
+  localStorage.setItem('token', JSON.stringify(data.token));
   return data;
 };
 
 const login = async (userData) => {
-  const response = await fetch(API_URL + "login", {
-    method: "POST",
+  const response = await fetch(API_URL + 'login', {
+    method: 'POST',
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(userData),
   });
@@ -38,21 +38,21 @@ const login = async (userData) => {
     throw new Error(data.message);
   }
 
-  localStorage.setItem("token", JSON.stringify(data.token));
+  localStorage.setItem('token', JSON.stringify(data.token));
   return data;
 };
 
 const logout = async () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem('token');
 };
 
 const getAuthUser = async (token) => {
-  const response = await fetch(API_URL + "me", {
-    method: "GET",
+  const response = await fetch(API_URL + 'me', {
+    method: 'GET',
     headers: {
       Authorization: token,
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
   });
 
@@ -67,12 +67,12 @@ const getAuthUser = async (token) => {
 };
 
 const updateAuthUser = async (token, userData) => {
-  const response = await fetch(API_URL + "me", {
-    method: "PUT",
+  const response = await fetch(API_URL + 'me', {
+    method: 'PUT',
     headers: {
       Authorization: token,
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(userData),
   });

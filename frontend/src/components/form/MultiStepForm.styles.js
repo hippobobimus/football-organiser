@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { Form as FormikForm } from "formik";
+import styled from 'styled-components';
+import { Form as FormikForm } from 'formik';
 
-import { Button } from "../styles";
+import { Button } from '../styles';
 
 export const Form = styled(FormikForm)`
   display: flex;

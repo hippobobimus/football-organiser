@@ -1,12 +1,12 @@
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 
-import { SmallButton, Button } from "../../components/styles";
-import * as Styled from "./UserAttendanceSummary.styles";
+import { SmallButton, Button } from '../../components/styles';
+import * as Styled from './UserAttendanceSummary.styles';
 import {
   addAuthUserToEvent,
   removeAuthUserFromEvent,
   updateAuthUserEventAttendee,
-} from "./eventsSlice";
+} from './eventsSlice';
 
 const UserAttendanceSummary = ({ event }) => {
   const dispatch = useDispatch();
@@ -25,12 +25,12 @@ const UserAttendanceSummary = ({ event }) => {
     return (
       <Styled.SummaryContainer>
         <Styled.Status>
-          {event.category === "match" ? "You Played!" : "You Attended!"}
+          {event.category === 'match' ? 'You Played!' : 'You Attended!'}
         </Styled.Status>
         {guests > 0 && (
           <Styled.GuestsContainer>
             <p>
-              ...and brought{" "}
+              ...and brought{' '}
               <u>
                 <b>{guests} guest(s)</b>
               </u>
@@ -82,12 +82,12 @@ const UserAttendanceSummary = ({ event }) => {
   return (
     <Styled.SummaryContainer>
       <Styled.Status>
-        {event.category === "match" ? "You're Playing!" : "You're Attending!"}
+        {event.category === 'match' ? "You're Playing!" : "You're Attending!"}
       </Styled.Status>
       {guests > 0 ? (
         <Styled.GuestsContainer>
           <p>
-            ...and bringing{" "}
+            ...and bringing{' '}
             <u>
               <b>{guests} guest(s)</b>
             </u>

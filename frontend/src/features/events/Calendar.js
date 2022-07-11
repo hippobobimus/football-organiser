@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Button,
   ButtonRow,
   SmallButton,
   Subtitle,
-} from "../../components/styles";
-import { Spinner } from "../../components/spinner";
-import PaginationButtons from "../../components/pagination/PaginationButtons";
-import { fetchEvents, selectAllEvents } from "./eventsSlice";
-import EventsList from "./EventsList";
+} from '../../components/styles';
+import { Spinner } from '../../components/spinner';
+import PaginationButtons from '../../components/pagination/PaginationButtons';
+import { fetchEvents, selectAllEvents } from './eventsSlice';
+import EventsList from './EventsList';
 
 const Calendar = () => {
   const dispatch = useDispatch();
@@ -30,11 +30,11 @@ const Calendar = () => {
     dispatch(fetchEvents({ page, finished }));
   }, [dispatch, finished, page]);
 
-  if (fetchStatus === "loading" || fetchStatus === "idle") {
+  if (fetchStatus === 'loading' || fetchStatus === 'idle') {
     return <Spinner />;
   }
 
-  if (fetchStatus === "error") {
+  if (fetchStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>

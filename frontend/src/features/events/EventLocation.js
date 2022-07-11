@@ -1,4 +1,4 @@
-import { Section } from "../../components/styles";
+import { Section } from '../../components/styles';
 
 const EventLocation = ({ event }) => {
   if (!event) {

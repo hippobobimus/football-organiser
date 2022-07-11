@@ -1,4 +1,4 @@
-import * as Styled from "./Menu.styles";
+import * as Styled from './Menu.styles';
 
 function Menu({ items, isRow }) {
   const elements = items.map((item) => (

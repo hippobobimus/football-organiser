@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
-import Icon from "@mdi/react";
+import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
+import Icon from '@mdi/react';
 import {
   mdiClockOutline,
   mdiClockStart,
   mdiCalendarMonthOutline,
   mdiAccountGroupOutline,
   mdiArrowRightBoldOutline,
-} from "@mdi/js";
+} from '@mdi/js';
 
-import * as Styled from "./EventInfoBar.styles";
+import * as Styled from './EventInfoBar.styles';
 
 const EventInfoBar = ({ event }) => {
   const [formatted, setFormatted] = useState({
-    date: "",
-    buildUp: "",
-    start: "",
-    end: "",
+    date: '',
+    buildUp: '',
+    start: '',
+    end: '',
   });
 
   useEffect(() => {
@@ -24,10 +24,10 @@ const EventInfoBar = ({ event }) => {
       const { buildUp, start, end } = event.time;
 
       setFormatted({
-        date: format(Date.parse(start), "EEE do LLL yyyy"),
-        buildUp: format(Date.parse(buildUp), "h:mmaaa"),
-        start: format(Date.parse(start), "h:mmaaa"),
-        end: format(Date.parse(end), "h:mmaaa"),
+        date: format(Date.parse(start), 'EEE do LLL yyyy'),
+        buildUp: format(Date.parse(buildUp), 'h:mmaaa'),
+        start: format(Date.parse(start), 'h:mmaaa'),
+        end: format(Date.parse(end), 'h:mmaaa'),
       });
     }
   }, [event]);
@@ -35,9 +35,9 @@ const EventInfoBar = ({ event }) => {
   return (
     <Styled.InfoContainer>
       <Styled.Status>
-        {(event.isCancelled && "Cancelled") ||
-          (event.isFinished && "Finished") ||
-          (event.isFull && "Event Full")}
+        {(event.isCancelled && 'Cancelled') ||
+          (event.isFinished && 'Finished') ||
+          (event.isFull && 'Event Full')}
       </Styled.Status>
 
       <Styled.InfoList>
@@ -49,7 +49,7 @@ const EventInfoBar = ({ event }) => {
         <Styled.InfoEntry>
           <Icon path={mdiClockStart} size={1} title="Arrive from" />
           <Styled.InfoText>
-            {event.category === "match" ? "Warm-up" : "Arrive-from"}{" "}
+            {event.category === 'match' ? 'Warm-up' : 'Arrive-from'}{' '}
             {formatted.buildUp}
           </Styled.InfoText>
         </Styled.InfoEntry>

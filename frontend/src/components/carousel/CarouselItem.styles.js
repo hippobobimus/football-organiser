@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const CarouselItemContainer = styled.div`
   display: inline-flex;

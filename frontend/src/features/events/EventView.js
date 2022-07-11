@@ -1,7 +1,7 @@
-import { SmallButton, ButtonRow, Subtitle } from "../../components/styles";
-import * as Styled from "./EventView.styles";
-import EventInfoBar from "./EventInfoBar";
-import EventCarousel from "./EventCarousel";
+import { SmallButton, ButtonRow, Subtitle } from '../../components/styles';
+import * as Styled from './EventView.styles';
+import EventInfoBar from './EventInfoBar';
+import EventCarousel from './EventCarousel';
 
 const EventView = ({ event, onEdit, onCancel, onUncancel, onDelete }) => {
   return (

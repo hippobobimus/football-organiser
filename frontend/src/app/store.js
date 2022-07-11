@@ -1,8 +1,8 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
-import authReducer from "../features/auth/authSlice";
-import eventsReducer from "../features/events/eventsSlice";
-import usersReducer from "../features/users/usersSlice";
+import authReducer from '../features/auth/authSlice';
+import eventsReducer from '../features/events/eventsSlice';
+import usersReducer from '../features/users/usersSlice';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
@@ -11,7 +11,7 @@ const combinedReducer = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === "store/purge") {
+  if (action.type === 'store/purge') {
     state = undefined;
   }
 

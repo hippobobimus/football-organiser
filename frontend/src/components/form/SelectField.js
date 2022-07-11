@@ -1,6 +1,6 @@
-import { useField } from "formik";
+import { useField } from 'formik';
 
-import * as Styled from "./SelectField.styles";
+import * as Styled from './SelectField.styles';
 
 const SelectField = ({ label, ...props }) => {
   const [field, meta] = useField(props);

@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Section, SmallButton } from "../../components/styles";
-import * as Styled from "./AttendanceList.styles";
-import AttendanceListItem from "./AttendanceListItem";
-import { reset } from "./eventsSlice";
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Section, SmallButton } from '../../components/styles';
+import * as Styled from './AttendanceList.styles';
+import AttendanceListItem from './AttendanceListItem';
+import { reset } from './eventsSlice';
 
 const AttendanceList = ({ attendees, eventId, isFull }) => {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
   };
 
   return (
-    <Section style={{ width: "100%" }}>
+    <Section style={{ width: '100%' }}>
       <Styled.List>
         {listItems}
         {isAdmin && (

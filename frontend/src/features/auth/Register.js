@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { FormStep, MultiStepForm, TextInput } from "../../components/form";
-import Spinner from "../../components/spinner/Spinner";
-import { Button, Subtitle } from "../../components/styles";
-import { register, reset } from "./authSlice";
-import { userRegistrationSchema } from "./authUserValidation";
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
+import Spinner from '../../components/spinner/Spinner';
+import { Button, Subtitle } from '../../components/styles';
+import { register, reset } from './authSlice';
+import { userRegistrationSchema } from './authUserValidation';
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userEntry, setUserEntry] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    firstName: '',
+    lastName: '',
+    email: '',
   });
   const { isLoggedIn, status, message } = useSelector((state) => state.auth);
 
@@ -29,11 +29,11 @@ const Register = () => {
   };
 
   const handleCancel = () => {
-    navigate("/login");
+    navigate('/login');
     dispatch(reset());
   };
 
-  if (isLoggedIn || status === "success") {
+  if (isLoggedIn || status === 'success') {
     return (
       <>
         <Subtitle>Welcome!</Subtitle>
@@ -44,7 +44,7 @@ const Register = () => {
     );
   }
 
-  if (status === "error") {
+  if (status === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
@@ -56,7 +56,7 @@ const Register = () => {
     );
   }
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return <Spinner />;
   }
 
@@ -64,7 +64,7 @@ const Register = () => {
     <>
       <Subtitle>Create an Account</Subtitle>
       <MultiStepForm
-        initialValues={{ newPassword: "", confirmPassword: "", ...userEntry }}
+        initialValues={{ newPassword: '', confirmPassword: '', ...userEntry }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >

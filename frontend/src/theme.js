@@ -1,14 +1,14 @@
 const colours = {
-  black: "black",
-  grey: "grey",
-  green: "#16ffbd",
-  darkGreen: "#12c998",
-  veryDarkGreen: "#439f76",
-  pink: "#f070a1",
-  darkPink: "#c34271",
-  white: "white",
-  red: "red",
-  darkRed: "darkRed",
+  black: 'black',
+  grey: 'grey',
+  green: '#16ffbd',
+  darkGreen: '#12c998',
+  veryDarkGreen: '#439f76',
+  pink: '#f070a1',
+  darkPink: '#c34271',
+  white: 'white',
+  red: 'red',
+  darkRed: 'darkRed',
 };
 
 const theme = {

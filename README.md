@@ -8,15 +8,17 @@ A web app designed to manage group events, currently adapted for football matche
 
 A demo version of the website is available here: [Demo site](https://demo.bibgameplayers.com)
 
-__NB__ - the website is hosted on a free tier platform that puts the server to sleep after a period of inactivity, so you may encounter a lag of a few seconds on the first page load while the server wakes.
+**NB** - the website is hosted on a free tier platform that puts the server to sleep after a period of inactivity, so you may encounter a lag of a few seconds on the first page load while the server wakes.
 
 #### Login details:
 
-##### Admin account: 
+##### Admin account:
+
 - Username: demo-admin@bibgameplayers.com
 - Password: Demoadmin1!
 
 ##### Standard user account
+
 - Username: demo-user@bibgameplayers.com
 - Password: Demouser1!
 
@@ -39,11 +41,13 @@ __NB__ - the website is hosted on a free tier platform that puts the server to s
 A Node.js / Express backend provides a REST api that allows creation, editing and deletion of events, users and event attendance records stored in a remote MongoDB database. It handles authentication of users, stores salted hashes only in the database and provides authentication tokens (JWT). The React frontend communicates with this backend via the api, storing and updating the state with Redux.
 
 ### Backend
+
 - Node.js/Express
 - MongoDB database (Mongoose ODM)
 - Express-Validator (request body/parameter validation)
 
 ### Frontend
+
 - React
 - Redux (Redux-Toolkit)
 - Formik (forms)

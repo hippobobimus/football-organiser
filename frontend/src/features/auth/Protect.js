@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { useLocation, Navigate, Outlet } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import { useLocation, Navigate, Outlet } from 'react-router-dom';
 
 const Protect = () => {
   const location = useLocation();

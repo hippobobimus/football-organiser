@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { format } from "date-fns";
-import { mdiAccountCheckOutline, mdiAccountGroupOutline } from "@mdi/js";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { format } from 'date-fns';
+import { mdiAccountCheckOutline, mdiAccountGroupOutline } from '@mdi/js';
 
-import * as Styled from "./EventListItem.styles";
-import { reset } from "./eventsSlice";
+import * as Styled from './EventListItem.styles';
+import { reset } from './eventsSlice';
 
 const EventListItem = ({ event }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [formatted, setFormatted] = useState({
-    date: "",
-    start: "",
+    date: '',
+    start: '',
   });
 
   const { name, time, numAttendees, authUserAttendee } = event;
@@ -23,11 +23,11 @@ const EventListItem = ({ event }) => {
       const { buildUp, start, end } = time;
 
       setFormatted({
-        weekday: format(Date.parse(start), "EEEE"),
-        date: format(Date.parse(start), "dd/LL/yy"),
-        buildUp: format(Date.parse(buildUp), "h:mmaaa"),
-        start: format(Date.parse(start), "h:mmaaa"),
-        end: format(Date.parse(end), "h:mmaaa"),
+        weekday: format(Date.parse(start), 'EEEE'),
+        date: format(Date.parse(start), 'dd/LL/yy'),
+        buildUp: format(Date.parse(buildUp), 'h:mmaaa'),
+        start: format(Date.parse(start), 'h:mmaaa'),
+        end: format(Date.parse(end), 'h:mmaaa'),
       });
     }
   }, [time]);
@@ -57,7 +57,7 @@ const EventListItem = ({ event }) => {
                 size={1}
                 title="Attendance"
               />
-              <b>{numAttendees === 0 ? "-" : numAttendees}</b>
+              <b>{numAttendees === 0 ? '-' : numAttendees}</b>
             </Styled.AttendeesField>
 
             {authUserAttendee && (

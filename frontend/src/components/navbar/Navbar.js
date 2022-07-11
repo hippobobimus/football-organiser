@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { mdiMenu } from "@mdi/js";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { mdiMenu } from '@mdi/js';
 
-import * as Styled from "./Navbar.styles";
-import { Container } from "../styles";
-import Menu from "../menu/Menu";
-import { reset } from "../../features/events/eventsSlice";
+import * as Styled from './Navbar.styles';
+import { Container } from '../styles';
+import Menu from '../menu/Menu';
+import { reset } from '../../features/events/eventsSlice';
 
 const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   const dispatch = useDispatch();
@@ -18,9 +18,9 @@ const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   useEffect(() => {
     const updateWidth = () => setScreenWidth(window.innerWidth);
 
-    window.addEventListener("resize", updateWidth);
+    window.addEventListener('resize', updateWidth);
 
-    return () => window.removeEventListener("resize", updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
   useEffect(() => {

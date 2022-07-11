@@ -1,5 +1,5 @@
-import EventListItem from "./EventListItem";
-import * as Styled from "./EventsList.styles";
+import EventListItem from './EventListItem';
+import * as Styled from './EventsList.styles';
 
 const EventsList = ({ events }) => {
   return (

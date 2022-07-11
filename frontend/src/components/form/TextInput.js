@@ -1,5 +1,5 @@
-import { useField } from "formik";
-import * as Styled from "./TextInput.styles";
+import { useField } from 'formik';
+import * as Styled from './TextInput.styles';
 
 const TextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);

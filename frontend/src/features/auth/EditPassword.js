@@ -1,12 +1,12 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import { Button, Subtitle } from "../../components/styles";
-import { FormStep, MultiStepForm, TextInput } from "../../components/form";
-import Spinner from "../../components/spinner/Spinner";
-import { resetUpdate, updateAuthUser } from "./authSlice";
-import { updatePasswordSchema } from "./authUserValidation";
+import { Button, Subtitle } from '../../components/styles';
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
+import Spinner from '../../components/spinner/Spinner';
+import { resetUpdate, updateAuthUser } from './authSlice';
+import { updatePasswordSchema } from './authUserValidation';
 
 const EditPassword = () => {
   const dispatch = useDispatch();
@@ -14,9 +14,9 @@ const EditPassword = () => {
   const { updateStatus, updateMessage } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (updateStatus === "success") {
+    if (updateStatus === 'success') {
       dispatch(resetUpdate());
-      navigate("/profile");
+      navigate('/profile');
     }
   }, [dispatch, navigate, updateStatus]);
 
@@ -26,15 +26,15 @@ const EditPassword = () => {
 
   const handleCancel = () => {
     dispatch(resetUpdate());
-    navigate("/profile");
+    navigate('/profile');
   };
 
   const handleBack = () => {
     dispatch(resetUpdate());
-    navigate("/profile");
+    navigate('/profile');
   };
 
-  if (updateStatus === "error") {
+  if (updateStatus === 'error') {
     return (
       <>
         <Subtitle>Something went wrong...</Subtitle>
@@ -46,7 +46,7 @@ const EditPassword = () => {
     );
   }
 
-  if (updateStatus === "loading") {
+  if (updateStatus === 'loading') {
     return <Spinner />;
   }
 
@@ -55,9 +55,9 @@ const EditPassword = () => {
       <Subtitle>Change Your Password</Subtitle>
       <MultiStepForm
         initialValues={{
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
         }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
