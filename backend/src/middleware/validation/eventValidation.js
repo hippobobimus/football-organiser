@@ -6,7 +6,7 @@ import { isBefore } from 'date-fns';
 // If the validator is exported directly the '.exists()' check will fail.
 // Hence exported as an arrow function!
 
-const TIMEZONE = 'Europe/London';
+const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
 const eventId = () => {
   return param('eventId')

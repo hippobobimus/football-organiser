@@ -1,7 +1,10 @@
 import { add, sub } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz/esm';
 
 import pwUtils from './utils/password';
 import { Event, User } from './models';
+
+const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
 export const standardUser = () => {
   return new User({
@@ -46,7 +49,7 @@ export const users = () => {
 };
 
 export const requiredEventInput = () => {
-  const now = new Date();
+  const now = utcToZonedTime(new Date(), TIMEZONE);
 
   return {
     category: 'match',
@@ -60,7 +63,7 @@ export const requiredEventInput = () => {
 };
 
 export const fullEventInput = () => {
-  const now = new Date();
+  const now = utcToZonedTime(new Date(), TIMEZONE);
 
   return {
     name: 'Test Event',
@@ -78,7 +81,7 @@ export const fullEventInput = () => {
 };
 
 export const eventUpdate = () => {
-  const now = new Date();
+  const now = utcToZonedTime(new Date(), TIMEZONE);
 
   return {
     name: 'Updated Event',

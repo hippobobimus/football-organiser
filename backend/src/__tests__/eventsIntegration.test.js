@@ -1,5 +1,6 @@
 import request from 'supertest';
 import { isAfter, isBefore, isEqual, parseISO, add, sub } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz/esm';
 import mongoose from 'mongoose';
 
 import app from '../app';
@@ -7,6 +8,8 @@ import * as db from '../config/testDb';
 import pwUtils from '../utils/password';
 import * as data from '../testData';
 import { Attendee, Event } from '../models';
+
+const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
 describe('events', () => {
   beforeAll(async () => {
@@ -281,21 +284,23 @@ describe('events', () => {
       const { locationTown, ...noLocationTown } = fields;
       const { locationPostcode, ...noLocationPostcode } = fields;
 
-      for (const input of [
-        noBuildUpTime,
-        noStartTime,
-        noEndTime,
-        noCategory,
-        noLocationLine1,
-        noLocationTown,
-        noLocationPostcode,
-      ]) {
-        const { statusCode } = await request(app)
-          .post(path)
-          .set('Authorization', adminToken)
-          .send(input);
-        expect(statusCode).toBe(400);
-      }
+      await Promise.all(
+        [
+          noBuildUpTime,
+          noStartTime,
+          noEndTime,
+          noCategory,
+          noLocationLine1,
+          noLocationTown,
+          noLocationPostcode,
+        ].map(async (input) => {
+          const { statusCode } = await request(app)
+            .post(path)
+            .set('Authorization', adminToken)
+            .send(input);
+          expect(statusCode).toBe(400);
+        })
+      );
     });
 
     it('should return json', async () => {
@@ -338,9 +343,9 @@ describe('events', () => {
         name: input.name,
         numAttendees: 0,
         time: {
-          buildUp: input.buildUpTime.toISOString(),
-          start: input.startTime.toISOString(),
-          end: input.endTime.toISOString(),
+          buildUp: zonedTimeToUtc(input.buildUpTime, TIMEZONE).toISOString(),
+          start: zonedTimeToUtc(input.startTime, TIMEZONE).toISOString(),
+          end: zonedTimeToUtc(input.endTime, TIMEZONE).toISOString(),
         },
         updatedAt: expect.any(String),
       });
@@ -615,9 +620,9 @@ describe('events', () => {
         name: update.name,
         numAttendees: 0,
         time: {
-          buildUp: update.buildUpTime.toISOString(),
-          start: update.startTime.toISOString(),
-          end: update.endTime.toISOString(),
+          buildUp: zonedTimeToUtc(update.buildUpTime, TIMEZONE).toISOString(),
+          start: zonedTimeToUtc(update.startTime, TIMEZONE).toISOString(),
+          end: zonedTimeToUtc(update.endTime, TIMEZONE).toISOString(),
         },
         updatedAt: expect.any(String),
       });
