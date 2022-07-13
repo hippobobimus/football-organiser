@@ -1,5 +1,6 @@
-import { getByText, render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+
+import { appRender } from '../../testUtils';
 import Navbar from './Navbar';
 
 describe('Navbar component', () => {
@@ -10,14 +11,13 @@ describe('Navbar component', () => {
   ];
 
   test('Renders correct menu items', () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />
-      </MemoryRouter>
+    appRender(
+      null,
+      <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />
     );
 
     menuItems.forEach((m) => {
-      const elem = getByText(m.text);
+      const elem = screen.getByText(m.text);
       expect(elem).toBeInTheDocument();
       expect(elem).toHaveAttribute('href', m.path);
     });

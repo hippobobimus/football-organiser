@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "yarn workspace backend lint",
+    "test": "yarn workspace backend test; CI=true yarn workspace frontend test",
     "postinstall": "husky install"
   },
   "prettier": {
