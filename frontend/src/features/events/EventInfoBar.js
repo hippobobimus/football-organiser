@@ -42,12 +42,12 @@ const EventInfoBar = ({ event }) => {
 
       <Styled.InfoList>
         <Styled.InfoEntry>
-          <Icon path={mdiCalendarMonthOutline} size={1} title='Date' />
+          <Icon path={mdiCalendarMonthOutline} size={1} title="Date" />
           <Styled.InfoText>{formatted.date}</Styled.InfoText>
         </Styled.InfoEntry>
 
         <Styled.InfoEntry>
-          <Icon path={mdiClockStart} size={1} title='Arrive from' />
+          <Icon path={mdiClockStart} size={1} title="Arrive from" />
           <Styled.InfoText>
             {event.category === 'match' ? 'Warm-up' : 'Arrive-from'}{' '}
             {formatted.buildUp}
@@ -55,14 +55,14 @@ const EventInfoBar = ({ event }) => {
         </Styled.InfoEntry>
 
         <Styled.InfoEntry>
-          <Icon path={mdiClockOutline} size={1} title='Time' />
+          <Icon path={mdiClockOutline} size={1} title="Time" />
           <Styled.InfoText>{formatted.start}</Styled.InfoText>
           <Icon path={mdiArrowRightBoldOutline} size={0.75} />
           <Styled.InfoText>{formatted.end}</Styled.InfoText>
         </Styled.InfoEntry>
 
         <Styled.InfoEntry>
-          <Icon path={mdiAccountGroupOutline} size={1} title='Attendance' />
+          <Icon path={mdiAccountGroupOutline} size={1} title="Attendance" />
           <Styled.InfoText>
             {event.numAttendees} {event.capacity > 0 && ` / ${event.capacity}`}
           </Styled.InfoText>

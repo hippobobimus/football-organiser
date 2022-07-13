@@ -87,7 +87,7 @@ const createEvent = async (token, eventData) => {
   return data;
 };
 
-const updateEvent = async (token, {id, update}) => {
+const updateEvent = async (token, { id, update }) => {
   const response = await fetch(API_URL + id, {
     method: 'PUT',
     headers: {

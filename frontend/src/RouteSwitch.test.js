@@ -1,61 +1,50 @@
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { Navbar } from './components';
-import { Faq, Home, MatchLineup, MatchLocation, MatchWeather, PageNotFound } from './routes';
+import { screen } from '@testing-library/react';
+
+import { appRender } from './testUtils';
 import RouteSwitch from './RouteSwitch';
 
-jest.mock('./components');
-jest.mock('./routes');
+jest.mock('./components', () => {
+  return {
+    Navbar: () => <div>NavbarMock</div>,
+    PageNotFound: () => <div>PageNotFoundMock</div>,
+  };
+});
+
+jest.mock('./components/PageNotFound', () => {
+  return {
+    __esModule: true,
+    default: () => <div>PageNotFoundMock</div>,
+  };
+});
+
+jest.mock('./features/events/Event', () => {
+  return {
+    __esModule: true,
+    default: (nextMatch) =>
+      nextMatch ? <div>{'NextMatchMock'}</div> : <div>{'EventMock'}</div>,
+  };
+});
+
+jest.mock('./features/auth/Login', () => {
+  return {
+    __esModule: true,
+    default: () => <div>LoginMock</div>,
+  };
+});
 
 describe('RouteSwitch', () => {
-  beforeEach(() => {
-    Navbar.mockImplementation(() => <div>NavbarMock</div>);
-  });
+  const checkCorrectRendering = (path, expectedText) => {
+    appRender([path], <RouteSwitch />);
 
-  function checkCorrectRendering(path, expectedText) {
-    render(
-      <MemoryRouter initialEntries={[path]}>
-        <RouteSwitch />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText('NavbarMock')).toBeInTheDocument();
     expect(screen.getByText(expectedText)).toBeInTheDocument();
-  }
+    expect(screen.getByText('NavbarMock')).toBeInTheDocument();
+  };
 
-  test('should render navbar and home page on \'/\' route', () => {
-    const testString = 'HomeMock';
-    Home.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/', testString);
+  it("should render navbar and login page on '/login' route", () => {
+    checkCorrectRendering('/login', 'LoginMock');
   });
 
-  test('should render navbar and lineup page on \'/lineup\' route', () => {
-    const testString = 'LineupMock';
-    MatchLineup.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/lineup', testString);
-  });
-
-  test('should render navbar and weather page on \'/weather\' route', () => {
-    const testString = 'WeatherMock';
-    MatchWeather.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/weather', testString);
-  });
-
-  test('should render navbar and location page on \'/location\' route', () => {
-    const testString = 'LocationMock';
-    MatchLocation.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/location', testString);
-  });
-
-  test('should render navbar and FAQ page on \'/faq\' route', () => {
-    const testString = 'FaqMock';
-    Faq.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/faq', testString);
-  });
-
-  test('sends bad routes to the page not found landing page', () => {
-    const testString = 'Not a valid path';
-    PageNotFound.mockImplementation(() => <div>{testString}</div>);
-    checkCorrectRendering('/not/a/valid/path', testString);
+  it('should send invalid routes to the page not found landing page', () => {
+    checkCorrectRendering('/not/a/valid/path', 'PageNotFoundMock');
   });
 });

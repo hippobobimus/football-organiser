@@ -21,7 +21,9 @@ const Calendar = () => {
 
   const authUser = useSelector((state) => state.auth.authUser);
 
-  const { fetchStatus, fetchMessage, pagination } = useSelector((state) => state.events);
+  const { fetchStatus, fetchMessage, pagination } = useSelector(
+    (state) => state.events
+  );
   const events = useSelector(selectAllEvents);
 
   useEffect(() => {
@@ -54,10 +56,10 @@ const Calendar = () => {
       <Subtitle>Calendar</Subtitle>
       {authUser.isAdmin && (
         <ButtonRow>
-          <Button as={Link} to='/create-match'>
+          <Button as={Link} to="/create-match">
             New Match
           </Button>
-          <Button as={Link} to='/create-social'>
+          <Button as={Link} to="/create-social">
             New Social
           </Button>
         </ButtonRow>
@@ -70,11 +72,11 @@ const Calendar = () => {
         downDisabled={!pagination?.hasNextPage}
       />
       {finished ? (
-        <SmallButton type='button' onClick={() => setFinished(false)}>
+        <SmallButton type="button" onClick={() => setFinished(false)}>
           Show Current & Upcoming Events
         </SmallButton>
       ) : (
-        <SmallButton type='button' onClick={() => setFinished(true)}>
+        <SmallButton type="button" onClick={() => setFinished(true)}>
           Show Past Events
         </SmallButton>
       )}

@@ -2,18 +2,11 @@ import express from 'express';
 import createError from 'http-errors';
 import morgan from 'morgan';
 
-import db from './config/db';
 import corsMiddleware from './middleware/cors';
 import { errorHandler } from './middleware/errorMiddleware';
 import { eventsRouter, usersRouter } from './routes';
 
 const app = express();
-
-/*
- * Connect to database
- */
-
-//db.connect();
 
 /*
  * Middleware

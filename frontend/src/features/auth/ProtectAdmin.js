@@ -32,7 +32,7 @@ const ProtectAdmin = () => {
   if (!isLoggedIn) {
     // redirect to login, storing intended destination to return to after
     // authentication is completed.
-    return <Navigate to='/login' state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (authUserStatus === 'loading' || authUserStatus === 'idle') {

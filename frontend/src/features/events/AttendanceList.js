@@ -15,7 +15,9 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
 
   let sortedAttendees;
   if (attendees) {
-    sortedAttendees = [...attendees].sort((a, b) => a.user.name.localeCompare(b.user.name));
+    sortedAttendees = [...attendees].sort((a, b) =>
+      a.user.name.localeCompare(b.user.name)
+    );
   }
 
   sortedAttendees?.forEach((attendee) => {
@@ -35,18 +37,14 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
   const handleAddUser = () => {
     dispatch(reset());
     navigate(`/events/${eventId}/add-user`);
-  }
+  };
 
   return (
     <Section style={{ width: '100%' }}>
       <Styled.List>
         {listItems}
         {isAdmin && (
-          <SmallButton
-            type='button'
-            disabled={isFull}
-            onClick={handleAddUser}
-          >
+          <SmallButton type="button" disabled={isFull} onClick={handleAddUser}>
             Add User
           </SmallButton>
         )}

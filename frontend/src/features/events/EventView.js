@@ -10,19 +10,19 @@ const EventView = ({ event, onEdit, onCancel, onUncancel, onDelete }) => {
       <EventInfoBar event={event} />
       <EventCarousel event={event} />
       <ButtonRow>
-        <SmallButton type='button' onClick={onEdit}>
+        <SmallButton type="button" onClick={onEdit}>
           Edit
         </SmallButton>
         {event.isCancelled ? (
-          <SmallButton type='button' onClick={onUncancel}>
+          <SmallButton type="button" onClick={onUncancel}>
             Uncancel
           </SmallButton>
         ) : (
-          <SmallButton type='button' onClick={onCancel}>
+          <SmallButton type="button" onClick={onCancel}>
             Cancel
           </SmallButton>
         )}
-        <SmallButton type='button' onClick={onDelete}>
+        <SmallButton type="button" onClick={onDelete}>
           Delete
         </SmallButton>
       </ButtonRow>

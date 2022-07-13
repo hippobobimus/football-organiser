@@ -6,7 +6,11 @@ import { Button, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
 import { MultiStepForm, FormStep, SelectField } from '../../components/form';
 import { createAttendee, reset as resetEvents } from './eventsSlice';
-import { fetchUsers, reset as resetUsers, selectAllUsers } from '../users/usersSlice';
+import {
+  fetchUsers,
+  reset as resetUsers,
+  selectAllUsers,
+} from '../users/usersSlice';
 import { attendeeUserSchema } from './eventValidation';
 
 const AddAttendee = () => {
@@ -60,7 +64,7 @@ const AddAttendee = () => {
         <Subtitle>Something went wrong...</Subtitle>
         {updateMessage && <p>{updateMessage}</p>}
         {fetchMessage && <p>{fetchMessage}</p>}
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
@@ -86,7 +90,7 @@ const AddAttendee = () => {
         onCancel={handleCancel}
       >
         <FormStep validationSchema={attendeeUserSchema}>
-          <SelectField label='User' name='userId'>
+          <SelectField label="User" name="userId">
             <option></option>
             {usersOptionsList}
           </SelectField>

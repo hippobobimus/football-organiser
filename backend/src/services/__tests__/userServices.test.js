@@ -305,7 +305,7 @@ describe('userServices', () => {
 
       const UserSaveMock = jest
         .spyOn(User.prototype, 'save')
-        .mockImplementation(function () {
+        .mockImplementation(function mockImp() {
           return Promise.resolve(this);
         });
 

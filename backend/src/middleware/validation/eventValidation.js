@@ -1,11 +1,12 @@
 import { body, param } from 'express-validator';
 import mongoose from 'mongoose';
 import { zonedTimeToUtc } from 'date-fns-tz/esm';
+import { isBefore } from 'date-fns';
 
 // If the validator is exported directly the '.exists()' check will fail.
 // Hence exported as an arrow function!
 
-const TIMEZONE = 'Europe/London';
+const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
 const eventId = () => {
   return param('eventId')
@@ -32,8 +33,11 @@ const guests = () => {
 const buildUpTime = () => {
   return body('buildUpTime')
     .trim()
+    .notEmpty()
+    .withMessage('Required.')
     .isISO8601()
     .withMessage('A valid build up date and time must be supplied.')
+    .bail()
     .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
     .isAfter()
     .withMessage('Cannot be in the past.')
@@ -43,20 +47,33 @@ const buildUpTime = () => {
 const startTime = () => {
   return body('startTime')
     .trim()
+    .notEmpty()
+    .withMessage('Required.')
     .isISO8601()
     .withMessage('A valid start date and time must be supplied.')
+    .bail()
     .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
-    .isAfter()
-    .withMessage('Cannot be in the past.')
+    .custom(
+      (start, { req }) =>
+        req.body.buildUpTime && !isBefore(start, req.body.buildUpTime)
+    )
+    .withMessage('Cannot precede the build up time.')
     .toDate();
 };
 
 const endTime = () => {
   return body('endTime')
     .trim()
+    .notEmpty()
+    .withMessage('Required.')
     .isISO8601()
     .withMessage('A valid end date and time must be supplied.')
+    .bail()
     .customSanitizer((val) => zonedTimeToUtc(val, TIMEZONE))
+    .custom(
+      (end, { req }) => req.body.startTime && !isBefore(end, req.body.startTime)
+    )
+    .withMessage('Cannot precede the start time.')
     .isAfter()
     .withMessage('Cannot be in the past.')
     .toDate();
@@ -76,6 +93,7 @@ const name = () => {
     .escape()
     .notEmpty()
     .withMessage('An event name must be supplied.')
+    .bail()
     .isLength({ min: 1, max: 20 })
     .withMessage('Maximum event name length of 20 characters.');
 };
@@ -86,6 +104,7 @@ const locationName = () => {
     .escape()
     .notEmpty()
     .withMessage('Location name is required.')
+    .bail()
     .isLength({ min: 1, max: 20 })
     .withMessage(
       'A location name of less than 20 characters must be supplied.'
@@ -98,6 +117,7 @@ const locationLine1 = () => {
     .escape()
     .notEmpty()
     .withMessage('Address line 1 is required.')
+    .bail()
     .isLength({ min: 1, max: 30 })
     .withMessage(
       'The first line of the address must be less than 30 characters.'
@@ -110,6 +130,7 @@ const locationLine2 = () => {
     .escape()
     .notEmpty()
     .withMessage('Address line 2 is required.')
+    .bail()
     .isLength({ min: 1, max: 30 })
     .withMessage(
       'The second line of the address must be less than 30 characters.'
@@ -122,6 +143,7 @@ const locationTown = () => {
     .escape()
     .notEmpty()
     .withMessage('Address town is required.')
+    .bail()
     .isLength({ min: 1, max: 30 })
     .withMessage('The address town must be less than 30 characters.');
 };

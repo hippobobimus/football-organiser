@@ -45,13 +45,13 @@ const Carousel = ({ children, className, headings }) => {
 
       <Styled.ButtonRow>
         <SmallButton onClick={() => cycleLeft()} disabled={index === 0}>
-          <Icon path={mdiArrowLeftBoldOutline} size={0.75} title='Page left' />
+          <Icon path={mdiArrowLeftBoldOutline} size={0.75} title="Page left" />
         </SmallButton>
         <SmallButton onClick={() => cycleRight()} disabled={index === maxIndex}>
           <Icon
             path={mdiArrowRightBoldOutline}
             size={0.75}
-            title='Page right'
+            title="Page right"
           />
         </SmallButton>
       </Styled.ButtonRow>

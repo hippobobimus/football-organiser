@@ -37,7 +37,7 @@ const Register = () => {
     return (
       <>
         <Subtitle>Welcome!</Subtitle>
-        <Button as={Link} to='/'>
+        <Button as={Link} to="/">
           Get Started
         </Button>
       </>
@@ -49,7 +49,7 @@ const Register = () => {
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{message}</p>
-        <Button type='button' onClick={() => dispatch(reset())}>
+        <Button type="button" onClick={() => dispatch(reset())}>
           Back
         </Button>
       </>
@@ -69,18 +69,18 @@ const Register = () => {
         onCancel={handleCancel}
       >
         <FormStep validationSchema={userRegistrationSchema}>
-          <TextInput label='First Name' name='firstName' type='text' />
-          <TextInput label='Last Name' name='lastName' type='text' />
-          <TextInput label='Email' name='email' type='email' />
+          <TextInput label="First Name" name="firstName" type="text" />
+          <TextInput label="Last Name" name="lastName" type="text" />
+          <TextInput label="Email" name="email" type="email" />
           <TextInput
-            label='Enter a strong password'
-            name='newPassword'
-            type='password'
+            label="Enter a strong password"
+            name="newPassword"
+            type="password"
           />
           <TextInput
-            label='Confirm password'
-            name='confirmPassword'
-            type='password'
+            label="Confirm password"
+            name="confirmPassword"
+            type="password"
           />
         </FormStep>
       </MultiStepForm>

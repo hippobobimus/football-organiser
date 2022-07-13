@@ -9,7 +9,7 @@ const colours = {
   white: 'white',
   red: 'red',
   darkRed: 'darkRed',
-}
+};
 
 const theme = {
   bgClr: colours.pink,
@@ -48,10 +48,10 @@ const theme = {
   spinnerBgClr: colours.white,
   spinnerFgClr: colours.darkPink,
 
-  titleFont: '\'Bangers\', cursive',
-  subtitleFont: '\'Permanent Marker\', cursive',
-  buttonFont: '\'Permanent Marker\', cursive',
-  font: '\'Chilanka\', cursive',
-}
+  titleFont: "'Bangers', cursive",
+  subtitleFont: "'Permanent Marker', cursive",
+  buttonFont: "'Permanent Marker', cursive",
+  font: "'Chilanka', cursive",
+};
 
 export default theme;

@@ -58,7 +58,7 @@ const Event = ({ nextMatch }) => {
         <Subtitle>Event deleted</Subtitle>
         <Button
           as={Link}
-          to='/calendar'
+          to="/calendar"
           onClick={() => {
             dispatch(reset());
             return true;

@@ -12,7 +12,9 @@
     "devdebug": "DEBUG=backend:\\* yarn run dev",
     "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand",
     "test:watch": "yarn test --watchAll",
-    "test:debug": "NODE_OPTIONS='--inspect-brk --experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand"
+    "test:debug": "NODE_OPTIONS='--inspect-brk --experimental-vm-modules --experimental-specifier-resolution=node' jest --runInBand",
+    "lint": "yarn eslint --cache .",
+    "lint:staged": "yarn eslint --cache"
   },
   "type": "module",
   "eslintConfig": {
@@ -43,9 +45,6 @@
       "no-underscore-dangle": "off"
     }
   },
-  "prettier": {
-    "singleQuote": true
-  },
   "dependencies": {
     "cors": "^2.8.5",
     "date-fns": "^2.28.0",
@@ -70,7 +69,6 @@
     "jest": "^28.1.1",
     "mongodb-memory-server": "^8.7.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.6.2",
     "supertest": "^6.2.3"
   }
 }

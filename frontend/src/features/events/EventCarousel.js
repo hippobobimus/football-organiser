@@ -10,9 +10,7 @@ const EventCarousel = ({ event }) => {
 
   return (
     <Styled.CarouselContainer>
-      <Styled.ContentCarousel
-        headings={['Me', 'Lineup', 'Location']}
-      >
+      <Styled.ContentCarousel headings={['Me', 'Lineup', 'Location']}>
         <Styled.ContentCarouselItem>
           <UserAttendanceSummary event={event} />
         </Styled.ContentCarouselItem>

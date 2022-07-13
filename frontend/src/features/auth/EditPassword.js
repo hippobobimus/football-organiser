@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Subtitle } from '../../components/styles';
-import {
-  FormStep,
-  MultiStepForm,
-  TextInput,
-} from '../../components/form';
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
 import { resetUpdate, updateAuthUser } from './authSlice';
 import { updatePasswordSchema } from './authUserValidation';
@@ -43,7 +39,7 @@ const EditPassword = () => {
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{updateMessage}</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
@@ -68,15 +64,15 @@ const EditPassword = () => {
       >
         <FormStep validationSchema={updatePasswordSchema}>
           <TextInput
-            label='Current password'
-            name='currentPassword'
-            type='password'
+            label="Current password"
+            name="currentPassword"
+            type="password"
           />
-          <TextInput label='New password' name='newPassword' type='password' />
+          <TextInput label="New password" name="newPassword" type="password" />
           <TextInput
-            label='Confirm password'
-            name='confirmPassword'
-            type='password'
+            label="Confirm password"
+            name="confirmPassword"
+            type="password"
           />
         </FormStep>
       </MultiStepForm>

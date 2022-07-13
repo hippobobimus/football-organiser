@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Subtitle } from '../../components/styles';
-import {
-  FormStep,
-  MultiStepForm,
-  TextInput,
-} from '../../components/form';
+import { FormStep, MultiStepForm, TextInput } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
 import { updateAuthUser, resetUpdate } from './authSlice';
 import { userUpdateSchema } from './authUserValidation';
@@ -45,7 +41,7 @@ const EditProfile = () => {
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{updateMessage}</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
@@ -65,13 +61,13 @@ const EditProfile = () => {
         onCancel={handleCancel}
       >
         <FormStep validationSchema={userUpdateSchema}>
-          <TextInput label='First Name' name='firstName' type='text' />
-          <TextInput label='Last Name' name='lastName' type='text' />
-          <TextInput label='Email' name='email' type='email' />
+          <TextInput label="First Name" name="firstName" type="text" />
+          <TextInput label="Last Name" name="lastName" type="text" />
+          <TextInput label="Email" name="email" type="email" />
           <TextInput
-            label='Enter your current password'
-            name='currentPassword'
-            type='password'
+            label="Enter your current password"
+            name="currentPassword"
+            type="password"
           />
         </FormStep>
       </MultiStepForm>

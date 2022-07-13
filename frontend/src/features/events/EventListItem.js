@@ -39,7 +39,7 @@ const EventListItem = ({ event }) => {
 
   return (
     <li>
-      <Styled.ListItemButton type='button' onClick={handleClick}>
+      <Styled.ListItemButton type="button" onClick={handleClick}>
         <Styled.FieldsList>
           <Styled.DateField>
             <span>{formatted.weekday}</span>
@@ -52,13 +52,21 @@ const EventListItem = ({ event }) => {
 
           <Styled.IconContainer>
             <Styled.AttendeesField>
-              <Styled.FieldIcon path={mdiAccountGroupOutline} size={1} title='Attendance' />
+              <Styled.FieldIcon
+                path={mdiAccountGroupOutline}
+                size={1}
+                title="Attendance"
+              />
               <b>{numAttendees === 0 ? '-' : numAttendees}</b>
             </Styled.AttendeesField>
 
             {authUserAttendee && (
               <Styled.UserAttendanceField>
-                <Styled.FieldIcon path={mdiAccountCheckOutline} size={1} title='You are attending'/>
+                <Styled.FieldIcon
+                  path={mdiAccountCheckOutline}
+                  size={1}
+                  title="You are attending"
+                />
               </Styled.UserAttendanceField>
             )}
           </Styled.IconContainer>

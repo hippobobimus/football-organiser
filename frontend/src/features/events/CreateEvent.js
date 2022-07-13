@@ -60,7 +60,7 @@ const CreateEvent = ({ category }) => {
       <>
         <Subtitle>Something went wrong...</Subtitle>
         <p>{updateMessage}</p>
-        <Button type='button' onClick={handleBack}>
+        <Button type="button" onClick={handleBack}>
           Back
         </Button>
       </>
@@ -80,20 +80,28 @@ const CreateEvent = ({ category }) => {
       >
         <FormStep validationSchema={eventInfoSchema}>
           {category === 'social' && (
-            <TextInput label='Name' name='name' type='text' />
+            <TextInput label="Name" name="name" type="text" />
           )}
-          <TextInput label='Warm Up*' name='buildUpTime' type='datetime-local' />
-          <TextInput label='Kick Off*' name='startTime' type='datetime-local' />
-          <TextInput label='Finish*' name='endTime' type='datetime-local' />
-          <TextInput label='Maximum No. of Attendees (optional)' name='capacity' type='number' />
+          <TextInput
+            label="Warm Up*"
+            name="buildUpTime"
+            type="datetime-local"
+          />
+          <TextInput label="Kick Off*" name="startTime" type="datetime-local" />
+          <TextInput label="Finish*" name="endTime" type="datetime-local" />
+          <TextInput
+            label="Maximum No. of Attendees (optional)"
+            name="capacity"
+            type="number"
+          />
         </FormStep>
         <FormStep validationSchema={addressSchema}>
           <SectionHeading>Address</SectionHeading>
-          <TextInput label='Name' name='locationName' type='text' />
-          <TextInput label='Address Line 1*' name='locationLine1' type='text' />
-          <TextInput label='Address Line 2' name='locationLine2' type='text' />
-          <TextInput label='Town*' name='locationTown' type='text' />
-          <TextInput label='Postcode*' name='locationPostcode' type='text' />
+          <TextInput label="Name" name="locationName" type="text" />
+          <TextInput label="Address Line 1*" name="locationLine1" type="text" />
+          <TextInput label="Address Line 2" name="locationLine2" type="text" />
+          <TextInput label="Town*" name="locationTown" type="text" />
+          <TextInput label="Postcode*" name="locationPostcode" type="text" />
         </FormStep>
       </MultiStepForm>
     </>

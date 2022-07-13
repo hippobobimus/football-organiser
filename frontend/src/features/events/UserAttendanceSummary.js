@@ -11,7 +11,11 @@ import {
 const UserAttendanceSummary = ({ event }) => {
   const dispatch = useDispatch();
 
-  if (!event || event.isCancelled || (event.isFinished && !event.authUserAttendee)) {
+  if (
+    !event ||
+    event.isCancelled ||
+    (event.isFinished && !event.authUserAttendee)
+  ) {
     return null;
   }
 
@@ -44,7 +48,7 @@ const UserAttendanceSummary = ({ event }) => {
   if (!event.authUserAttendee) {
     return (
       <Styled.SummaryContainer>
-        <Button type='button' onClick={handleJoin}>
+        <Button type="button" onClick={handleJoin}>
           Count Me In!
         </Button>
       </Styled.SummaryContainer>
@@ -88,19 +92,27 @@ const UserAttendanceSummary = ({ event }) => {
               <b>{guests} guest(s)</b>
             </u>
           </p>
-          <SmallButton type='button' onClick={handleRemoveGuest}>
+          <SmallButton type="button" onClick={handleRemoveGuest}>
             -
           </SmallButton>
-          <SmallButton type='button' onClick={handleAddGuest} disabled={event.isFull}>
+          <SmallButton
+            type="button"
+            onClick={handleAddGuest}
+            disabled={event.isFull}
+          >
             +
           </SmallButton>
         </Styled.GuestsContainer>
       ) : (
-        <SmallButton type='button' onClick={handleAddGuest} disabled={event.isFull}>
+        <SmallButton
+          type="button"
+          onClick={handleAddGuest}
+          disabled={event.isFull}
+        >
           Add a Guest
         </SmallButton>
       )}
-      <SmallButton type='button' onClick={handleLeave}>
+      <SmallButton type="button" onClick={handleLeave}>
         Cancel my attendance
       </SmallButton>
     </Styled.SummaryContainer>

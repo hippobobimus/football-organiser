@@ -48,7 +48,7 @@ const Navbar = ({ title, menuItems, widthBreakpoint }) => {
     <Styled.Nav isMobile={isMobile}>
       <Container>
         {isMobile && (
-          <Styled.MenuToggle path={mdiMenu} title='Menu' onClick={toggleMenu} />
+          <Styled.MenuToggle path={mdiMenu} title="Menu" onClick={toggleMenu} />
         )}
         <Styled.NavTitle>{title}</Styled.NavTitle>
       </Container>

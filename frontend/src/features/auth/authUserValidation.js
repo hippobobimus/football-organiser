@@ -30,6 +30,8 @@ export const updatePasswordSchema = Yup.object({
 
 export const userRegistrationSchema = userSchema.concat(newPasswordSchema);
 
-export const loginSchema = userSchema.pick(['email']).concat(currentPasswordSchema);
+export const loginSchema = userSchema
+  .pick(['email'])
+  .concat(currentPasswordSchema);
 
 export const userUpdateSchema = userSchema.concat(currentPasswordSchema);

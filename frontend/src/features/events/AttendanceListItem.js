@@ -52,19 +52,19 @@ const AttendanceListItem = ({ attendee, isGuest }) => {
           <Styled.Icon
             path={mdiAccountMultipleMinusOutline}
             size={0.65}
-            title='Remove guest'
+            title="Remove guest"
             onClick={handleRemoveGuest}
           />
           <Styled.Icon
             path={mdiAccountMultiplePlusOutline}
             size={0.65}
-            title='Add guest'
+            title="Add guest"
             onClick={handleAddGuest}
           />
           <Styled.Icon
             path={mdiCloseCircleOutline}
             size={0.65}
-            title='Remove user and guests'
+            title="Remove user and guests"
             onClick={handleDeleteAttendee}
           />
         </Styled.IconContainer>

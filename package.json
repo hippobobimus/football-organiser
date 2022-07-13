@@ -1,6 +1,7 @@
 {
   "name": "football-organiser",
   "version": "1.0.0",
+  "private": true,
   "packageManager": "yarn@3.2.0",
   "workspaces": [
     "frontend",
@@ -11,9 +12,25 @@
     "client": "yarn workspace frontend start",
     "server": "yarn workspace backend devdebug",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn workspace frontend install && yarn workspace frontend run build"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false yarn workspace frontend install && yarn workspace frontend run build",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint": "yarn workspace backend lint",
+    "test": "yarn workspace backend test; CI=true yarn workspace frontend test",
+    "postinstall": "husky install"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "lint-staged": {
+    "*.js": "prettier --write",
+    "*.md": "prettier --write",
+    "backend/**/*.js": "yarn workspace backend lint:staged"
   },
   "devDependencies": {
-    "concurrently": "^7.1.0"
+    "concurrently": "^7.1.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
   }
 }
