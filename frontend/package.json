@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@mswjs/data": "^0.10.1",
     "msw": "^0.44.2"
   }
 }
