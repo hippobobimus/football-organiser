@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { appRender } from './testUtils';
+import { render } from './testUtils';
 import RouteSwitch from './RouteSwitch';
 
 jest.mock('./components', () => {
@@ -34,7 +34,7 @@ jest.mock('./features/auth/Login', () => {
 
 describe('RouteSwitch', () => {
   const checkCorrectRendering = (path, expectedText) => {
-    appRender([path], <RouteSwitch />);
+    render(<RouteSwitch />, { initialRouterEntries: [path] });
 
     expect(screen.getByText(expectedText)).toBeInTheDocument();
     expect(screen.getByText('NavbarMock')).toBeInTheDocument();

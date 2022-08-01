@@ -18,6 +18,9 @@ const rootReducer = (state, action) => {
   return combinedReducer(state, action);
 };
 
-export const store = configureStore({
-  reducer: rootReducer,
-});
+export const setupStore = (preloadedState) => {
+  return configureStore({
+    reducer: rootReducer,
+    preloadedState,
+  });
+};

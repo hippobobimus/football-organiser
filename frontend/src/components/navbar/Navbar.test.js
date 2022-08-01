@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 
-import { appRender } from '../../testUtils';
+import { render } from '../../testUtils';
 import Navbar from './Navbar';
 
 describe('Navbar component', () => {
@@ -11,8 +11,7 @@ describe('Navbar component', () => {
   ];
 
   test('Renders correct menu items', () => {
-    appRender(
-      null,
+    render(
       <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />
     );
 
