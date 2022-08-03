@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { FormStep, MultiStepForm, TextInput } from '../../components/form';
-import Spinner from '../../components/spinner/Spinner';
-import { Button, Container, Link, Subtitle } from '../../components/styles';
-import { login, reset } from './authSlice';
-import { loginSchema } from './authUserValidation';
+import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
+import Spinner from '../../../components/spinner/Spinner';
+import { Button, Container, Link, Subtitle } from '../../../components/styles';
+import { login, reset } from '../stores/authSlice';
+import { loginSchema } from '../authUserValidation';
 
 const Login = () => {
   const dispatch = useDispatch();

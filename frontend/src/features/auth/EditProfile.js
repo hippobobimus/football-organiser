@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Subtitle } from '../../components/styles';
 import { FormStep, MultiStepForm, TextInput } from '../../components/form';
 import Spinner from '../../components/spinner/Spinner';
-import { updateAuthUser, resetUpdate } from './authSlice';
+import { updateAuthUser, resetUpdate } from './stores/authSlice';
 import { userUpdateSchema } from './authUserValidation';
 
 const EditProfile = () => {

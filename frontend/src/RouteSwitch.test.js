@@ -25,10 +25,10 @@ jest.mock('./features/events/Event', () => {
   };
 });
 
-jest.mock('./features/auth/Login', () => {
+jest.mock('./features/auth', () => {
   return {
     __esModule: true,
-    default: () => <div>LoginMock</div>,
+    Login: () => <div>LoginMock</div>,
   };
 });
 

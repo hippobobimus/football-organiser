@@ -8,7 +8,7 @@ import {
   SmallButton,
 } from '../../components/styles';
 import * as Styled from './Profile.styles';
-import { logout, reset, resetUpdate } from '../auth/authSlice';
+import { logout, resetUpdate } from './stores/authSlice';
 
 const ProfileInfo = ({ user }) => {
   const dispatch = useDispatch();

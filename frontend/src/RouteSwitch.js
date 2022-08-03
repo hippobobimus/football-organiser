@@ -4,8 +4,6 @@ import App from './App';
 import PageNotFound from './components/PageNotFound';
 import Protect from './features/auth/Protect';
 import ProtectAdmin from './features/auth/ProtectAdmin';
-import Login from './features/auth/Login';
-import Register from './features/auth/Register';
 import Profile from './features/auth/Profile';
 import EditProfile from './features/auth/EditProfile';
 import EditPassword from './features/auth/EditPassword';
@@ -15,14 +13,15 @@ import EditEvent from './features/events/EditEvent';
 import AddAttendee from './features/events/AddAttendee';
 import Calendar from './features/events/Calendar';
 
+import { AuthRoutes } from './features/auth';
+
 const RouteSwitch = () => {
   return (
     <Routes>
       <Route path="/" element={<App />}>
         {/* Public routes */}
         <Route index element={<Navigate replace to="/next-match" />} />
-        <Route path="register" element={<Register />} />
-        <Route path="login" element={<Login />} />
+        <AuthRoutes />
 
         {/* Private routes that require authentication */}
         <Route element={<Protect />}>

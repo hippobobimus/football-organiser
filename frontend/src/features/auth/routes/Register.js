@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { FormStep, MultiStepForm, TextInput } from '../../components/form';
-import Spinner from '../../components/spinner/Spinner';
-import { Button, Subtitle } from '../../components/styles';
-import { register, reset } from './authSlice';
-import { userRegistrationSchema } from './authUserValidation';
+import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
+import Spinner from '../../../components/spinner/Spinner';
+import { Button, Subtitle } from '../../../components/styles';
+import { register, reset } from '../stores/authSlice';
+import { userRegistrationSchema } from '../authUserValidation';
 
 const Register = () => {
   const dispatch = useDispatch();

@@ -4,7 +4,7 @@ import { useLocation, Navigate, Outlet } from 'react-router-dom';
 
 import { Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
-import { fetchAuthUser } from './authSlice';
+import { fetchAuthUser } from './stores/authSlice';
 
 const ProtectAdmin = () => {
   const dispatch = useDispatch();
