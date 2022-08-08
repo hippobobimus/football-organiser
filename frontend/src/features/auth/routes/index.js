@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { Protect } from '../components/Protect';
 import { Login } from './Login';
@@ -8,11 +9,18 @@ import { EditProfile } from './EditProfile';
 import { EditPassword } from './EditPassword';
 
 export const AuthRoutes = () => {
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
+      <Route
+        path="login"
+        element={isLoggedIn ? <Navigate replace to="/" /> : <Login />}
+      />
+      <Route
+        path="register"
+        element={isLoggedIn ? <Navigate replace to="/" /> : <Register />}
+      />
 
       <Route element={<Protect allowedRoles={['admin', 'user']} />}>
         <Route path="profile" element={<Profile />} />
