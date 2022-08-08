@@ -6,9 +6,9 @@ import {
   Subtitle,
   SectionHeading,
   SmallButton,
-} from '../../components/styles';
+} from '../../../components/styles';
 import * as Styled from './Profile.styles';
-import { logout, resetUpdate } from './stores/authSlice';
+import { logout, resetUpdate } from '../stores/authSlice';
 
 const ProfileInfo = ({ user }) => {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const ProfileInfo = ({ user }) => {
   );
 };
 
-const Profile = () => {
+export const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -70,5 +70,3 @@ const Profile = () => {
     </>
   );
 };
-
-export default Profile;

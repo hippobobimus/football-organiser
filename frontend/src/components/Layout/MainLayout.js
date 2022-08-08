@@ -1,12 +1,10 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 import uniqid from 'uniqid';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Navbar } from '../navbar';
-import { Content, Subtitle } from '../styles';
-import { Spinner } from '../spinner';
-
-import { fetchAuthUser } from '../../features/auth';
+import { Content } from '../styles';
 
 const TITLE = 'Bib Game Players';
 const MENU_ITEMS = [
@@ -18,38 +16,7 @@ const RESPONSIVE_BREAKPOINT = {
   width: 900,
 };
 
-const ErrorDisplay = ({ status, msg }) => {
-  if (status !== 'error') {
-    return null;
-  }
-  return (
-    <>
-      <Subtitle>Something went wrong...</Subtitle>
-      <p>{msg}</p>
-    </>
-  );
-};
-
-const Loading = ({ status }) => {
-  if (status !== 'loading') {
-    return null;
-  }
-  return <Spinner />;
-};
-
-export const MainLayout = ({ children }) => {
-  const dispatch = useDispatch();
-
-  const { isLoggedIn, authUserStatus, authUserMessage } = useSelector(
-    (state) => state.auth
-  );
-
-  useEffect(() => {
-    if (isLoggedIn && authUserStatus === 'idle') {
-      dispatch(fetchAuthUser());
-    }
-  }, [dispatch, authUserStatus, isLoggedIn]);
-
+export const MainLayout = () => {
   return (
     <>
       <Navbar
@@ -58,10 +25,8 @@ export const MainLayout = ({ children }) => {
         widthBreakpoint={RESPONSIVE_BREAKPOINT.width}
       />
       <Content>
-        <ErrorDisplay status={authUserStatus} msg={authUserMessage} />
-        <Loading status={authUserStatus} />
-        {(authUserStatus === 'success' || authUserStatus === 'idle') &&
-          children}
+        <ToastContainer position="bottom-center" />
+        <Outlet />
       </Content>
     </>
   );

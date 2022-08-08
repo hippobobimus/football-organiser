@@ -8,7 +8,7 @@ import { Button, Subtitle } from '../../../components/styles';
 import { register, reset } from '../stores/authSlice';
 import { userRegistrationSchema } from '../authUserValidation';
 
-const Register = () => {
+export const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userEntry, setUserEntry] = useState({
@@ -87,5 +87,3 @@ const Register = () => {
     </>
   );
 };
-
-export default Register;

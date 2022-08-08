@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button, Container } from '../../components/styles';
+import { Button, Container } from '../../../components/styles';
 
 export const HeadingContainer = styled(Container)`
   flex-direction: row;

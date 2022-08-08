@@ -2,18 +2,16 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Subtitle } from '../../components/styles';
-import { FormStep, MultiStepForm, TextInput } from '../../components/form';
-import Spinner from '../../components/spinner/Spinner';
-import { updateAuthUser, resetUpdate } from './stores/authSlice';
-import { userUpdateSchema } from './authUserValidation';
+import { Button, Subtitle } from '../../../components/styles';
+import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
+import Spinner from '../../../components/spinner/Spinner';
+import { resetUpdate, updateAuthUser } from '../stores/authSlice';
+import { updatePasswordSchema } from '../authUserValidation';
 
-const EditProfile = () => {
+export const EditPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, updateStatus, updateMessage } = useSelector(
-    (state) => state.auth
-  );
+  const { updateStatus, updateMessage } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (updateStatus === 'success') {
@@ -54,19 +52,26 @@ const EditProfile = () => {
 
   return (
     <>
-      <Subtitle>Edit Your Info</Subtitle>
+      <Subtitle>Change Your Password</Subtitle>
       <MultiStepForm
-        initialValues={{ currentPassword: '', ...user }}
+        initialValues={{
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >
-        <FormStep validationSchema={userUpdateSchema}>
-          <TextInput label="First Name" name="firstName" type="text" />
-          <TextInput label="Last Name" name="lastName" type="text" />
-          <TextInput label="Email" name="email" type="email" />
+        <FormStep validationSchema={updatePasswordSchema}>
           <TextInput
-            label="Enter your current password"
+            label="Current password"
             name="currentPassword"
+            type="password"
+          />
+          <TextInput label="New password" name="newPassword" type="password" />
+          <TextInput
+            label="Confirm password"
+            name="confirmPassword"
             type="password"
           />
         </FormStep>
@@ -74,5 +79,3 @@ const EditProfile = () => {
     </>
   );
 };
-
-export default EditProfile;
