@@ -11,7 +11,7 @@ import { deleteAttendee, updateAttendee } from './eventsSlice';
 const AttendanceListItem = ({ attendee, isGuest }) => {
   const dispatch = useDispatch();
 
-  const { isAdmin } = useSelector((state) => state.auth.authUser);
+  const { isAdmin } = useSelector((state) => state.auth.user);
 
   const handleAddGuest = () => {
     dispatch(

@@ -1,18 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import authService from '../api/authService';
+import { apiSlice } from '../../api/apiSlice';
 
 const token = JSON.parse(localStorage.getItem('token')) || null;
 const isLoggedIn = Boolean(token);
 
 const initialState = {
-  authUser: null,
+  user: null,
+  token,
+  isLoggedIn,
+
   authUserStatus: 'idle',
   authUserMessage: '',
   updateStatus: 'idle',
   updateMessage: '',
-  token,
-  isLoggedIn,
   status: 'idle',
   message: '',
 };
@@ -27,14 +29,6 @@ export const register = createAsyncThunk(
     }
   }
 );
-
-export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
-  try {
-    return await authService.login(user);
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.message);
-  }
-});
 
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
@@ -105,20 +99,6 @@ const authSlice = createSlice({
         state.token = null;
       })
 
-      .addCase(login.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.status = 'success';
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.status = 'error';
-        state.message = action.payload;
-        state.token = null;
-      })
-
       .addCase(logout.fulfilled, (state) => {
         state.token = null;
         state.isLoggedIn = false;
@@ -147,9 +127,27 @@ const authSlice = createSlice({
       .addCase(updateAuthUser.rejected, (state, action) => {
         state.updateStatus = 'error';
         state.updateMessage = action.payload;
-      });
+      })
+
+      .addMatcher(
+        apiSlice.endpoints.login.matchFulfilled,
+        (state, { payload }) => {
+          state.token = payload.token;
+          state.isLoggedIn = true;
+          localStorage.setItem('token', JSON.stringify(payload.token));
+        }
+      )
+      .addMatcher(
+        apiSlice.endpoints.getAuthUser.matchFulfilled,
+        (state, { payload }) => {
+          state.user = payload;
+          state.authUser = payload;
+        }
+      );
   },
 });
+
+export const selectAuthUser = (state) => state.auth.user;
 
 export const { reset, resetUpdate } = authSlice.actions;
 export const authReducer = authSlice.reducer;

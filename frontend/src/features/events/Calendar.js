@@ -19,7 +19,7 @@ const Calendar = () => {
   const [page, setPage] = useState(1);
   const [finished, setFinished] = useState(false);
 
-  const authUser = useSelector((state) => state.auth.authUser);
+  const authUser = useSelector((state) => state.auth.user);
 
   const { fetchStatus, fetchMessage, pagination } = useSelector(
     (state) => state.events

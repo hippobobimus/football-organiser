@@ -11,7 +11,7 @@ const AttendanceList = ({ attendees, eventId, isFull }) => {
 
   let listItems = [];
 
-  const { isAdmin } = useSelector((state) => state.auth.authUser);
+  const { isAdmin } = useSelector((state) => state.auth.user);
 
   let sortedAttendees;
   if (attendees) {

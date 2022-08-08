@@ -11,7 +11,7 @@ import { userUpdateSchema } from './authUserValidation';
 const EditProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { authUser, updateStatus, updateMessage } = useSelector(
+  const { user, updateStatus, updateMessage } = useSelector(
     (state) => state.auth
   );
 
@@ -56,7 +56,7 @@ const EditProfile = () => {
     <>
       <Subtitle>Edit Your Info</Subtitle>
       <MultiStepForm
-        initialValues={{ currentPassword: '', ...authUser }}
+        initialValues={{ currentPassword: '', ...user }}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
       >

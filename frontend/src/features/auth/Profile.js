@@ -45,9 +45,9 @@ const ProfileInfo = ({ user }) => {
 const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { authUser } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
-  if (!authUser) {
+  if (!user) {
     return null;
   }
 
@@ -63,8 +63,8 @@ const Profile = () => {
 
   return (
     <>
-      <Subtitle>Hi {authUser.firstName}!</Subtitle>
-      <ProfileInfo user={authUser} />
+      <Subtitle>Hi {user.firstName}!</Subtitle>
+      <ProfileInfo user={user} />
       <SmallButton onClick={handleChangePassword}>Change Password</SmallButton>
       <Button onClick={handleLogout}>Logout</Button>
     </>
