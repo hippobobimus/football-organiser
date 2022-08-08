@@ -13,7 +13,7 @@ export const createUser = (userProperties) => {
   return user;
 };
 
-export const render = (
+const customRender = (
   ui,
   {
     preloadedState = {},
@@ -32,3 +32,7 @@ export const render = (
 
   return { store, ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }) };
 };
+
+export * from '@testing-library/react';
+
+export { customRender as render };
