@@ -1,4 +1,5 @@
 import { render as rtlRender } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
@@ -35,4 +36,4 @@ const customRender = (
 
 export * from '@testing-library/react';
 
-export { customRender as render };
+export { customRender as render, userEvent };
