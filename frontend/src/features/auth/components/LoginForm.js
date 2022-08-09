@@ -43,8 +43,13 @@ export const LoginForm = ({ onSuccess }) => {
         submitLabel="Login"
       >
         <FormStep validationSchema={loginSchema}>
-          <TextInput label="Email" name="email" type="email" />
-          <TextInput label="Password" name="currentPassword" type="password" />
+          <TextInput id="email" label="Email" name="email" type="email" />
+          <TextInput
+            id="password"
+            label="Password"
+            name="currentPassword"
+            type="password"
+          />
         </FormStep>
       </MultiStepForm>
       <Container>

@@ -6,10 +6,7 @@ const models = {
     firstName: String,
     lastName: String,
     email: String,
-    password: {
-      hash: String,
-      salt: String,
-    },
+    password: String,
     role: String,
     name: String,
     isAdmin: Boolean,
