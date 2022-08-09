@@ -1,7 +1,7 @@
 import { Spinner } from '../../../components/spinner';
 import { useSelector } from 'react-redux';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
-import { useGetAuthUserQuery } from '../../api/apiSlice';
+import { useGetAuthUserQuery } from '../api/authApiSlice';
 
 export const Protect = ({ allowedRoles }) => {
   const location = useLocation();

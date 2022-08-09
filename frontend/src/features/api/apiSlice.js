@@ -16,21 +16,5 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery,
-  endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (credentials) => ({
-        url: '/users/login',
-        method: 'POST',
-        body: credentials,
-      }),
-    }),
-    getAuthUser: builder.query({
-      query: () => ({
-        url: '/users/me',
-        method: 'GET',
-      }),
-    }),
-  }),
+  endpoints: () => ({}),
 });
-
-export const { useLoginMutation, useGetAuthUserQuery } = apiSlice;
