@@ -5,23 +5,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Navbar } from '../navbar';
 import { Content } from '../styles';
+import { RESPONSIVE_BREAKPOINT } from '../../config';
 
-const TITLE = 'Bib Game Players';
-const MENU_ITEMS = [
-  { uid: uniqid(), text: 'Next Match', path: '/next-match' },
-  { uid: uniqid(), text: 'Calendar', path: '/calendar' },
-  { uid: uniqid(), text: 'My Profile', path: '/profile' },
-];
-const RESPONSIVE_BREAKPOINT = {
-  width: 900,
-};
+export const MainLayout = ({ title, navbarEntries }) => {
+  const menuItems = navbarEntries.map((entry) => ({ uid: uniqid(), ...entry }));
 
-export const MainLayout = () => {
   return (
     <>
       <Navbar
-        title={TITLE}
-        menuItems={MENU_ITEMS}
+        title={title}
+        menuItems={menuItems}
         widthBreakpoint={RESPONSIVE_BREAKPOINT.width}
       />
       <Content>

@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { db } from './db';
-
-const JWT_SECRET = 'woeih12312fd';
+import { JWT_SECRET } from '../../config';
 
 export const hash = (str) => {
   let hash = 8364;

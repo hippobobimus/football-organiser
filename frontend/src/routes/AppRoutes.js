@@ -10,10 +10,21 @@ import AddAttendee from '../features/events/AddAttendee';
 import Calendar from '../features/events/Calendar';
 import PageNotFound from '../components/PageNotFound';
 
+const title = 'Bib Game Players';
+
+const navbarEntries = [
+  { text: 'Next Match', path: '/next-match' },
+  { text: 'Calendar', path: '/calendar' },
+  { text: 'My Profile', path: '/profile' },
+];
+
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
+      <Route
+        path="/"
+        element={<MainLayout title={title} navbarEntries={navbarEntries} />}
+      >
         <Route index element={<Navigate replace to="/next-match" />} />
         <Route path="*" element={<AuthRoutes />} />
 

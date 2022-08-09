@@ -1,7 +1,6 @@
 import { rest } from 'msw';
 import { authenticate } from '../utils';
-
-const API_URL = '/api';
+import { API_URL } from '../../../config';
 
 export const usersHandlers = [
   rest.post(`${API_URL}/users/login`, (req, res, ctx) => {
