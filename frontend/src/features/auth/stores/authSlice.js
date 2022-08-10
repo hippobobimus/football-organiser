@@ -19,17 +19,6 @@ const initialState = {
   message: '',
 };
 
-export const register = createAsyncThunk(
-  'auth/register',
-  async (user, thunkAPI) => {
-    try {
-      return await authService.register(user);
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-);
-
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
     // purge store state and logout.
@@ -85,20 +74,6 @@ const authSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(register.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(register.fulfilled, (state, action) => {
-        state.status = 'success';
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.status = 'error';
-        state.message = action.payload;
-        state.token = null;
-      })
-
       .addCase(logout.fulfilled, (state) => {
         state.token = null;
         state.isLoggedIn = false;

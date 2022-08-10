@@ -15,8 +15,16 @@ const authApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    register: build.mutation({
+      query: (userData) => ({
+        url: '/users',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation, useGetAuthUserQuery } = authApiSlice;
+export const { useLoginMutation, useGetAuthUserQuery, useRegisterMutation } =
+  authApiSlice;
