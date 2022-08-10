@@ -4,7 +4,9 @@ import { useSelector } from 'react-redux';
 import { Protect } from '../components/Protect';
 import { Login } from './Login';
 import { Register } from './Register';
-import { Profile } from './Profile';
+import { ProfileLayout } from '../components/Layout';
+import { ProfileHome } from './ProfileHome';
+
 import { EditProfile } from './EditProfile';
 import { EditPassword } from './EditPassword';
 
@@ -23,9 +25,11 @@ export const AuthRoutes = () => {
       />
 
       <Route element={<Protect allowedRoles={['admin', 'user']} />}>
-        <Route path="profile" element={<Profile />} />
-        <Route path="edit-profile" element={<EditProfile />} />
-        <Route path="edit-password" element={<EditPassword />} />
+        <Route path="profile" element={<ProfileLayout />}>
+          <Route index element={<ProfileHome />} />
+          <Route path="edit" element={<EditProfile />} />
+          <Route path="change-password" element={<EditPassword />} />
+        </Route>
       </Route>
     </Routes>
   );
