@@ -6,7 +6,7 @@ import { Button, Subtitle } from '../../../components/styles';
 import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
 import Spinner from '../../../components/spinner/Spinner';
 import { resetUpdate, updateAuthUser } from '../stores/authSlice';
-import { updatePasswordSchema } from '../authUserValidation';
+import { updatePasswordSchema } from '../components/Form/validation';
 
 export const EditPassword = () => {
   const dispatch = useDispatch();

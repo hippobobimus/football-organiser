@@ -1,6 +1,6 @@
 import { render, screen, userEvent, waitFor, createUser } from 'test-utils';
 import { toast } from 'react-toastify';
-import { userGenerator } from '../../../../test/dataGenerators';
+import { userGenerator } from '../../../../../test/dataGenerators';
 
 import { RegisterForm } from '../RegisterForm';
 

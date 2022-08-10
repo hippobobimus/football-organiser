@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Subtitle } from '../../../components/styles';
-import { LoginForm } from '../components/LoginForm';
+import { LoginForm } from '../components/Form';
 
 export const Login = () => {
   const location = useLocation();

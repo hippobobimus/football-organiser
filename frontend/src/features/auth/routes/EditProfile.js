@@ -6,7 +6,7 @@ import { Button, Subtitle } from '../../../components/styles';
 import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
 import Spinner from '../../../components/spinner/Spinner';
 import { updateAuthUser, resetUpdate } from '../stores/authSlice';
-import { userUpdateSchema } from '../authUserValidation';
+import { userUpdateSchema } from '../components/Form/validation';
 
 export const EditProfile = () => {
   const dispatch = useDispatch();

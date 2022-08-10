@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
-import { userRegistrationSchema } from '../authUserValidation';
-import { useRegisterMutation } from '../api/authApiSlice';
+import {
+  FormStep,
+  MultiStepForm,
+  TextInput,
+} from '../../../../components/form';
+import { userRegistrationSchema } from './validation';
+import { useRegisterMutation } from '../../api/authApiSlice';
 
 export const RegisterForm = ({ onSuccess, onCancel }) => {
   const [register, { isError, error, isSuccess }] = useRegisterMutation();

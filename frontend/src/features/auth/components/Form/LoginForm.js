@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { FormStep, MultiStepForm, TextInput } from '../../../components/form';
-import { Container, Link } from '../../../components/styles';
-import { loginSchema } from '../authUserValidation';
-import { useLoginMutation } from '../api/authApiSlice';
+import {
+  FormStep,
+  MultiStepForm,
+  TextInput,
+} from '../../../../components/form';
+import { Container, Link } from '../../../../components/styles';
+import { loginSchema } from './validation';
+import { useLoginMutation } from '../../api/authApiSlice';
 
 export const LoginForm = ({ onSuccess }) => {
   const [login, { isError, error, isSuccess }] = useLoginMutation();

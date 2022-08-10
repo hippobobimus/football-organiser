@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Subtitle } from '../../../components/styles';
-import { RegisterForm } from '../components/RegisterForm';
+import { RegisterForm } from '../components/Form';
 
 export const Register = () => {
   const navigate = useNavigate();
