@@ -39,7 +39,10 @@ const loginUser = [
         email: req.body.email,
         currentPassword: req.body.currentPassword,
       });
-      return res.status(200).json({ token });
+      return res
+        .status(200)
+        .cookie('token', token, { httpOnly: true })
+        .json({ token });
     } catch (err) {
       return next(err);
     }

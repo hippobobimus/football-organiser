@@ -2,4 +2,5 @@
 .env
 
 # Key files
+keys/
 *.pem
