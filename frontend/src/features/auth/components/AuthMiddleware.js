@@ -1,11 +1,11 @@
 import { useGetAuthUserQuery } from '../api/authApiSlice';
-import { Spinner } from '../../../components/spinner';
+import { LoadingPage } from './LoadingPage';
 
 export const AuthMiddleware = ({ children }) => {
   const { isLoading } = useGetAuthUserQuery();
 
   if (isLoading) {
-    return <Spinner />;
+    return <LoadingPage />;
   }
 
   return children;

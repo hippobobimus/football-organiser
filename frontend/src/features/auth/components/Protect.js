@@ -2,6 +2,7 @@ import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { Spinner } from '../../../components/spinner';
+import { DisplayUnauthorised } from './DisplayUnauthorised';
 import { useGetAuthUserQuery } from '../api/authApiSlice';
 
 export const Protect = ({ allowedRoles }) => {
@@ -30,7 +31,7 @@ export const Protect = ({ allowedRoles }) => {
     return allowedRoles.includes(user?.role) ? (
       <Outlet />
     ) : (
-      <p>unauthorised...</p>
+      <DisplayUnauthorised />
     );
   }
 
