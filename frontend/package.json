@@ -60,5 +60,8 @@
     "@mswjs/data": "^0.10.1",
     "jsonwebtoken": "^8.5.1",
     "msw": "^0.44.2"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }

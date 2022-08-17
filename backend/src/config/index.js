@@ -30,6 +30,6 @@ export const ACCESS_TOKEN_PRIVATE_KEY =
 
 export const REFRESH_TOKEN_EXPIRES_IN = '1d';
 
-export const ACCESS_TOKEN_EXPIRES_IN = '20s';
+export const ACCESS_TOKEN_EXPIRES_IN = '30m';
 
 export const REFRESH_COOKIE_MAX_AGE_MS = 1 * 24 * 60 * 60 * 1000;

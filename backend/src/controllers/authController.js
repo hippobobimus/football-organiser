@@ -69,7 +69,7 @@ const login = [
 const logout = async (req, res, next) => {
   try {
     await authServices.logout(req.cookies?.refreshToken);
-    return res.status(204).clearCookie('refreshToken');
+    return res.status(204).clearCookie('refreshToken').end();
   } catch (err) {
     return next(err);
   }
@@ -89,6 +89,7 @@ const refresh = async (req, res, next) => {
       .cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
       .json({ accessToken });
   } catch (err) {
+    res.clearCookie('refreshToken');
     return next(err);
   }
 };
