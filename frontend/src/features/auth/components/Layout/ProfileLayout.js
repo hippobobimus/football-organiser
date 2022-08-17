@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
 
 import { Subtitle } from '../../../../components/styles';
+import { useGetAuthUserQuery } from '../../api/authApiSlice';
 
 export const ProfileLayout = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { data: user } = useGetAuthUserQuery();
 
   if (!user) {
     return null;

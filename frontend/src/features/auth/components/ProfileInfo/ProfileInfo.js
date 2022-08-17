@@ -2,6 +2,10 @@ import { SectionHeading, SmallButton } from '../../../../components/styles';
 import * as Styled from './ProfileInfo.styles';
 
 export const ProfileInfo = ({ user, onEdit }) => {
+  if (!user) {
+    return null;
+  }
+
   return (
     <section>
       <Styled.SectionContainer>
