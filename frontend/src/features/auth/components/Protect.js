@@ -2,6 +2,7 @@ import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { Spinner } from '../../../components/spinner';
+import { DisplayError } from '../../../components/DisplayError';
 import { DisplayUnauthorised } from './DisplayUnauthorised';
 import { useGetAuthUserQuery } from '../api/authApiSlice';
 
@@ -24,7 +25,7 @@ export const Protect = ({ allowedRoles }) => {
   }
 
   if (isError) {
-    return <p>{`Error: ${error.message || error.data?.message || error}`}</p>;
+    return <DisplayError error={error} />;
   }
 
   if (isLoggedIn && user) {
