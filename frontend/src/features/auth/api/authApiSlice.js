@@ -15,17 +15,24 @@ const authApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
       }),
     }),
+    register: build.mutation({
+      query: (userData) => ({
+        url: '/auth/register',
+        method: 'POST',
+        body: userData,
+      }),
+    }),
     getAuthUser: build.query({
       query: () => ({
         url: '/auth/user',
         method: 'GET',
       }),
     }),
-    register: build.mutation({
-      query: (userData) => ({
-        url: '/auth/register',
-        method: 'POST',
-        body: userData,
+    updateAuthUser: build.mutation({
+      query: (updates) => ({
+        url: '/auth/user',
+        method: 'PATCH',
+        body: updates,
       }),
     }),
   }),
@@ -35,6 +42,7 @@ const authApiSlice = apiSlice.injectEndpoints({
 export const {
   useLoginMutation,
   useLogoutMutation,
-  useGetAuthUserQuery,
   useRegisterMutation,
+  useGetAuthUserQuery,
+  useUpdateAuthUserMutation,
 } = authApiSlice;

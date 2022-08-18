@@ -27,7 +27,39 @@ export const authenticate = ({ email, currentPassword }) => {
     throw new Error('Invalid email or password');
   }
 
-  const token = jwt.sign(user.id, JWT_SECRET);
+  const accessToken = jwt.sign(user.id, JWT_SECRET);
 
-  return { token };
+  return { accessToken };
+};
+
+export const requireAuth = (req) => {
+  if (!req.headers.get('authorization')) {
+    throw new Error('Invalid access token');
+  }
+
+  const {
+    0: tokenType,
+    1: token,
+    length,
+  } = req.headers.get('authorization').split(' ');
+
+  if (length !== 2 || tokenType.toLowerCase() !== 'bearer') {
+    throw new Error('Access denied, invalid token.');
+  }
+
+  const userId = jwt.verify(token, JWT_SECRET);
+
+  const user = db.user.findFirst({
+    where: {
+      id: {
+        equals: userId,
+      },
+    },
+  });
+
+  if (!user) {
+    throw new Error('Invalid access token, user does not exist');
+  }
+
+  return user;
 };

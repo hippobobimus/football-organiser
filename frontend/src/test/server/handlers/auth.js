@@ -2,7 +2,7 @@ import { rest } from 'msw';
 import uniqid from 'uniqid';
 
 import { db } from '../db';
-import { authenticate, hash } from '../utils';
+import { authenticate, hash, requireAuth } from '../utils';
 import { API_URL } from '../../../config';
 
 export const authHandlers = [
@@ -59,5 +59,42 @@ export const authHandlers = [
 
   rest.get(`${API_URL}/auth/refresh`, (req, res, ctx) => {
     return res(ctx.status(401), ctx.json({ message: 'Unauthorised' }));
+  }),
+
+  rest.get(`${API_URL}/auth/user`, (req, res, ctx) => {
+    try {
+      const user = requireAuth(req);
+      return res(ctx.json(user));
+    } catch (err) {
+      return res(ctx.status(401), ctx.json(err));
+    }
+  }),
+
+  rest.patch(`${API_URL}/auth/user`, (req, res, ctx) => {
+    try {
+      const user = requireAuth(req);
+
+      // re-authenticate
+      authenticate({
+        email: user.email,
+        currentPassword: req.body.currentPassword,
+      });
+
+      const result = db.user.update({
+        where: {
+          id: {
+            equals: user.id,
+          },
+        },
+        data: req.body,
+      });
+
+      return res(ctx.json(result));
+    } catch (err) {
+      return res(
+        ctx.status(400),
+        ctx.json({ message: err?.message || 'Server error' })
+      );
+    }
   }),
 ];

@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { setupStore } from '../app/store';
 import { userGenerator } from './dataGenerators';
 import { db } from './server/db';
-import { hash } from './server/utils';
+import { authenticate, hash } from './server/utils';
 
 export const createUser = (userProperties) => {
   const user = userGenerator(userProperties);
@@ -14,15 +14,39 @@ export const createUser = (userProperties) => {
   return user;
 };
 
+export const loginAsUser = (user) => {
+  return authenticate({ ...user, currentPassword: user.password });
+};
+
 const customRender = (
   ui,
   {
     preloadedState = {},
-    store = setupStore(preloadedState),
+    store,
     initialRouterEntries = ['/'],
+    user,
     ...renderOptions
   } = {}
 ) => {
+  // if user is provided, login
+  if (user) {
+    const { accessToken } = loginAsUser(user);
+
+    if (preloadedState?.auth) {
+      preloadedState.auth.accessToken = accessToken;
+      preloadedState.auth.isLoggedIn = true;
+    } else {
+      preloadedState = {
+        ...preloadedState,
+        auth: { accessToken, isLoggedIn: true },
+      };
+    }
+  }
+
+  if (!store) {
+    store = setupStore(preloadedState);
+  }
+
   const Wrapper = ({ children }) => {
     return (
       <MemoryRouter initialEntries={initialRouterEntries}>
