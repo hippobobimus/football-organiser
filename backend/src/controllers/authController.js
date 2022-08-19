@@ -106,4 +106,40 @@ const readAuthUser = async (req, res, next) => {
   }
 };
 
-export default { login, logout, register, refresh, readAuthUser };
+// @desc    Edit current authenticated user
+// @route   PUT /api/auth/user
+// @access  Private
+const updateAuthUser = [
+  validateUser.firstName().optional({ checkFalsy: true }),
+  validateUser.lastName().optional({ checkFalsy: true }),
+  validateUser.email().optional({ checkFalsy: true }),
+  validateUser.newPassword().optional({ checkFalsy: true }),
+  validateUser.currentPassword(),
+  processValidation,
+  async (req, res, next) => {
+    let update = {
+      firstName: req.body.firstName || null,
+      lastName: req.body.lastName || null,
+      email: req.body.email || null,
+      newPassword: req.body.newPassword || null,
+      currentPassword: req.body.currentPassword || null,
+    };
+
+    try {
+      const user = await userServices.updateUser(req.user.id, update);
+      // return updated user.
+      return res.status(200).json(user);
+    } catch (err) {
+      return next(err);
+    }
+  },
+];
+
+export default {
+  login,
+  logout,
+  register,
+  refresh,
+  readAuthUser,
+  updateAuthUser,
+};

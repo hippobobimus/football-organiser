@@ -13,6 +13,9 @@ router.route('/register').post(authController.register);
 
 router.route('/refresh').get(authController.refresh);
 
-router.route('/user').get(protect, authController.readAuthUser);
+router
+  .route('/user')
+  .get(protect, authController.readAuthUser)
+  .patch(protect, authController.updateAuthUser);
 
 export default router;
