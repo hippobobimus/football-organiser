@@ -6,15 +6,12 @@ import {
   MultiStepForm,
   TextInput,
 } from '../../../../components/form';
-import {
-  useGetAuthUserQuery,
-  useUpdateAuthUserMutation,
-} from '../../api/authApiSlice';
-import { userUpdateSchema } from './validation';
+import { Spinner } from '../../../../components/spinner';
+import { useUpdateAuthUserMutation } from '../../api/authApiSlice';
+import { updatePasswordSchema } from './validation';
 
-export const EditProfileForm = ({ onSuccess, onCancel }) => {
-  const { data: user } = useGetAuthUserQuery();
-  const [updateAuthUser, { isSuccess, isError, error }] =
+export const EditPasswordForm = ({ onSuccess, onCancel }) => {
+  const [updateAuthUser, { isLoading, isSuccess, isError, error }] =
     useUpdateAuthUserMutation();
 
   useEffect(() => {
@@ -34,39 +31,37 @@ export const EditProfileForm = ({ onSuccess, onCancel }) => {
     onCancel();
   };
 
-  if (!user) {
-    return null;
+  if (isLoading) {
+    return <Spinner />;
   }
 
   return (
     <MultiStepForm
       initialValues={{
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
         currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
       }}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
     >
-      <FormStep validationSchema={userUpdateSchema}>
+      <FormStep validationSchema={updatePasswordSchema}>
         <TextInput
-          id="firstName"
-          label="First Name"
-          name="firstName"
-          type="text"
-        />
-        <TextInput
-          id="lastName"
-          label="Last Name"
-          name="lastName"
-          type="text"
-        />
-        <TextInput id="email" label="Email" name="email" type="email" />
-        <TextInput
-          id="password"
-          label="Enter your current password"
+          id="currentPassword"
+          label="Current password"
           name="currentPassword"
+          type="password"
+        />
+        <TextInput
+          id="newPassword"
+          label="New password"
+          name="newPassword"
+          type="password"
+        />
+        <TextInput
+          id="confirmPassword"
+          label="Confirm password"
+          name="confirmPassword"
           type="password"
         />
       </FormStep>

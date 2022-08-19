@@ -17,16 +17,12 @@ export const LoginForm = ({ onSuccess }) => {
     if (isSuccess) {
       onSuccess();
     } else if (isError) {
-      toast.error(error.data.message);
+      toast.error(error.data?.message || error.message || error);
     }
   }, [isSuccess, isError, error, onSuccess]);
 
   const handleSubmit = async (values, actions) => {
-    try {
-      await login(values);
-    } catch (err) {
-      toast.error(error.data?.message || error.message);
-    }
+    await login(values);
 
     actions.resetForm({
       values: {

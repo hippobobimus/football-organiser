@@ -21,12 +21,7 @@ export const RegisterForm = ({ onSuccess, onCancel }) => {
   }, [isSuccess, isError, error, onSuccess]);
 
   const handleSubmit = async (values, actions) => {
-    try {
-      await register(values);
-    } catch (err) {
-      toast.error(error.data?.message || error.message || error);
-    }
-
+    await register(values);
     actions.resetForm({
       values: {
         firstName: values.firstName,
