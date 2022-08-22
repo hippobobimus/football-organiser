@@ -1,15 +1,7 @@
 import * as authServices from '../services/authServices';
 import * as userServices from '../services/userServices';
 import { validateUser, processValidation } from '../middleware/validation';
-import { REFRESH_COOKIE_MAX_AGE_MS } from '../config/index.js';
-
-const refreshTokenCookieOptions = {
-  httpOnly: true,
-  maxAge: REFRESH_COOKIE_MAX_AGE_MS,
-  // TODO
-  // secure: true,
-  // sameSite: 'strict',
-};
+import { REFRESH_TOKEN_COOKIE_OPTIONS } from '../config/index.js';
 
 // @desc    Create a new user
 // @route   POST /api/auth/register
@@ -31,7 +23,7 @@ const register = [
 
       return res
         .status(200)
-        .cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
+        .cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
         .json({ accessToken });
     } catch (err) {
       return next(err);
@@ -55,7 +47,7 @@ const login = [
 
       return res
         .status(200)
-        .cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
+        .cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
         .json({ accessToken });
     } catch (err) {
       return next(err);
@@ -69,7 +61,8 @@ const login = [
 const logout = async (req, res, next) => {
   try {
     await authServices.logout(req.cookies?.refreshToken);
-    return res.status(204).clearCookie('refreshToken').end();
+    const { maxAge, ...options } = REFRESH_TOKEN_COOKIE_OPTIONS;
+    return res.status(204).clearCookie('refreshToken', options).end();
   } catch (err) {
     return next(err);
   }
@@ -86,10 +79,11 @@ const refresh = async (req, res, next) => {
 
     return res
       .status(200)
-      .cookie('refreshToken', refreshToken, refreshTokenCookieOptions)
+      .cookie('refreshToken', refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
       .json({ accessToken });
   } catch (err) {
-    res.clearCookie('refreshToken');
+    const { maxAge, ...options } = REFRESH_TOKEN_COOKIE_OPTIONS;
+    res.clearCookie('refreshToken', options);
     return next(err);
   }
 };

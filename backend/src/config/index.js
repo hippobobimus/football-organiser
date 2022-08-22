@@ -33,3 +33,12 @@ export const REFRESH_TOKEN_EXPIRES_IN = '1d';
 export const ACCESS_TOKEN_EXPIRES_IN = '30m';
 
 export const REFRESH_COOKIE_MAX_AGE_MS = 1 * 24 * 60 * 60 * 1000;
+
+export const REFRESH_TOKEN_COOKIE_OPTIONS = {
+  httpOnly: true,
+  maxAge: REFRESH_COOKIE_MAX_AGE_MS,
+  path: '/',
+  // TODO
+  // secure: true,
+  // sameSite: 'strict',
+};
