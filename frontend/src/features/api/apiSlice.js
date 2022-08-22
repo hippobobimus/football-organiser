@@ -1,7 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { Mutex } from 'async-mutex';
 
 import { API_URL } from '../../config';
 import { setAccessToken, loggedOut } from '../auth/stores/authSlice';
+
+const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
@@ -20,18 +23,33 @@ const baseQuery = fetchBaseQuery({
 });
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  await mutex.waitForUnlock();
   // initial attempt.
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const refreshResult = await baseQuery(
+          '/auth/refresh',
+          api,
+          extraOptions
+        );
 
-    if (refreshResult.data) {
-      api.dispatch(setAccessToken(refreshResult.data));
-      // retry with new token.
-      result = await baseQuery(args, api, extraOptions);
+        if (refreshResult.data) {
+          api.dispatch(setAccessToken(refreshResult.data));
+          // retry with new token.
+          result = await baseQuery(args, api, extraOptions);
+        } else {
+          api.dispatch(loggedOut());
+        }
+      } finally {
+        release();
+      }
     } else {
-      api.dispatch(loggedOut());
+      await mutex.waitForUnlock();
+      result = await baseQuery(args, api, extraOptions);
     }
   }
 
