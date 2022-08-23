@@ -8,12 +8,12 @@ export const Register = () => {
   const navigate = useNavigate();
 
   const handleCancel = () => {
-    navigate('/login');
+    navigate('../login');
   };
 
   const handleSuccess = () => {
-    toast.success('You have successfully registered. Please login.');
-    navigate('/login');
+    toast.success('You have successfully registered');
+    navigate('/');
   };
 
   return (

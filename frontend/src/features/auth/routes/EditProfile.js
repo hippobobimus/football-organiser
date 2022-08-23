@@ -8,12 +8,12 @@ export const EditProfile = () => {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate('/profile');
+    navigate('../');
     toast.success('Profile updated');
   };
 
   const handleCancel = () => {
-    navigate('/profile');
+    navigate('../');
   };
 
   return (

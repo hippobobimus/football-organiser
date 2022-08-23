@@ -8,12 +8,12 @@ export const EditPassword = () => {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate('/profile');
+    navigate('../');
     toast.success('Password updated');
   };
 
   const handleCancel = () => {
-    navigate('/profile');
+    navigate('../');
   };
 
   return (

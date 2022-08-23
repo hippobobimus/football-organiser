@@ -54,7 +54,7 @@ export const LoginForm = ({ onSuccess }) => {
       </MultiStepForm>
       <Container>
         <p>Not registered yet?</p>
-        <Link to="/register">Create an account</Link>
+        <Link to="/auth/register">Create an account</Link>
       </Container>
     </>
   );
