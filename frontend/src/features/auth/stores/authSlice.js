@@ -26,6 +26,13 @@ const authSlice = createSlice({
           state.isLoggedIn = true;
         }
       )
+      .addMatcher(
+        apiSlice.endpoints.register.matchFulfilled,
+        (state, { payload }) => {
+          state.accessToken = payload.accessToken;
+          state.isLoggedIn = true;
+        }
+      )
       .addMatcher(apiSlice.endpoints.logout.matchFulfilled, () => initialState);
   },
 });

@@ -1,6 +1,7 @@
 import { apiSlice } from '../../api/apiSlice';
 
 const authApiSlice = apiSlice.injectEndpoints({
+  tagTypes: ['AuthUser'],
   endpoints: (build) => ({
     login: build.mutation({
       query: (credentials) => ({
@@ -27,6 +28,7 @@ const authApiSlice = apiSlice.injectEndpoints({
         url: '/auth/user',
         method: 'GET',
       }),
+      providesTags: ['AuthUser'],
     }),
     updateAuthUser: build.mutation({
       query: (updates) => ({
@@ -34,6 +36,7 @@ const authApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body: updates,
       }),
+      invalidatesTags: ['AuthUser'],
     }),
   }),
   overrideExisting: false,
