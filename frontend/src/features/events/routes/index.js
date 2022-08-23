@@ -2,10 +2,12 @@ import { Route, Routes } from 'react-router-dom';
 
 import { Protect } from '../../auth';
 import { EventLayout } from '../components/Layout';
+import { Calendar } from './Calendar';
+
+// TODO port to rtk query
 import Event from '../Event';
 import EditEvent from '../EditEvent';
 import AddAttendee from '../AddAttendee';
-import Calendar from '../Calendar';
 import CreateEvent from '../CreateEvent';
 
 export const EventsRoutes = () => {

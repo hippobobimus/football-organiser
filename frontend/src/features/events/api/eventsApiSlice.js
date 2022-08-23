@@ -2,9 +2,9 @@ import { apiSlice } from '../../api/apiSlice';
 
 const eventsApiSlice = apiSlice.injectEndpoints({
   endpoints: (build) => ({
-    getEvents: build.query({
-      query: () => ({
-        url: '/events',
+    listEvents: build.query({
+      query: ({ page = 1, finished = false }) => ({
+        url: `/events?page=${page}&finished=${finished}`,
         method: 'GET',
       }),
     }),
@@ -18,4 +18,4 @@ const eventsApiSlice = apiSlice.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useGetEventsQuery, useGetEventQuery } = eventsApiSlice;
+export const { useListEventsQuery, useGetEventQuery } = eventsApiSlice;
