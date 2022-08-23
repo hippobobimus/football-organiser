@@ -19,14 +19,14 @@ describe('EditProfileForm', () => {
     mockOnSuccess = jest.fn();
     mockOnCancel = jest.fn();
     user = userEvent.setup();
+  });
 
+  it('should update user and call onSuccess callback', async () => {
     render(
       <EditProfileForm onCancel={mockOnCancel} onSuccess={mockOnSuccess} />,
       { user: testUser }
     );
-  });
 
-  it('should update user and call onSuccess callback', async () => {
     const firstNameField = await screen.findByLabelText(/first name/i);
     const lastNameField = await screen.findByLabelText(/last name/i);
     const emailField = await screen.findByLabelText(/email/i);
@@ -58,6 +58,11 @@ describe('EditProfileForm', () => {
   });
 
   it('should show an error alert if an invalid password is provided', async () => {
+    render(
+      <EditProfileForm onCancel={mockOnCancel} onSuccess={mockOnSuccess} />,
+      { user: testUser }
+    );
+
     const firstNameField = await screen.findByLabelText(/first name/i);
     const lastNameField = await screen.findByLabelText(/last name/i);
     const emailField = await screen.findByLabelText(/email/i);

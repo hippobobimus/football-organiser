@@ -16,14 +16,14 @@ describe('EditPasswordForm', () => {
     mockOnSuccess = jest.fn();
     mockOnCancel = jest.fn();
     user = userEvent.setup();
+  });
 
+  it('should update password and call onSuccess callback', async () => {
     render(
       <EditPasswordForm onCancel={mockOnCancel} onSuccess={mockOnSuccess} />,
       { user: testUser }
     );
-  });
 
-  it('should update password and call onSuccess callback', async () => {
     const newPassword = 'NewPassword.123';
 
     const currentPasswordField = await screen.findByLabelText(
