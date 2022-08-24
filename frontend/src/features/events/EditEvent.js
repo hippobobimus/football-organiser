@@ -6,7 +6,10 @@ import { format, isPast } from 'date-fns';
 import { Button, SectionHeading, Subtitle } from '../../components/styles';
 import { Spinner } from '../../components/spinner';
 import { MultiStepForm, FormStep, TextInput } from '../../components/form';
-import { addressSchema, eventInfoSchema } from './eventValidation';
+import {
+  addressSchema,
+  eventInfoSchema,
+} from './components/EventForm/validation';
 import { updateEvent, fetchOneEvent, reset } from './eventsSlice';
 
 const EditEvent = () => {

@@ -11,7 +11,7 @@ import {
   reset as resetUsers,
   selectAllUsers,
 } from '../users/usersSlice';
-import { attendeeUserSchema } from './eventValidation';
+import { attendeeUserSchema } from './components/EventForm/validation';
 
 const AddAttendee = () => {
   const dispatch = useDispatch();

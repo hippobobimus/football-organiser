@@ -1,15 +1,22 @@
-import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
-import { SmallButton, Button } from '../../components/styles';
+import { SmallButton, Button } from '../../../components/styles';
 import * as Styled from './UserAttendanceSummary.styles';
 import {
-  addAuthUserToEvent,
-  removeAuthUserFromEvent,
-  updateAuthUserEventAttendee,
-} from './eventsSlice';
+  useUpdateAuthUserEventAttendeeMutation,
+  useRemoveAuthUserFromEventMutation,
+  useAddAuthUserToEventMutation,
+  useGetEventQuery,
+} from '../api/eventsApiSlice';
 
-const UserAttendanceSummary = ({ event }) => {
-  const dispatch = useDispatch();
+export const UserAttendanceSummary = () => {
+  const { eventId } = useParams();
+
+  const [updateAuthUserEventAttendee] =
+    useUpdateAuthUserEventAttendeeMutation();
+  const [removeAuthUserFromEvent] = useRemoveAuthUserFromEventMutation();
+  const [addAuthUserToEvent] = useAddAuthUserToEventMutation();
+  const { data: event } = useGetEventQuery(eventId);
 
   if (
     !event ||
@@ -42,7 +49,7 @@ const UserAttendanceSummary = ({ event }) => {
   }
 
   const handleJoin = () => {
-    dispatch(addAuthUserToEvent(event.id));
+    addAuthUserToEvent(eventId);
   };
 
   if (!event.authUserAttendee) {
@@ -56,27 +63,21 @@ const UserAttendanceSummary = ({ event }) => {
   }
 
   const handleLeave = () => {
-    dispatch(removeAuthUserFromEvent(event.id));
+    removeAuthUserFromEvent(eventId);
   };
 
   const handleAddGuest = () => {
-    dispatch(
-      updateAuthUserEventAttendee({
-        eventId: event.id,
-        guests: guests + 1,
-      })
-    );
+    updateAuthUserEventAttendee({
+      eventId,
+      guests: guests + 1,
+    });
   };
 
   const handleRemoveGuest = () => {
-    if (guests > 0) {
-      dispatch(
-        updateAuthUserEventAttendee({
-          eventId: event.id,
-          guests: guests - 1,
-        })
-      );
-    }
+    updateAuthUserEventAttendee({
+      eventId,
+      guests: guests - 1,
+    });
   };
 
   return (
@@ -92,7 +93,11 @@ const UserAttendanceSummary = ({ event }) => {
               <b>{guests} guest(s)</b>
             </u>
           </p>
-          <SmallButton type="button" onClick={handleRemoveGuest}>
+          <SmallButton
+            type="button"
+            onClick={handleRemoveGuest}
+            disabled={guests === 0}
+          >
             -
           </SmallButton>
           <SmallButton
@@ -118,5 +123,3 @@ const UserAttendanceSummary = ({ event }) => {
     </Styled.SummaryContainer>
   );
 };
-
-export default UserAttendanceSummary;

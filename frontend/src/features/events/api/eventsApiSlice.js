@@ -1,6 +1,7 @@
 import { apiSlice } from '../../api/apiSlice';
 
 const eventsApiSlice = apiSlice.injectEndpoints({
+  providesTags: ['Event'],
   endpoints: (build) => ({
     listEvents: build.query({
       query: ({ page = 1, finished = false }) => ({
@@ -13,6 +14,7 @@ const eventsApiSlice = apiSlice.injectEndpoints({
         url: `/events/${eventId}`,
         method: 'GET',
       }),
+      providesTags: ['Event'],
     }),
     createEvent: build.mutation({
       query: (eventData) => ({
@@ -21,9 +23,37 @@ const eventsApiSlice = apiSlice.injectEndpoints({
         body: eventData,
       }),
     }),
+    addAuthUserToEvent: build.mutation({
+      query: (eventId) => ({
+        url: `/events/${eventId}/attendees/me`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Event'],
+    }),
+    removeAuthUserFromEvent: build.mutation({
+      query: (eventId) => ({
+        url: `/events/${eventId}/attendees/me`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Event'],
+    }),
+    updateAuthUserEventAttendee: build.mutation({
+      query: ({ eventId, update }) => ({
+        url: `/events/${eventId}/attendees/me`,
+        method: 'PATCH',
+        body: update,
+      }),
+      invalidatesTags: ['Event'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useListEventsQuery, useGetEventQuery, useCreateEventMutation } =
-  eventsApiSlice;
+export const {
+  useListEventsQuery,
+  useGetEventQuery,
+  useCreateEventMutation,
+  useAddAuthUserToEventMutation,
+  useRemoveAuthUserFromEventMutation,
+  useUpdateAuthUserEventAttendeeMutation,
+} = eventsApiSlice;
