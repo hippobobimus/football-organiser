@@ -1,13 +1,16 @@
 import { Outlet, useParams } from 'react-router-dom';
 
+import { Subtitle } from '../../../../components/styles';
 import { Spinner } from '../../../../components/spinner';
 import { DisplayError } from '../../../../components/DisplayError';
 import { EventInfoBar } from '../EventInfoBar';
+import { EventContentContainer } from './EventContentContainer';
 import { useGetEventQuery } from '../../api/eventsApiSlice';
+import * as Styled from './EventLayout.styles';
 
-export const EventLayout = () => {
+export const EventLayout = ({ navItems }) => {
   const { eventId } = useParams();
-  const { isLoading, isError, error } = useGetEventQuery(eventId);
+  const { data: event, isLoading, isError, error } = useGetEventQuery(eventId);
 
   if (isLoading) {
     return <Spinner />;
@@ -18,9 +21,12 @@ export const EventLayout = () => {
   }
 
   return (
-    <>
+    <Styled.ContentContainer>
+      <Subtitle>{event.name}</Subtitle>
       <EventInfoBar eventId={eventId} />
-      <Outlet />
-    </>
+      <EventContentContainer navItems={navItems}>
+        <Outlet />
+      </EventContentContainer>
+    </Styled.ContentContainer>
   );
 };
