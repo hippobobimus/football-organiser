@@ -14,8 +14,16 @@ const eventsApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+    createEvent: build.mutation({
+      query: (eventData) => ({
+        url: '/events',
+        method: 'POST',
+        body: eventData,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useListEventsQuery, useGetEventQuery } = eventsApiSlice;
+export const { useListEventsQuery, useGetEventQuery, useCreateEventMutation } =
+  eventsApiSlice;
