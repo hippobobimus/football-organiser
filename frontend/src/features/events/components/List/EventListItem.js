@@ -1,40 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { format } from 'date-fns';
 import { mdiAccountCheckOutline, mdiAccountGroupOutline } from '@mdi/js';
 
 import * as Styled from './EventListItem.styles';
-import { reset } from './eventsSlice';
 
-const EventListItem = ({ event }) => {
-  const dispatch = useDispatch();
+export const EventListItem = ({ event }) => {
   const navigate = useNavigate();
-
-  const [formatted, setFormatted] = useState({
-    date: '',
-    start: '',
-  });
 
   const { name, time, numAttendees, authUserAttendee } = event;
 
-  useEffect(() => {
-    if (time) {
-      const { buildUp, start, end } = time;
+  const formattedTime = useMemo(() => {
+    const { start } = time;
 
-      setFormatted({
-        weekday: format(Date.parse(start), 'EEEE'),
-        date: format(Date.parse(start), 'dd/LL/yy'),
-        buildUp: format(Date.parse(buildUp), 'h:mmaaa'),
-        start: format(Date.parse(start), 'h:mmaaa'),
-        end: format(Date.parse(end), 'h:mmaaa'),
-      });
-    }
+    return {
+      weekday: format(Date.parse(start), 'EEEE'),
+      date: format(Date.parse(start), 'dd/LL/yy'),
+      start: format(Date.parse(start), 'h:mmaaa'),
+    };
   }, [time]);
 
   const handleClick = () => {
-    dispatch(reset());
-    navigate(`/events/${event.id}`);
+    navigate(`${event.id}`);
   };
 
   return (
@@ -42,11 +29,11 @@ const EventListItem = ({ event }) => {
       <Styled.ListItemButton type="button" onClick={handleClick}>
         <Styled.FieldsList>
           <Styled.DateField>
-            <span>{formatted.weekday}</span>
-            <span>{formatted.date}</span>
+            <span>{formattedTime.weekday}</span>
+            <span>{formattedTime.date}</span>
           </Styled.DateField>
 
-          <Styled.TimeField>{formatted.start}</Styled.TimeField>
+          <Styled.TimeField>{formattedTime.start}</Styled.TimeField>
 
           <Styled.NameField>{name}</Styled.NameField>
 
@@ -75,5 +62,3 @@ const EventListItem = ({ event }) => {
     </li>
   );
 };
-
-export default EventListItem;
