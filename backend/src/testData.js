@@ -2,7 +2,7 @@ import { add, sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz/esm';
 
 import pwUtils from './utils/password';
-import { Event, User } from './models';
+import { AppEvent, User } from './models';
 
 const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
@@ -102,7 +102,7 @@ export const events = () => {
   const now = new Date();
 
   return [
-    new Event({
+    new AppEvent({
       name: 'Future Event A',
       category: 'match',
       time: {
@@ -120,7 +120,7 @@ export const events = () => {
       capacity: 10,
       isCancelled: false,
     }),
-    new Event({
+    new AppEvent({
       name: 'Future Event B',
       category: 'match',
       time: {
@@ -138,7 +138,7 @@ export const events = () => {
       capacity: -1,
       isCancelled: false,
     }),
-    new Event({
+    new AppEvent({
       name: 'Future Event C',
       category: 'match',
       time: {
@@ -156,7 +156,7 @@ export const events = () => {
       capacity: 12,
       isCancelled: true,
     }),
-    new Event({
+    new AppEvent({
       name: 'Future Event D',
       category: 'social',
       time: {
@@ -174,7 +174,7 @@ export const events = () => {
       capacity: 20,
       isCancelled: true,
     }),
-    new Event({
+    new AppEvent({
       name: 'Future Event E',
       category: 'match',
       time: {
@@ -192,7 +192,7 @@ export const events = () => {
       capacity: 3,
       isCancelled: false,
     }),
-    new Event({
+    new AppEvent({
       name: 'Past Event A',
       category: 'match',
       time: {
@@ -210,7 +210,7 @@ export const events = () => {
       capacity: 10,
       isCancelled: false,
     }),
-    new Event({
+    new AppEvent({
       name: 'Past Event B',
       category: 'match',
       time: {
@@ -228,7 +228,7 @@ export const events = () => {
       capacity: -1,
       isCancelled: false,
     }),
-    new Event({
+    new AppEvent({
       name: 'Past Event C',
       category: 'match',
       time: {
@@ -246,7 +246,7 @@ export const events = () => {
       capacity: 12,
       isCancelled: true,
     }),
-    new Event({
+    new AppEvent({
       name: 'Past Event D',
       category: 'match',
       time: {
@@ -264,7 +264,7 @@ export const events = () => {
       capacity: 20,
       isCancelled: true,
     }),
-    new Event({
+    new AppEvent({
       name: 'Past Event E',
       category: 'match',
       time: {
