@@ -2,7 +2,7 @@ import request from 'supertest';
 
 import app from '../app';
 import * as db from '../config/testDb';
-import { createAuthUser, createUsers } from '../test/utils';
+import { createAuthUser, createUsers, escape } from '../test/utils';
 import { userGenerator } from '../test/dataGenerators';
 
 describe('auth', () => {
@@ -315,6 +315,11 @@ describe('auth', () => {
     });
 
     it('should allow individual user fields to be updated', async () => {
+      update = userGenerator({
+        newPassword: 'Newpassword.123',
+        currentPassword: auth.password,
+        lastName: "O'Reilly",
+      });
       const { currentPassword, ...rest } = update;
       const updateFields = Object.entries(rest);
 
@@ -329,7 +334,7 @@ describe('auth', () => {
             });
           expect(statusCode).toBe(200);
           if (key !== 'newPassword') {
-            expect(body[key]).toBe(val);
+            expect(body[key]).toBe(escape(val));
           }
         })
       );

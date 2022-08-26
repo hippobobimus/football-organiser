@@ -96,3 +96,12 @@ export const createAttendee = async (event, user) => {
     user: user.id,
   }).save();
 };
+
+export const escape = (text) => {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/'/g, '&#x27;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+};
