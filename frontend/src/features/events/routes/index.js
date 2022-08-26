@@ -6,6 +6,7 @@ import { Calendar } from './Calendar';
 import { CreateEvent } from './CreateEvent';
 import { AuthUserAttendance } from './AuthUserAttendance';
 import { EventLocation } from './EventLocation';
+import { Attendance } from './Attendance';
 
 // TODO port to rtk query
 //import EditEvent from '../EditEvent';
@@ -30,7 +31,11 @@ export const EventsRoutes = () => {
           <Route index element={<Navigate to="me" replace={true} />} />
           <Route path="me" element={<AuthUserAttendance />} />
           <Route path="location" element={<EventLocation />} />
+          <Route path="lineup" element={<Attendance />} />
           {/* TODO
+          <Route element={<Protect allowedRoles={['admin']} />}>
+            <Route path="add-user" element={<AddAttendee />} />
+          </Route>
           <Route path='lineup' element={<UserAttendanceSummary />} />
           <Route path="edit" element={<EditEvent />} />
           <Route path="add-user" element={<AddAttendee />} />

@@ -45,6 +45,28 @@ const eventsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Event'],
     }),
+    addUserToEvent: build.mutation({
+      query: ({ eventId, userId }) => ({
+        url: `/events/${eventId}/attendees/${userId}`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Event'],
+    }),
+    removeUserFromEvent: build.mutation({
+      query: ({ eventId, userId }) => ({
+        url: `/events/${eventId}/attendees/${userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Event'],
+    }),
+    updateUserEventAttendee: build.mutation({
+      query: ({ eventId, userId, update }) => ({
+        url: `/events/${eventId}/attendees/${userId}`,
+        method: 'PATCH',
+        body: update,
+      }),
+      invalidatesTags: ['Event'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -56,4 +78,7 @@ export const {
   useAddAuthUserToEventMutation,
   useRemoveAuthUserFromEventMutation,
   useUpdateAuthUserEventAttendeeMutation,
+  useAddUserToEventMutation,
+  useRemoveUserFromEventMutation,
+  useUpdateUserEventAttendeeMutation,
 } = eventsApiSlice;
