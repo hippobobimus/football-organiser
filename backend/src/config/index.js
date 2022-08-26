@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+export const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
+
 export const REFRESH_TOKEN_PUBLIC_KEY =
   process.env.JWT_PUBLIC_KEY ||
   fs.readFileSync(
