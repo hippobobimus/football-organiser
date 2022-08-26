@@ -4,7 +4,8 @@ import { Protect } from '../../auth';
 import { EventLayout } from '../components/Layout';
 import { Calendar } from './Calendar';
 import { CreateEvent } from './CreateEvent';
-import { UserAttendanceSummary } from './UserAttendanceSummary';
+import { AuthUserAttendance } from './AuthUserAttendance';
+import { EventLocation } from './EventLocation';
 
 // TODO port to rtk query
 //import EditEvent from '../EditEvent';
@@ -27,10 +28,10 @@ export const EventsRoutes = () => {
           element={<EventLayout navItems={eventNavItems} />}
         >
           <Route index element={<Navigate to="me" replace={true} />} />
-          <Route path="me" element={<UserAttendanceSummary />} />
+          <Route path="me" element={<AuthUserAttendance />} />
+          <Route path="location" element={<EventLocation />} />
           {/* TODO
           <Route path='lineup' element={<UserAttendanceSummary />} />
-          <Route path='location' element={<UserAttendanceSummary />} />
           <Route path="edit" element={<EditEvent />} />
           <Route path="add-user" element={<AddAttendee />} />
           <Route path="*" element={<p>not found</p>} />

@@ -9,6 +9,8 @@ export const InfoContainer = styled.ul`
   border-radius: 25px;
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
   padding: 10px;
+  gap: 10px;
+  width: 100%;
 `;
 
 export const InfoList = styled.ul`

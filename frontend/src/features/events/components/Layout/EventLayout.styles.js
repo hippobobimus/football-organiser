@@ -6,4 +6,5 @@ export const ContentContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 15px;
+  width: min(100%, 750px);
 `;
