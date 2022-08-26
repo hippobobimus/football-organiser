@@ -125,6 +125,7 @@ export const getNextMatch = async (authUserId) => {
   const query = await AppEvent.find({
     category: 'match',
     'time.end': { $gte: new Date() },
+    isCancelled: false,
   })
     .sort({
       'time.end': 'asc',

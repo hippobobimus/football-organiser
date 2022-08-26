@@ -15,19 +15,19 @@ router.route('/next-match').get(protect, eventController.readNextMatch);
 router
   .route('/:eventId')
   .get(protect, eventController.readEvent)
-  .put(protectAdmin, eventController.updateEvent)
+  .patch(protectAdmin, eventController.updateEvent)
   .delete(protectAdmin, eventController.deleteEvent);
 
 router
   .route('/:eventId/attendees/me')
   .post(protect, eventController.createAuthUserAttendee)
-  .put(protect, eventController.updateAuthUserAttendee)
+  .patch(protect, eventController.updateAuthUserAttendee)
   .delete(protect, eventController.deleteAuthUserAttendee);
 
 router
   .route('/:eventId/attendees/:userId')
   .post(protectAdmin, eventController.createAttendee)
-  .put(protectAdmin, eventController.updateAttendee)
+  .patch(protectAdmin, eventController.updateAttendee)
   .delete(protectAdmin, eventController.deleteAttendee);
 
 export default router;
