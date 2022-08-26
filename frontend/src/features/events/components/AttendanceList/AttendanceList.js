@@ -1,16 +1,12 @@
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
-import { Section, SmallButton } from '../../../../components/styles';
+import { SmallButton } from '../../../../components/styles';
 import * as Styled from './AttendanceList.styles';
 import { AttendanceListItem } from './AttendanceListItem';
 import { useGetEventQuery } from '../../api/eventsApiSlice';
 import { useGetAuthUserQuery } from '../../../auth/api/authApiSlice';
 
-export const AttendanceList = () => {
-  const navigate = useNavigate();
-  const { eventId } = useParams();
-
+export const AttendanceList = ({ eventId, onAddUser }) => {
   const { data: user } = useGetAuthUserQuery();
   const { data: event } = useGetEventQuery(eventId);
 
@@ -24,7 +20,7 @@ export const AttendanceList = () => {
     return [...attendees].sort((a, b) =>
       a.user.name.localeCompare(b.user.name)
     );
-  });
+  }, [attendees]);
 
   let listItems = [];
   sortedAttendees?.forEach((attendee) => {
@@ -50,19 +46,11 @@ export const AttendanceList = () => {
     }
   });
 
-  const handleAddUser = () => {
-    navigate(`/events/${eventId}/add-user`);
-  };
-
   return (
     <Styled.List>
       {listItems}
       {isAdmin && (
-        <SmallButton
-          type="button"
-          disabled={event?.isFull}
-          onClick={handleAddUser}
-        >
+        <SmallButton type="button" disabled={event?.isFull} onClick={onAddUser}>
           Add User
         </SmallButton>
       )}
