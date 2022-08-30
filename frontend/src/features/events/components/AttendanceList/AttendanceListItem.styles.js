@@ -15,6 +15,7 @@ export const ListItem = styled.li`
 
 export const Content = styled.span`
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
   margin: 0px 0px 0px 0px;
   padding-top: 4px;

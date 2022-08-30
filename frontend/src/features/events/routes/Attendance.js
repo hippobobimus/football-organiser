@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Section, Container } from '../../../components/styles';
+import { Container } from '../../../components/styles';
 import { AttendanceList } from '../components/AttendanceList';
 
 export const Attendance = () => {
@@ -12,10 +12,8 @@ export const Attendance = () => {
   };
 
   return (
-    <Container>
-      <Section style={{ width: 'min(100%, 500px)' }}>
-        <AttendanceList eventId={eventId} onAddUser={handleAddUser} />
-      </Section>
+    <Container style={{ width: 'min(90%, 500px)' }}>
+      <AttendanceList eventId={eventId} onAddUser={handleAddUser} />
     </Container>
   );
 };
