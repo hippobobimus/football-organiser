@@ -31,6 +31,13 @@ const eventsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Event'],
     }),
+    deleteEvent: build.mutation({
+      query: (eventId) => ({
+        url: `/events/${eventId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Event'],
+    }),
     addAuthUserToEvent: build.mutation({
       query: (eventId) => ({
         url: `/events/${eventId}/attendees/me`,
@@ -84,6 +91,7 @@ export const {
   useGetEventQuery,
   useCreateEventMutation,
   useUpdateEventMutation,
+  useDeleteEventMutation,
   useAddAuthUserToEventMutation,
   useRemoveAuthUserFromEventMutation,
   useUpdateAuthUserEventAttendeeMutation,
