@@ -23,6 +23,14 @@ const eventsApiSlice = apiSlice.injectEndpoints({
         body: eventData,
       }),
     }),
+    updateEvent: build.mutation({
+      query: ({ eventId, update }) => ({
+        url: `/events/${eventId}`,
+        method: 'PATCH',
+        body: update,
+      }),
+      invalidatesTags: ['Event'],
+    }),
     addAuthUserToEvent: build.mutation({
       query: (eventId) => ({
         url: `/events/${eventId}/attendees/me`,
@@ -75,6 +83,7 @@ export const {
   useListEventsQuery,
   useGetEventQuery,
   useCreateEventMutation,
+  useUpdateEventMutation,
   useAddAuthUserToEventMutation,
   useRemoveAuthUserFromEventMutation,
   useUpdateAuthUserEventAttendeeMutation,
