@@ -1,30 +1,36 @@
 import styled from 'styled-components';
 
-export const NavContainer = styled.div`
-  display: flex;
-  justify-content: center;
+import { Container } from '../../../../components/styles';
+
+export const EventContainer = styled(Container)`
+  width: min(100%, 750px);
+`;
+
+export const EventBodyContainer = styled(Container)`
+  justify-content: flex-start;
   width: 100%;
-  padding: 5px;
+  height: 380px;
+`;
+
+export const TabsNavContainer = styled(Container)`
+  width: 100%;
+  padding: 10px;
   border-bottom: 2px solid black;
   background-color: ${(props) => props.theme.eventContentNavBgClr};
   border-radius: 25px 25px 0 0;
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
 `;
 
-export const MainContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+export const ContentCard = styled(Container)`
   width: 100%;
   height: 320px;
   background-color: ${(props) => props.theme.eventContentBgClr};
   border-radius: 25px;
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
+  gap: 0;
 `;
 
-export const ContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+export const TabBodyContainer = styled(Container)`
   width: 100%;
   height: 100%;
 `;

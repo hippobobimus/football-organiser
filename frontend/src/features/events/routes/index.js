@@ -1,7 +1,11 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { Protect } from '../../auth';
-import { EventLayout } from '../components/Layout';
+import {
+  EventMainLayout,
+  EventTabLayout,
+  EventEditLayout,
+} from '../components/Layout';
 import { Calendar } from './Calendar';
 import { CreateEvent } from './CreateEvent';
 import { AuthUserAttendance } from './AuthUserAttendance';
@@ -21,16 +25,18 @@ export const EventsRoutes = () => {
       <Route element={<Protect allowedRoles={['admin', 'user']} />}>
         <Route index element={<Calendar />} />
 
-        <Route
-          path=":eventId"
-          element={<EventLayout navItems={eventNavItems} />}
-        >
-          <Route index element={<Navigate to="me" replace={true} />} />
-          <Route path="me" element={<AuthUserAttendance />} />
-          <Route path="location" element={<EventLocation />} />
-          <Route path="lineup" element={<Attendance />} />
+        <Route path=":eventId" element={<EventMainLayout />}>
+          <Route element={<EventTabLayout navItems={eventNavItems} />}>
+            <Route index element={<Navigate to="me" replace={true} />} />
+            <Route path="me" element={<AuthUserAttendance />} />
+            <Route path="location" element={<EventLocation />} />
+            <Route path="lineup" element={<Attendance />} />
+          </Route>
+
           <Route element={<Protect allowedRoles={['admin']} />}>
-            <Route path="lineup/add-user" element={<AddAttendee />} />
+            <Route element={<EventEditLayout />}>
+              <Route path="lineup/add-user" element={<AddAttendee />} />
+            </Route>
           </Route>
           {/* TODO
           <Route path="edit" element={<EditEvent />} />

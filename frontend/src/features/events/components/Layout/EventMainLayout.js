@@ -4,11 +4,10 @@ import { Subtitle } from '../../../../components/styles';
 import { Spinner } from '../../../../components/spinner';
 import { DisplayError } from '../../../../components/DisplayError';
 import { EventInfoBar } from '../EventInfoBar';
-import { EventContentContainer } from './EventContentContainer';
 import { useGetEventQuery } from '../../api/eventsApiSlice';
-import * as Styled from './EventLayout.styles';
+import * as Styled from './styles';
 
-export const EventLayout = ({ navItems }) => {
+export const EventMainLayout = () => {
   const { eventId } = useParams();
   const { data: event, isLoading, isError, error } = useGetEventQuery(eventId);
 
@@ -21,12 +20,12 @@ export const EventLayout = ({ navItems }) => {
   }
 
   return (
-    <Styled.ContentContainer>
+    <Styled.EventContainer>
       <Subtitle>{event.name}</Subtitle>
       <EventInfoBar eventId={eventId} />
-      <EventContentContainer navItems={navItems}>
+      <Styled.EventBodyContainer>
         <Outlet />
-      </EventContentContainer>
-    </Styled.ContentContainer>
+      </Styled.EventBodyContainer>
+    </Styled.EventContainer>
   );
 };

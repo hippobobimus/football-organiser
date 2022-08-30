@@ -12,7 +12,7 @@ export const Attendance = () => {
   };
 
   return (
-    <Container style={{ width: 'min(90%, 500px)' }}>
+    <Container style={{ width: 'min(90%, 500px)', padding: '15px 0' }}>
       <AttendanceList eventId={eventId} onAddUser={handleAddUser} />
     </Container>
   );
