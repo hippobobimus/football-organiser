@@ -48,7 +48,7 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 5px;
+  gap: 15px;
 `;
 
 export const Content = styled(Container)`
