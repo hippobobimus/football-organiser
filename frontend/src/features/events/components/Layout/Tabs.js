@@ -1,4 +1,4 @@
-import { Menu } from '../../../../components/menu/Menu.js';
+import { Menu } from '../../../../components/Menu';
 import * as Styled from './styles';
 
 const TabsNav = ({ items }) => {
