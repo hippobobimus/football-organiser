@@ -8,12 +8,12 @@ export const CreateEvent = ({ category }) => {
   const navigate = useNavigate();
 
   const handleSuccess = (eventId) => {
-    navigate(`/calendar/${eventId}`);
+    navigate(`/events/${eventId}`);
     toast.success('New event created');
   };
 
   const handleCancel = () => {
-    navigate('/calendar');
+    navigate('/events');
   };
 
   return (

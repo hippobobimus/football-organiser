@@ -9,12 +9,12 @@ export const EditEvent = () => {
   const { eventId } = useParams();
 
   const handleSuccess = () => {
-    navigate(`/calendar/${eventId}`);
+    navigate(`/events/${eventId}`);
     toast.success('Event updated');
   };
 
   const handleCancel = () => {
-    navigate(`/calendar/${eventId}`);
+    navigate(`/events/${eventId}`);
   };
 
   return (

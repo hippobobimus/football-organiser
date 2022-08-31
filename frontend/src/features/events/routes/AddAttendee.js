@@ -9,12 +9,12 @@ export const AddAttendee = () => {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate(`/calendar/${eventId}/lineup`);
+    navigate(`/events/${eventId}/lineup`);
     toast.success('Added user');
   };
 
   const handleCancel = () => {
-    navigate(`/calendar/${eventId}/lineup`);
+    navigate(`/events/${eventId}/lineup`);
   };
 
   return (
