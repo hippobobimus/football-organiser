@@ -42,10 +42,6 @@ export const EventsRoutes = () => {
             </Route>
           </Route>
         </Route>
-
-        {/* TODO
-        <Route path="next-match" element={<Event nextMatch />} />
-          */}
       </Route>
 
       <Route element={<Protect allowedRoles={['admin']} />}>

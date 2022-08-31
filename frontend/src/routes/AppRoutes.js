@@ -8,7 +8,7 @@ import { PageNotFound } from '../components/PageNotFound';
 const title = 'Bib Game Players';
 
 const navbarEntries = [
-  { text: 'Next Match', path: '/next-match' },
+  { text: 'Next Match', path: '/calendar/next-match' },
   { text: 'Calendar', path: '/calendar' },
   { text: 'My Profile', path: '/auth/profile' },
 ];
@@ -20,13 +20,21 @@ export const AppRoutes = () => {
         path="/"
         element={<MainLayout title={title} navbarEntries={navbarEntries} />}
       >
-        <Route index element={<Navigate replace to="/next-match" />} />
+        <Route index element={<Navigate replace to="/calendar/next-match" />} />
 
         {/* Redirects for convenient access to common pages. */}
         <Route path="login" element={<Navigate replace to="/auth/login" />} />
         <Route
           path="register"
           element={<Navigate replace to="/auth/register" />}
+        />
+        <Route
+          path="next-match"
+          element={<Navigate replace to="/calendar/next-match" />}
+        />
+        <Route
+          path="profile"
+          element={<Navigate replace to="/auth/profile" />}
         />
 
         <Route path="auth/*" element={<AuthRoutes />} />
