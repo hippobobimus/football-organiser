@@ -12,6 +12,8 @@ import { AuthUserAttendance } from './AuthUserAttendance';
 import { EventLocation } from './EventLocation';
 import { Attendance } from './Attendance';
 import { AddAttendee } from './AddAttendee';
+import { EditEvent } from './EditEvent';
+import { PageNotFound } from '../../../components/PageNotFound';
 
 export const EventsRoutes = () => {
   const eventNavItems = [
@@ -36,12 +38,9 @@ export const EventsRoutes = () => {
           <Route element={<Protect allowedRoles={['admin']} />}>
             <Route element={<EventEditLayout />}>
               <Route path="lineup/add-user" element={<AddAttendee />} />
+              <Route path="edit" element={<EditEvent />} />
             </Route>
           </Route>
-          {/* TODO
-          <Route path="edit" element={<EditEvent />} />
-          <Route path="*" element={<p>not found</p>} />
-          */}
         </Route>
 
         {/* TODO
@@ -56,6 +55,8 @@ export const EventsRoutes = () => {
           element={<CreateEvent category="social" />}
         />
       </Route>
+
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };

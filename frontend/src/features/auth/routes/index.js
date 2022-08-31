@@ -6,9 +6,9 @@ import { Login } from './Login';
 import { Register } from './Register';
 import { ProfileLayout } from '../components/Layout';
 import { ProfileHome } from './ProfileHome';
-
 import { EditProfile } from './EditProfile';
 import { EditPassword } from './EditPassword';
+import { PageNotFound } from '../../../components/PageNotFound';
 
 export const AuthRoutes = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -31,6 +31,8 @@ export const AuthRoutes = () => {
           <Route path="change-password" element={<EditPassword />} />
         </Route>
       </Route>
+
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };

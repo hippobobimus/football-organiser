@@ -1,5 +1,10 @@
-function PageNotFound() {
-  return <p>Page not found...</p>;
-}
+import { Subtitle, Link } from './styles';
 
-export default PageNotFound;
+export const PageNotFound = () => {
+  return (
+    <>
+      <Subtitle>Page not found...</Subtitle>
+      <Link to={'/'}>Return to homepage</Link>
+    </>
+  );
+};

@@ -3,7 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { MainLayout } from '../components/Layout';
 import { AuthRoutes } from '../features/auth';
 import { EventsRoutes } from '../features/events';
-import PageNotFound from '../components/PageNotFound';
+import { PageNotFound } from '../components/PageNotFound';
 
 const title = 'Bib Game Players';
 
