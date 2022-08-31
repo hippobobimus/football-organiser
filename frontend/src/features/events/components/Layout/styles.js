@@ -9,7 +9,7 @@ export const EventContainer = styled(Container)`
 export const EventBodyContainer = styled(Container)`
   justify-content: flex-start;
   width: 100%;
-  height: 380px;
+  height: 100%;
 `;
 
 export const TabsNavContainer = styled(Container)`
@@ -23,7 +23,8 @@ export const TabsNavContainer = styled(Container)`
 
 export const ContentCard = styled(Container)`
   width: 100%;
-  height: 320px;
+  height: 100%;
+  min-height: 350px;
   background-color: ${(props) => props.theme.eventContentBgClr};
   border-radius: 25px;
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
