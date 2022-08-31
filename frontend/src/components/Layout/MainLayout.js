@@ -3,7 +3,7 @@ import uniqid from 'uniqid';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { Navbar } from '../navbar';
+import { Navbar } from '../Navbar';
 import { Content } from '../styles';
 import { RESPONSIVE_BREAKPOINT } from '../../config';
 

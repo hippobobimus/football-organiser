@@ -8,7 +8,7 @@ import { Container } from '../styles';
 import Menu from '../menu/Menu';
 import { reset } from '../../features/events/eventsSlice';
 
-const Navbar = ({ title, menuItems, widthBreakpoint }) => {
+export const Navbar = ({ title, menuItems, widthBreakpoint }) => {
   const dispatch = useDispatch();
   const [menuIsVisible, setMenuIsVisible] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -60,5 +60,3 @@ const Navbar = ({ title, menuItems, widthBreakpoint }) => {
     </Styled.Nav>
   );
 };
-
-export default Navbar;
