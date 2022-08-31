@@ -1,14 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import { authReducer } from '../features/auth';
-import eventsReducer from '../features/events/eventsSlice';
-import usersReducer from '../features/users/usersSlice';
 import { apiSlice } from '../features/api/apiSlice';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
-  events: eventsReducer,
-  users: usersReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
