@@ -4,8 +4,10 @@ import { Button, SmallButton } from '../../../components/styles';
 import { ProfileInfo } from '../components/ProfileInfo';
 import { useGetAuthUserQuery, useLogoutMutation } from '../api/authApiSlice';
 import { Spinner } from '../../../components/spinner';
+import { useDispatch } from 'react-redux';
 
 export const ProfileHome = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data: user, isLoading: userIsLoading } = useGetAuthUserQuery();
   const [logout, { logoutIsLoading }] = useLogoutMutation();
@@ -20,6 +22,7 @@ export const ProfileHome = () => {
 
   const handleLogout = () => {
     logout();
+    dispatch({ type: 'store/purge' });
   };
 
   if (userIsLoading) {
