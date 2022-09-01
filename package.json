@@ -7,6 +7,9 @@
     "frontend",
     "backend"
   ],
+  "engines": {
+    "node": "17.9.0"
+  },
   "scripts": {
     "start": "yarn workspace backend start",
     "client": "yarn workspace frontend start",
