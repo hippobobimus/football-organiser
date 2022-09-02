@@ -1,7 +1,6 @@
-import { screen } from '@testing-library/react';
+import { render, screen, createUser } from 'test-utils';
 
-import { render } from '../../test/testUtils';
-import Navbar from './Navbar';
+import { Navbar } from './Navbar';
 
 describe('Navbar component', () => {
   const menuItems = [
@@ -10,15 +9,27 @@ describe('Navbar component', () => {
     { uid: 2, text: 'Test789', path: '/test-path-2' },
   ];
 
-  test('Renders correct menu items', () => {
+  it('Renders correct menu items when user is logged in', () => {
     render(
-      <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />
+      <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />,
+      { user: createUser() }
     );
 
     menuItems.forEach((m) => {
       const elem = screen.getByText(m.text);
       expect(elem).toBeInTheDocument();
       expect(elem).toHaveAttribute('href', m.path);
+    });
+  });
+
+  it('Should not display the navigation menu if the user is not logged in', () => {
+    render(
+      <Navbar title="test-title" menuItems={menuItems} widthThreshold={800} />
+    );
+
+    menuItems.forEach((m) => {
+      const elem = screen.queryByText(m.text);
+      expect(elem).not.toBeInTheDocument();
     });
   });
 });
