@@ -1,6 +1,7 @@
 import express from 'express';
 
 import eventController from '../controllers/eventController';
+import { parseEventId } from '../middleware/idParser';
 import { protect, protectAdmin } from '../middleware/auth';
 
 const router = express.Router();
@@ -10,24 +11,22 @@ router
   .get(protect, eventController.readEvents)
   .post(protectAdmin, eventController.createEvent);
 
-router.route('/next-match').get(protect, eventController.readNextMatch);
-
 router
   .route('/:eventId')
-  .get(protect, eventController.readEvent)
-  .patch(protectAdmin, eventController.updateEvent)
-  .delete(protectAdmin, eventController.deleteEvent);
+  .get(protect, parseEventId, eventController.readEvent)
+  .patch(protectAdmin, parseEventId, eventController.updateEvent)
+  .delete(protectAdmin, parseEventId, eventController.deleteEvent);
 
 router
   .route('/:eventId/attendees/me')
-  .post(protect, eventController.createAuthUserAttendee)
-  .patch(protect, eventController.updateAuthUserAttendee)
-  .delete(protect, eventController.deleteAuthUserAttendee);
+  .post(protect, parseEventId, eventController.createAuthUserAttendee)
+  .patch(protect, parseEventId, eventController.updateAuthUserAttendee)
+  .delete(protect, parseEventId, eventController.deleteAuthUserAttendee);
 
 router
   .route('/:eventId/attendees/:userId')
-  .post(protectAdmin, eventController.createAttendee)
-  .patch(protectAdmin, eventController.updateAttendee)
-  .delete(protectAdmin, eventController.deleteAttendee);
+  .post(protectAdmin, parseEventId, eventController.createAttendee)
+  .patch(protectAdmin, parseEventId, eventController.updateAttendee)
+  .delete(protectAdmin, parseEventId, eventController.deleteAttendee);
 
 export default router;

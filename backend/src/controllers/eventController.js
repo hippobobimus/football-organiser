@@ -58,18 +58,6 @@ const readEvent = [
   },
 ];
 
-// @desc    Retrieve the chronologically next upcoming event of type 'match'
-// @route   GET /api/events/next-match
-// @access  Private
-const readNextMatch = async (req, res, next) => {
-  try {
-    const nextMatch = await eventServices.getNextMatch(req.user.id);
-    return res.status(200).json(nextMatch);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 // @desc    Edit event
 // @route   PATCH /api/events/:eventId
 // @access  Private, admin only
@@ -259,7 +247,6 @@ export default {
   readEvents,
   createEvent,
   readEvent,
-  readNextMatch,
   updateEvent,
   deleteEvent,
   createAuthUserAttendee,
