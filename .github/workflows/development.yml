@@ -1,0 +1,46 @@
+# This workflow performs a clean installation of node dependencies, cache/restore them,
+# runs tests, lints and then formats the code before finally deploying to the development
+# Heroku app.
+
+name: Development CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+env:
+  ACCESS_TOKEN_PUBLIC_KEY: ${{secrets.ACCESS_TOKEN_PUBLIC_KEY}}
+  ACCESS_TOKEN_PRIVATE_KEY: ${{secrets.ACCESS_TOKEN_PRIVATE_KEY}}
+  REFRESH_TOKEN_PUBLIC_KEY: ${{secrets.REFRESH_TOKEN_PUBLIC_KEY}}
+  REFRESH_TOKEN_PRIVATE_KEY: ${{secrets.REFRESH_TOKEN_PRIVATE_KEY}}
+  CLIENT_TZ: "Europe/London"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [17.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+    - run: yarn install --immutable
+    - run: yarn test
+    - run: yarn lint
+    - run: yarn format:write
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: "bibgameplayers-dev"
+        heroku_email: "rjcmasters@gmail.com"
