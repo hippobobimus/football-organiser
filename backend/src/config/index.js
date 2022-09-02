@@ -3,28 +3,28 @@ import fs from 'fs';
 export const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
 
 export const REFRESH_TOKEN_PUBLIC_KEY =
-  process.env.JWT_PUBLIC_KEY ||
+  process.env.REFRESH_TOKEN_PUBLIC_KEY ||
   fs.readFileSync(
     new URL('../../keys/id_rsa_pub_refresh.pem', import.meta.url),
     'utf8'
   );
 
 export const REFRESH_TOKEN_PRIVATE_KEY =
-  process.env.JWT_PRIVATE_KEY ||
+  process.env.REFRESH_TOKEN_PRIVATE_KEY ||
   fs.readFileSync(
     new URL('../../keys/id_rsa_priv_refresh.pem', import.meta.url),
     'utf8'
   );
 
 export const ACCESS_TOKEN_PUBLIC_KEY =
-  process.env.JWT_PUBLIC_KEY ||
+  process.env.ACCESS_TOKEN_PUBLIC_KEY ||
   fs.readFileSync(
     new URL('../../keys/id_rsa_pub_access.pem', import.meta.url),
     'utf8'
   );
 
 export const ACCESS_TOKEN_PRIVATE_KEY =
-  process.env.JWT_PRIVATE_KEY ||
+  process.env.ACCESS_TOKEN_PRIVATE_KEY ||
   fs.readFileSync(
     new URL('../../keys/id_rsa_priv_access.pem', import.meta.url),
     'utf8'
