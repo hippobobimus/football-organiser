@@ -19,6 +19,10 @@ export const EventMainLayout = () => {
     return <DisplayError error={error} />;
   }
 
+  if (eventId === 'next-match' && !event) {
+    return <Subtitle>No upcoming matches...</Subtitle>;
+  }
+
   return (
     <Styled.EventContainer>
       <Subtitle>{event.name}</Subtitle>
