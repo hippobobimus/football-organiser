@@ -1,7 +1,6 @@
 import { apiSlice } from '../../api/apiSlice';
 
 const authApiSlice = apiSlice.injectEndpoints({
-  tagTypes: ['AuthUser'],
   endpoints: (build) => ({
     login: build.mutation({
       query: (credentials) => ({

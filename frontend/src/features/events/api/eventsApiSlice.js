@@ -1,7 +1,6 @@
 import { apiSlice } from '../../api/apiSlice';
 
 const eventsApiSlice = apiSlice.injectEndpoints({
-  providesTags: ['Event'],
   endpoints: (build) => ({
     listEvents: build.query({
       query: ({ page = 1, finished = false }) => ({
