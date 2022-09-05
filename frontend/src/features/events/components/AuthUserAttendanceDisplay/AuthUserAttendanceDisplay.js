@@ -14,11 +14,13 @@ export const AuthUserAttendanceDisplay = ({
   onAddGuest,
 }) => {
   if (isFinished) {
-    <PastAttendanceDisplay
-      attended={isAttending}
-      eventCategory={eventCategory}
-      guest={guests}
-    />;
+    return (
+      <PastAttendanceDisplay
+        attended={isAttending}
+        eventCategory={eventCategory}
+        guests={guests}
+      />
+    );
   }
   if (!isAttending) {
     return <InitialAttendanceDisplay onJoin={onJoin} />;
