@@ -1,7 +1,7 @@
 import request from 'supertest';
 
 import app from '../app';
-import * as db from '../config/testDb';
+import * as db from '../test/database';
 import { createAuthUser, createUsers } from '../test/utils';
 
 describe('users', () => {

@@ -4,7 +4,7 @@ import { zonedTimeToUtc } from 'date-fns-tz/esm';
 import mongoose from 'mongoose';
 
 import app from '../app';
-import * as db from '../config/testDb';
+import * as db from '../test/database';
 import { Attendee, AppEvent } from '../models';
 import {
   createAttendee,
