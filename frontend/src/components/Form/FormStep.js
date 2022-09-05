@@ -1,3 +1,1 @@
-const FormStep = ({ children }) => children;
-
-export default FormStep;
+export const FormStep = ({ children }) => children;

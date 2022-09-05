@@ -2,7 +2,7 @@ import { useField } from 'formik';
 
 import * as Styled from './SelectField.styles';
 
-const SelectField = ({ label, ...props }) => {
+export const SelectField = ({ label, ...props }) => {
   const [field, meta] = useField(props);
 
   const isInvalid = meta.touched && meta.error;
@@ -17,5 +17,3 @@ const SelectField = ({ label, ...props }) => {
     </Styled.SelectContainer>
   );
 };
-
-export default SelectField;

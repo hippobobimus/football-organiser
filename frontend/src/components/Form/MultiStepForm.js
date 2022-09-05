@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 
 import * as Styled from './MultiStepForm.styles';
 
-const MultiStepForm = ({
+export const MultiStepForm = ({
   children,
   initialValues,
   onSubmit,
@@ -72,5 +72,3 @@ const MultiStepForm = ({
     </Formik>
   );
 };
-
-export default MultiStepForm;

@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import * as Styled from './TextInput.styles';
 
-const TextInput = ({ label, ...props }) => {
+export const TextInput = ({ label, ...props }) => {
   const [field, meta] = useField(props);
 
   const isInvalid = meta.touched && meta.error;
@@ -16,5 +16,3 @@ const TextInput = ({ label, ...props }) => {
     </Styled.InputContainer>
   );
 };
-
-export default TextInput;
