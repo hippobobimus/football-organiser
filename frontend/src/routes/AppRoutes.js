@@ -9,7 +9,7 @@ const title = 'Bib Game Players';
 
 const navbarEntries = [
   { text: 'Next Match', path: '/events/next-match' },
-  { text: 'Events', path: '/events' },
+  { text: 'Events', path: '/events', end: true },
   { text: 'My Profile', path: '/auth/profile' },
 ];
 
