@@ -318,7 +318,6 @@ describe('auth', () => {
       update = userGenerator({
         newPassword: 'Newpassword.123',
         currentPassword: auth.password,
-        lastName: "O'Reilly",
       });
       const { currentPassword, ...rest } = update;
       const updateFields = Object.entries(rest);
@@ -352,11 +351,11 @@ describe('auth', () => {
         _id: auth.user.id,
         createdAt: expect.any(String),
         email: update.email,
-        firstName: update.firstName,
+        firstName: escape(update.firstName),
         id: auth.user.id,
         isAdmin: false,
-        lastName: update.lastName,
-        name: update.firstName + ' ' + update.lastName,
+        lastName: escape(update.lastName),
+        name: escape(update.firstName) + ' ' + escape(update.lastName),
         role: auth.user.role,
         updatedAt: expect.any(String),
       });

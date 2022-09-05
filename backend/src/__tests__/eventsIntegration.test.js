@@ -480,7 +480,7 @@ describe('events', () => {
       expect(statusCode).toBe(200);
     });
 
-    it('should return null if no upcoming match is found', async () => {
+    it('should return an empty response if no upcoming match is found', async () => {
       // remove all upcoming matches
       await AppEvent.deleteMany({
         category: 'match',
@@ -491,8 +491,8 @@ describe('events', () => {
         .get(path)
         .set('Authorization', `bearer ${auth.accessToken}`);
 
-      expect(statusCode).toBe(200);
-      expect(body).toBe(null);
+      expect(statusCode).toBe(204);
+      expect(body).toMatchObject({});
     });
 
     it('should return json', async () => {
