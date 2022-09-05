@@ -5,8 +5,8 @@ import {
   FormStep,
   MultiStepForm,
   TextInput,
-} from '../../../../components/form';
-import { Spinner } from '../../../../components/spinner';
+} from '../../../../components/Form';
+import { Spinner } from '../../../../components/Spinner';
 import { useUpdateAuthUserMutation } from '../../api/authApiSlice';
 import { updatePasswordSchema } from './validation';
 

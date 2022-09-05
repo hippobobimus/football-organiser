@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { SmallButton } from '../../../../components/styles';
-import { Spinner } from '../../../../components/spinner';
+import { Spinner } from '../../../../components/Spinner';
 import { DisplayError } from '../../../../components/DisplayError';
-import PaginationButtons from '../../../../components/pagination/PaginationButtons';
+import { PaginationButtons } from '../../../../components/Pagination';
 import { EventsList } from './EventsList';
 import { useListEventsQuery } from '../../api/eventsApiSlice';
 

@@ -1,7 +1,7 @@
 import { Outlet, useParams } from 'react-router-dom';
 
 import { Subtitle } from '../../../../components/styles';
-import { Spinner } from '../../../../components/spinner';
+import { Spinner } from '../../../../components/Spinner';
 import { DisplayError } from '../../../../components/DisplayError';
 import { EventInfoBar } from '../EventInfoBar';
 import { useGetEventQuery } from '../../api/eventsApiSlice';

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
-import { FormStep, MultiStepForm } from '../../../../components/form';
+import { FormStep, MultiStepForm } from '../../../../components/Form';
 import { SelectUserField } from '../../../users/components/SelectUserField';
 import { attendeeUserSchema } from './validation';
 import { useAddUserToEventMutation } from '../../api/eventsApiSlice';

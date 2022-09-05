@@ -4,7 +4,7 @@ import { mdiArrowUpBoldOutline, mdiArrowDownBoldOutline } from '@mdi/js';
 import { SmallButton } from '../styles';
 import * as Styled from './PaginationButtons.styles';
 
-const PaginationButtons = ({
+export const PaginationButtons = ({
   onUpClick,
   onDownClick,
   upDisabled,
@@ -21,5 +21,3 @@ const PaginationButtons = ({
     </Styled.ButtonRow>
   );
 };
-
-export default PaginationButtons;

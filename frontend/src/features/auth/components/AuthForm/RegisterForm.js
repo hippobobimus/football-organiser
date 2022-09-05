@@ -5,7 +5,7 @@ import {
   FormStep,
   MultiStepForm,
   TextInput,
-} from '../../../../components/form';
+} from '../../../../components/Form';
 import { userRegistrationSchema } from './validation';
 import { useRegisterMutation } from '../../api/authApiSlice';
 

@@ -5,7 +5,7 @@ import {
   FormStep,
   MultiStepForm,
   TextInput,
-} from '../../../../components/form';
+} from '../../../../components/Form';
 import { SectionHeading } from '../../../../components/styles';
 import { eventInfoSchema, addressSchema } from './validation';
 import { useCreateEventMutation } from '../../api/eventsApiSlice';

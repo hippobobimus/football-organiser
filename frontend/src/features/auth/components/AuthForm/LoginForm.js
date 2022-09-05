@@ -5,7 +5,7 @@ import {
   FormStep,
   MultiStepForm,
   TextInput,
-} from '../../../../components/form';
+} from '../../../../components/Form';
 import { Container, Link } from '../../../../components/styles';
 import { loginSchema } from './validation';
 import { useLoginMutation } from '../../api/authApiSlice';

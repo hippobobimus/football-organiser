@@ -1,7 +1,7 @@
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Spinner } from '../../../components/spinner';
+import { Spinner } from '../../../components/Spinner';
 import { DisplayError } from '../../../components/DisplayError';
 import { DisplayUnauthorised } from './DisplayUnauthorised';
 import { useGetAuthUserQuery } from '../api/authApiSlice';

@@ -1,6 +1,6 @@
-import { Spinner } from '../../../components/spinner';
+import { Spinner } from '../../../components/Spinner';
 import { DisplayError } from '../../../components/DisplayError';
-import { SelectField } from '../../../components/form';
+import { SelectField } from '../../../components/Form';
 import { useGetUsersQuery } from '../api/usersApiSlice';
 
 export const SelectUserField = () => {
