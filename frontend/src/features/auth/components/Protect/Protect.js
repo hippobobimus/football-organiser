@@ -1,10 +1,10 @@
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { Spinner } from '../../../components/Spinner';
-import { DisplayError } from '../../../components/DisplayError';
-import { DisplayUnauthorised } from './DisplayUnauthorised';
-import { useGetAuthUserQuery } from '../api/authApiSlice';
+import { Spinner } from '../../../../components/Spinner';
+import { DisplayError } from '../../../../components/DisplayError';
+import { Unauthorised } from './Unauthorised';
+import { useGetAuthUserQuery } from '../../api/authApiSlice';
 
 export const Protect = ({ allowedRoles }) => {
   const location = useLocation();
@@ -29,11 +29,7 @@ export const Protect = ({ allowedRoles }) => {
   }
 
   if (isLoggedIn && user) {
-    return allowedRoles.includes(user?.role) ? (
-      <Outlet />
-    ) : (
-      <DisplayUnauthorised />
-    );
+    return allowedRoles.includes(user?.role) ? <Outlet /> : <Unauthorised />;
   }
 
   // store intended destination to return to after authentication is completed.

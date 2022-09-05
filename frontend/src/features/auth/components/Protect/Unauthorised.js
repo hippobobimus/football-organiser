@@ -1,6 +1,6 @@
-import { Subtitle } from '../../../components/styles';
+import { Subtitle } from '../../../../components/styles';
 
-export const DisplayUnauthorised = () => {
+export const Unauthorised = () => {
   return (
     <>
       <Subtitle>Access Denied</Subtitle>
