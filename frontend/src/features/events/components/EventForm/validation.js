@@ -38,7 +38,7 @@ export const addressSchema = Yup.object({
   locationPostcode: Yup.string()
     .required('Required')
     .matches(
-      /^([A-Z][A-HJ-Y]?\d[A-Z\d]? ?\d[A-Z]{2}|GIR ?0A{2})$/,
+      /^([A-Za-z][A-HJ-Ya-hj-y]?\d[A-Za-z\d]? ?\d[A-Za-z]{2}|GIR ?0A{2})$/,
       'Must be a valid UK postcode format.'
     ),
 });

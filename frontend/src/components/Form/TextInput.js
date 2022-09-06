@@ -11,7 +11,9 @@ export const TextInput = ({ label, ...props }) => {
       <Styled.Label htmlFor={props.id || props.name}>{label}</Styled.Label>
       <Styled.Input {...field} {...props} isInvalid={isInvalid} />
       {isInvalid ? (
-        <Styled.ErrorMessage>{meta.error}</Styled.ErrorMessage>
+        <Styled.ErrorMessage name={props.name}>
+          {meta.error}
+        </Styled.ErrorMessage>
       ) : null}
     </Styled.InputContainer>
   );
