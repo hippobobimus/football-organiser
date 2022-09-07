@@ -28,12 +28,18 @@ export const EditEventForm = ({ eventId, onSuccess, onCancel }) => {
   }, [isSuccess, isError, error, onSuccess]);
 
   const formattedTime = useMemo(
-    () => ({
-      buildUp: format(Date.parse(event.time.buildUp), "yyyy-MM-dd'T'HH:mm"),
-      start: format(Date.parse(event.time.start), "yyyy-MM-dd'T'HH:mm"),
-      end: format(Date.parse(event.time.end), "yyyy-MM-dd'T'HH:mm"),
-    }),
-    [event.time]
+    () =>
+      event?.time
+        ? {
+            buildUp: format(
+              Date.parse(event.time.buildUp),
+              "yyyy-MM-dd'T'HH:mm"
+            ),
+            start: format(Date.parse(event.time.start), "yyyy-MM-dd'T'HH:mm"),
+            end: format(Date.parse(event.time.end), "yyyy-MM-dd'T'HH:mm"),
+          }
+        : null,
+    [event?.time]
   );
 
   const handleSubmit = async (values) => {
