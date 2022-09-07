@@ -9,15 +9,16 @@ export const userGenerator = (overrides) => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
   const name = firstName + ' ' + lastName;
+  const role = overrides?.role || 'admin';
 
   return {
     firstName,
     lastName,
     email: faker.internet.email(),
     password: faker.internet.password(),
-    role: 'admin',
+    role,
     name,
-    isAdmin: Boolean,
+    isAdmin: role === 'admin',
 
     ...overrides,
   };

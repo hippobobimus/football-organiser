@@ -37,7 +37,6 @@ const models = {
   },
   attendee: {
     id: primaryKey(faker.datatype.uuid),
-    event: oneOf('event'),
     user: oneOf('user'),
     guests: Number,
   },

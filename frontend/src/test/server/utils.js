@@ -32,7 +32,7 @@ export const authenticate = ({ email, currentPassword }) => {
   return { accessToken };
 };
 
-export const requireAuth = (req) => {
+export const requireAuth = (req, options) => {
   if (!req.headers.get('authorization')) {
     throw new Error('Invalid access token');
   }
@@ -59,6 +59,10 @@ export const requireAuth = (req) => {
 
   if (!user) {
     throw new Error('Invalid access token, user does not exist');
+  }
+
+  if (options?.admin && !user.isAdmin) {
+    throw new Error('Access denied, insufficient privileges');
   }
 
   return user;

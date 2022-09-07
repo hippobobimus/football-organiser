@@ -23,6 +23,28 @@ export const createEvent = (eventProperties) => {
   return event;
 };
 
+export const addUserToEvent = (event, user) => {
+  const exists = event.attendees.find((x) => x.user.id === user.id);
+  if (exists) {
+    throw new Error('Attendee already exists');
+  }
+
+  const attendee = db.attendee.create({
+    user,
+    guests: 0,
+  });
+
+  const updatedEvent = db.event.update({
+    where: { id: { equals: event.id } },
+    data: {
+      numAttendees: (prev) => prev + 1,
+      attendees: (prev) => prev.concat(attendee),
+    },
+  });
+
+  return updatedEvent;
+};
+
 export const loginAsUser = (user) => {
   return authenticate({ ...user, currentPassword: user.password });
 };
