@@ -5,23 +5,28 @@ import {
   fireEvent,
   waitFor,
   createUser,
+  createEvent,
 } from 'test-utils';
 import { eventGenerator } from '../../../../../test/dataGenerators';
 
-import { CreateEventForm } from '../CreateEventForm';
+import { EditEventForm } from '../EditEventForm';
 
-describe('CreateEventForm', () => {
+describe('EditEventForm', () => {
   it("should display event name input for 'social' category events", async () => {
     const mockOnSuccess = jest.fn();
     const mockOnCancel = jest.fn();
+    const event = createEvent({ overrides: { category: 'social' } });
 
     render(
-      <CreateEventForm
-        category="social"
+      <EditEventForm
+        eventId={event.id}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />,
-      { user: createUser() }
+      {
+        user: createUser(),
+        initialRouterEntries: [`/events/${event.id}/edit`],
+      }
     );
 
     expect(await screen.findByLabelText(/name/i)).toBeInTheDocument();
@@ -30,70 +35,95 @@ describe('CreateEventForm', () => {
   it("should not display event name input for 'match' category events", async () => {
     const mockOnSuccess = jest.fn();
     const mockOnCancel = jest.fn();
+    const event = createEvent();
 
     render(
-      <CreateEventForm
-        category="match"
+      <EditEventForm
+        eventId={event.id}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />,
-      { user: createUser() }
+      {
+        user: createUser(),
+        initialRouterEntries: [`/events/${event.id}/edit`],
+      }
     );
 
     expect(screen.queryByLabelText(/name/i)).not.toBeInTheDocument();
   });
 
-  it('should create match event and call onSuccess callback', async () => {
+  it('should update event and call onSuccess callback', async () => {
     const mockOnSuccess = jest.fn();
     const mockOnCancel = jest.fn();
     const user = userEvent.setup();
-    const eventInput = eventGenerator({ formatTime: true });
+    const event = createEvent();
+    const update = eventGenerator({ formatTime: true });
 
     render(
-      <CreateEventForm
-        category="match"
+      <EditEventForm
+        eventId={event.id}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />,
-      { user: createUser() }
+      {
+        user: createUser(),
+        initialRouterEntries: [`/events/${event.id}/edit`],
+      }
     );
 
     // page 1
-    await user.click(screen.getByLabelText(/warm up/i));
-    fireEvent.change(screen.getByLabelText(/warm up/i), {
-      target: { value: eventInput.time.buildUp },
+    const buildUpInput = await screen.findByLabelText(/warm up/i);
+    const startInput = screen.getByLabelText(/kick off/i);
+    const endInput = screen.getByLabelText(/finish/i);
+    const capacityInput = screen.getByLabelText(/maximum no. of attendees/i);
+
+    await user.click(buildUpInput);
+    fireEvent.change(buildUpInput, {
+      target: { value: update.time.buildUp },
     });
 
-    await user.click(screen.getByLabelText(/kick off/i));
-    fireEvent.change(screen.getByLabelText(/kick off/i), {
-      target: { value: eventInput.time.start },
+    await user.click(startInput);
+    fireEvent.change(startInput, {
+      target: { value: update.time.start },
     });
 
-    await user.click(screen.getByLabelText(/finish/i));
-    fireEvent.change(screen.getByLabelText(/finish/i), {
-      target: { value: eventInput.time.end },
+    await user.click(endInput);
+    fireEvent.change(endInput, {
+      target: { value: update.time.end },
     });
 
-    await user.click(screen.getByLabelText(/maximum no. of attendees/i));
-    await user.keyboard(eventInput.capacity);
+    await user.click(capacityInput);
+    await user.clear(capacityInput);
+    await user.keyboard(update.capacity);
 
     await user.click(screen.getByRole('button', { name: /next/i }));
 
     // page 2
-    await user.click(await screen.findByLabelText(/name/i));
-    await user.keyboard(eventInput.location.name);
+    const nameInput = await screen.findByLabelText(/name/i);
+    const line1Input = screen.getByLabelText(/line 1/i);
+    const line2Input = screen.getByLabelText(/line 2/i);
+    const townInput = screen.getByLabelText(/town/i);
+    const postcodeInput = screen.getByLabelText(/postcode/i);
 
-    await user.click(await screen.findByLabelText(/line 1/i));
-    await user.keyboard(eventInput.location.line1);
+    await user.click(nameInput);
+    await user.clear(nameInput);
+    await user.keyboard(update.location.name);
 
-    await user.click(await screen.findByLabelText(/line 2/i));
-    await user.keyboard(eventInput.location.line2);
+    await user.click(line1Input);
+    await user.clear(line1Input);
+    await user.keyboard(update.location.line1);
 
-    await user.click(await screen.findByLabelText(/town/i));
-    await user.keyboard(eventInput.location.town);
+    await user.click(line2Input);
+    await user.clear(line2Input);
+    await user.keyboard(update.location.line2);
 
-    await user.click(await screen.findByLabelText(/postcode/i));
-    await user.keyboard(eventInput.location.postcode);
+    await user.click(townInput);
+    await user.clear(townInput);
+    await user.keyboard(update.location.town);
+
+    await user.click(postcodeInput);
+    await user.clear(postcodeInput);
+    await user.keyboard(update.location.postcode);
 
     await user.click(screen.getByRole('button', { name: /save/i }));
 
@@ -105,42 +135,47 @@ describe('CreateEventForm', () => {
     const mockOnSuccess = jest.fn();
     const mockOnCancel = jest.fn();
     const user = userEvent.setup();
-    const eventInput = eventGenerator({ formatTime: true, past: true });
+    const event = createEvent();
+    const update = eventGenerator({ formatTime: true, past: true });
 
     render(
-      <CreateEventForm
-        category="match"
+      <EditEventForm
+        eventId={event.id}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />,
-      { user: createUser() }
+      {
+        user: createUser(),
+        initialRouterEntries: [`/events/${event.id}/edit`],
+      }
     );
 
     // page 1
-    const buildUpInput = screen.getByLabelText(/warm up/i);
+    const buildUpInput = await screen.findByLabelText(/warm up/i);
     const startInput = screen.getByLabelText(/kick off/i);
     const endInput = screen.getByLabelText(/finish/i);
     const capacityInput = screen.getByLabelText(/maximum no. of attendees/i);
 
-    fireEvent.change(buildUpInput, { target: { value: eventInput.time.end } });
+    fireEvent.change(buildUpInput, { target: { value: update.time.end } });
     fireEvent.blur(buildUpInput);
     expect(
       await screen.findByText(/cannot be in the past/i)
     ).toBeInTheDocument();
 
-    fireEvent.change(startInput, { target: { value: eventInput.time.start } });
+    fireEvent.change(startInput, { target: { value: update.time.start } });
     fireEvent.blur(startInput);
     expect(
       await screen.findByText(/cannot precede the warm up time/i)
     ).toBeInTheDocument();
 
-    fireEvent.change(endInput, { target: { value: eventInput.time.buildUp } });
+    fireEvent.change(endInput, { target: { value: update.time.buildUp } });
     fireEvent.blur(endInput);
     expect(
       await screen.findByText(/cannot precede the kick off time/i)
     ).toBeInTheDocument();
 
     await user.click(capacityInput);
+    await user.clear(capacityInput);
     await user.keyboard('-1');
     fireEvent.blur(capacityInput);
     expect(await screen.findByText(/must be at least 1/i)).toBeInTheDocument();
@@ -155,35 +190,45 @@ describe('CreateEventForm', () => {
     const mockOnSuccess = jest.fn();
     const mockOnCancel = jest.fn();
     const user = userEvent.setup();
-    const eventInput = eventGenerator({ formatTime: true });
+    const event = createEvent();
+    const update = eventGenerator({ formatTime: true });
 
     render(
-      <CreateEventForm
-        category="match"
+      <EditEventForm
+        eventId={event.id}
         onCancel={mockOnCancel}
         onSuccess={mockOnSuccess}
       />,
-      { user: createUser() }
+      {
+        user: createUser(),
+        initialRouterEntries: [`/events/${event.id}/edit`],
+      }
     );
 
     // page 1
-    await user.click(screen.getByLabelText(/warm up/i));
-    fireEvent.change(screen.getByLabelText(/warm up/i), {
-      target: { value: eventInput.time.buildUp },
+    const buildUpInput = await screen.findByLabelText(/warm up/i);
+    const startInput = screen.getByLabelText(/kick off/i);
+    const endInput = screen.getByLabelText(/finish/i);
+    const capacityInput = screen.getByLabelText(/maximum no. of attendees/i);
+
+    await user.click(buildUpInput);
+    fireEvent.change(buildUpInput, {
+      target: { value: update.time.buildUp },
     });
 
-    await user.click(screen.getByLabelText(/kick off/i));
-    fireEvent.change(screen.getByLabelText(/kick off/i), {
-      target: { value: eventInput.time.start },
+    await user.click(startInput);
+    fireEvent.change(startInput, {
+      target: { value: update.time.start },
     });
 
-    await user.click(screen.getByLabelText(/finish/i));
-    fireEvent.change(screen.getByLabelText(/finish/i), {
-      target: { value: eventInput.time.end },
+    await user.click(endInput);
+    fireEvent.change(endInput, {
+      target: { value: update.time.end },
     });
 
-    await user.click(screen.getByLabelText(/maximum no. of attendees/i));
-    await user.keyboard(eventInput.capacity);
+    await user.click(capacityInput);
+    await user.clear(capacityInput);
+    await user.keyboard(update.capacity);
 
     await user.click(screen.getByRole('button', { name: /next/i }));
 
@@ -202,7 +247,7 @@ describe('CreateEventForm', () => {
     ).toBeInTheDocument();
     await user.click(nameInput);
     await user.clear(nameInput);
-    await user.keyboard(eventInput.location.name);
+    await user.keyboard(update.location.name);
 
     await user.click(line1Input);
     expect(
@@ -215,7 +260,7 @@ describe('CreateEventForm', () => {
     ).toBeInTheDocument();
     await user.click(line1Input);
     await user.clear(line1Input);
-    await user.keyboard(eventInput.location.line1);
+    await user.keyboard(update.location.line1);
 
     await user.click(line2Input);
     expect(
@@ -228,7 +273,7 @@ describe('CreateEventForm', () => {
     ).toBeInTheDocument();
     await user.click(line2Input);
     await user.clear(line2Input);
-    await user.keyboard(eventInput.location.line2);
+    await user.keyboard(update.location.line2);
 
     await user.click(townInput);
     expect(
@@ -241,7 +286,7 @@ describe('CreateEventForm', () => {
     ).toBeInTheDocument();
     await user.click(townInput);
     await user.clear(townInput);
-    await user.keyboard(eventInput.location.town);
+    await user.keyboard(update.location.town);
 
     await user.click(postcodeInput);
     await user.keyboard('ABC 123');

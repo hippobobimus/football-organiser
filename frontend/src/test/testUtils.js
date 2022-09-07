@@ -4,14 +4,23 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { setupStore } from '../app/store';
-import { userGenerator } from './dataGenerators';
+import { eventGenerator, userGenerator } from './dataGenerators';
 import { db } from './server/db';
 import { authenticate, hash } from './server/utils';
 
 export const createUser = (userProperties) => {
-  const user = userGenerator(userProperties);
-  db.user.create({ ...user, password: hash(user.password) });
-  return user;
+  const userInput = userGenerator(userProperties);
+  const user = db.user.create({
+    ...userInput,
+    password: hash(userInput.password),
+  });
+  return { ...user, password: userInput.password };
+};
+
+export const createEvent = (eventProperties) => {
+  const eventInput = eventGenerator(eventProperties);
+  const event = db.event.create(eventInput);
+  return event;
 };
 
 export const loginAsUser = (user) => {

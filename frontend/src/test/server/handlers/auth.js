@@ -1,5 +1,4 @@
 import { rest } from 'msw';
-import uniqid from 'uniqid';
 
 import { db } from '../db';
 import { authenticate, hash, requireAuth } from '../utils';
@@ -37,7 +36,6 @@ export const authHandlers = [
 
       db.user.create({
         ...userData,
-        id: uniqid(),
         password: hash(userData.newPassword),
         role: 'user',
         isAdmin: false,
