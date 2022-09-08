@@ -1,6 +1,6 @@
 {
   "name": "football-organiser",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "private": true,
   "packageManager": "yarn@3.2.0",
   "workspaces": [
