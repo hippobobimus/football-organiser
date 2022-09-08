@@ -38,18 +38,33 @@ A demo version of the website is available here: [Demo site](https://demo.bibgam
 
 ## Technology
 
-A Node.js / Express backend provides a REST api that allows creation, editing and deletion of events, users and event attendance records stored in a remote MongoDB database. It handles authentication of users, stores salted hashes only in the database and provides authentication tokens (JWT). The React frontend communicates with this backend via the api, storing and updating the state with Redux.
+A Node.js / Express backend provides a REST api that allows creation, editing and deletion of events, users and event attendance records stored in a remote MongoDB database. It handles authentication of users, storing salted hashes only in the database, and provides authentication tokens (JWT). The React frontend communicates with this backend via the api, caching api calls with RTK Query.
 
 ### Backend
 
 - Node.js/Express
 - MongoDB database (Mongoose ODM)
-- Express-Validator (request body/parameter validation)
+- Express-Validator (request body/parameter validation/sanitisation)
+
+#### Testing
+
+- Jest
+- SuperTest (http request testing)
+- mongodb-memory-server (in memory MongoDB test database)
+- Faker (fake data generation)
 
 ### Frontend
 
 - React
 - Redux (Redux-Toolkit)
+- RTK Query (api caching)
 - Formik (forms)
 - Yup (field validation)
 - styled-components (for css in js)
+
+#### Testing
+
+- Jest
+- Mock Service Worker (api mocking)
+- mswjs/data (data modelling/mocking)
+- Faker (fake data generation)
