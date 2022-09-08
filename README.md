@@ -1,4 +1,4 @@
-![bibgameplayers](https://user-images.githubusercontent.com/25724314/174857587-8ff1e362-0e15-42fe-a80c-c30895f12020.png)
+![bibgameplayers-desktop](https://user-images.githubusercontent.com/25724314/189161062-6b903435-dc85-46c9-b6e6-6907bfd382bb.png)
 
 # Event Organisation
 
