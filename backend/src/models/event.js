@@ -18,7 +18,7 @@ const EventSchema = new Schema(
       line1: { type: String, required: true },
       line2: { type: String },
       town: { type: String, required: true },
-      postcode: { type: String, required: true },
+      postcode: { type: String, uppercase: true, required: true },
     },
     capacity: { type: Number, default: -1 },
     isCancelled: { type: Boolean, default: false },

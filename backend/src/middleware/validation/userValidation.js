@@ -8,12 +8,7 @@ const firstName = () => {
     .trim()
     .isLength({ min: 1, max: 100 })
     .escape()
-    .withMessage('First name must be specified.')
-    .bail()
-    .isAlphanumeric('en-GB', { ignore: "'-" })
-    .withMessage(
-      'First name has invalid characters (a-z, A-Z, hyphenation and apostrophes only).'
-    );
+    .withMessage('First name must be specified.');
 };
 
 const lastName = () => {
@@ -21,12 +16,7 @@ const lastName = () => {
     .trim()
     .isLength({ min: 1, max: 100 })
     .escape()
-    .withMessage('Last name must be specified.')
-    .bail()
-    .isAlphanumeric('en-GB', { ignore: "'-" })
-    .withMessage(
-      'Last name has invalid characters (a-z, A-Z, hyphenation and apostrophes only).'
-    );
+    .withMessage('Last name must be specified.');
 };
 
 const email = () => {

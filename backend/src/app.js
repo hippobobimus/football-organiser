@@ -1,10 +1,11 @@
 import express from 'express';
 import createError from 'http-errors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
 
 import corsMiddleware from './middleware/cors';
 import { errorHandler } from './middleware/errorMiddleware';
-import { eventsRouter, usersRouter } from './routes';
+import { authRouter, eventsRouter, usersRouter } from './routes';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(corsMiddleware);
 app.use(morgan('dev'));
 
 // parsers
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -25,6 +27,7 @@ app.use(express.urlencoded({ extended: false }));
  * Routing
  */
 
+app.use('/api/auth', authRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/users', usersRouter);
 

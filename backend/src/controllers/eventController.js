@@ -58,20 +58,8 @@ const readEvent = [
   },
 ];
 
-// @desc    Retrieve the chronologically next upcoming event of type 'match'
-// @route   GET /api/events/next-match
-// @access  Private
-const readNextMatch = async (req, res, next) => {
-  try {
-    const nextMatch = await eventServices.getNextMatch(req.user.id);
-    return res.status(200).json(nextMatch);
-  } catch (err) {
-    return next(err);
-  }
-};
-
 // @desc    Edit event
-// @route   PUT /api/events/:eventId
+// @route   PATCH /api/events/:eventId
 // @access  Private, admin only
 const updateEvent = [
   validateEvent.eventId(),
@@ -143,7 +131,7 @@ const createAuthUserAttendee = [
 ];
 
 // @desc    Update the authenticated user's attendance to the given event.
-// @route   PUT /api/events/:eventId/attendees/me
+// @route   PATCH /api/events/:eventId/attendees/me
 // @access  Private
 const updateAuthUserAttendee = [
   validateEvent.eventId(),
@@ -210,7 +198,7 @@ const createAttendee = [
 ];
 
 // @desc    Update the attendance record for the given user and event
-// @route   PUT /api/events/:eventId/attendees/:userId
+// @route   PATCH /api/events/:eventId/attendees/:userId
 // @access  Private, admin only
 const updateAttendee = [
   validateEvent.eventId(),
@@ -259,7 +247,6 @@ export default {
   readEvents,
   createEvent,
   readEvent,
-  readNextMatch,
   updateEvent,
   deleteEvent,
   createAuthUserAttendee,

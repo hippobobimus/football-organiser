@@ -1,12 +1,10 @@
-import fs from 'fs';
 import createError from 'http-errors';
-import jsonwebtoken from 'jsonwebtoken';
 
 import { User } from '../models';
+import { verifyAccessToken } from '../utils/password';
 
-const PUB_KEY =
-  process.env.JWT_PUBLIC_KEY ||
-  fs.readFileSync(new URL('../../id_rsa_pub.pem', import.meta.url), 'utf8');
+// TODO allowed roles
+// const protect = (allowedRoles = ['user']) => async (req, res, next) => {
 
 const protect = async (req, res, next) => {
   if (!req.headers.authorization) {
@@ -25,7 +23,7 @@ const protect = async (req, res, next) => {
 
   let payload;
   try {
-    payload = jsonwebtoken.verify(token, PUB_KEY);
+    payload = verifyAccessToken(token);
   } catch (err) {
     return next(createError(401, 'Access denied, invalid token.'));
   }

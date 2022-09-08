@@ -153,7 +153,8 @@ const locationPostcode = () => {
     .trim()
     .escape()
     .isPostalCode('GB')
-    .withMessage('Must be a valid UK postcode format.');
+    .withMessage('Must be a valid UK postcode format.')
+    .toUpperCase();
 };
 
 const capacity = () => {

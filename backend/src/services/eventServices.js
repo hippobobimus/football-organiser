@@ -1,7 +1,7 @@
 import createError from 'http-errors';
 import mongoose from 'mongoose';
 
-import { Attendee, Event } from '../models';
+import { Attendee, AppEvent } from '../models';
 
 /*
  * Helper functions
@@ -62,7 +62,7 @@ export const getEvents = async (authUserId, query) => {
     options.sort = { 'time.start': 'asc' };
   }
 
-  let results = await Event.paginate(filter, options);
+  let results = await AppEvent.paginate(filter, options);
 
   results.docs.forEach((event) => populateEvent(event, authUserId));
 
@@ -82,7 +82,7 @@ export const createEvent = async (authUserId, eventData) => {
     throw createError(400, 'Missing user input data.');
   }
 
-  const event = await Event.create({
+  const event = await AppEvent.create({
     category: eventData.category,
     name: eventData.name || 'Event',
     time: {
@@ -110,7 +110,7 @@ export const getEvent = async (authUserId, eventId) => {
     throw createError(401, 'Invalid event id.');
   }
 
-  let event = await Event.findById(eventId);
+  let event = await AppEvent.findById(eventId);
 
   if (!event) {
     throw createError(401, 'Event does not exist.');
@@ -121,32 +121,12 @@ export const getEvent = async (authUserId, eventId) => {
   return event;
 };
 
-export const getNextMatch = async (authUserId) => {
-  const query = await Event.find({
-    category: 'match',
-    'time.end': { $gte: new Date() },
-  })
-    .sort({
-      'time.end': 'asc',
-    })
-    .limit(1);
-
-  if (query.length === 0) {
-    // no upcoming matches
-    return null;
-  }
-
-  const nextMatch = await populateEvent(query[0], authUserId);
-
-  return nextMatch;
-};
-
 export const updateEvent = async (authUserId, eventId, update) => {
   if (!authUserId || !eventId || !update) {
     throw createError(400, 'Missing function argument(s).');
   }
 
-  let event = await Event.findById(eventId);
+  let event = await AppEvent.findById(eventId);
 
   if (!event) {
     throw createError(404, 'Event not found');
@@ -198,7 +178,7 @@ export const updateEvent = async (authUserId, eventId, update) => {
 };
 
 export const deleteEvent = async (authUserId, eventId) => {
-  let event = await Event.findByIdAndDelete(eventId);
+  let event = await AppEvent.findByIdAndDelete(eventId);
   event = await populateEvent(event, authUserId);
 
   // remove related attendee records.
@@ -208,7 +188,7 @@ export const deleteEvent = async (authUserId, eventId) => {
 };
 
 export const createAttendee = async (authUserId, userId, eventId, isAdmin) => {
-  let event = await Event.findById(eventId);
+  let event = await AppEvent.findById(eventId);
 
   if (!event) {
     throw createError(404, 'Event not found');
@@ -255,7 +235,7 @@ export const updateAttendee = async (
   update,
   isAdmin
 ) => {
-  let event = await Event.findById(eventId);
+  let event = await AppEvent.findById(eventId);
 
   if (!event) {
     throw createError(404, 'Event not found');
@@ -303,7 +283,7 @@ export const updateAttendee = async (
 };
 
 export const deleteAttendee = async (authUserId, userId, eventId, isAdmin) => {
-  let event = await Event.findById(eventId);
+  let event = await AppEvent.findById(eventId);
 
   if (!event) {
     throw createError(404, 'Event not found');

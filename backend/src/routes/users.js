@@ -5,16 +5,6 @@ import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(protect, userController.readUsers)
-  .post(userController.createUser);
-
-router.route('/login').post(userController.loginUser);
-
-router
-  .route('/me')
-  .get(protect, userController.readAuthUser)
-  .put(protect, userController.updateAuthUser);
+router.route('/').get(protect, userController.readUsers);
 
 export default router;

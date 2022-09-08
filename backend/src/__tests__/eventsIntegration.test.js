@@ -4,14 +4,28 @@ import { zonedTimeToUtc } from 'date-fns-tz/esm';
 import mongoose from 'mongoose';
 
 import app from '../app';
-import * as db from '../config/testDb';
-import pwUtils from '../utils/password';
-import * as data from '../testData';
-import { Attendee, Event } from '../models';
-
-const TIMEZONE = process.env.CLIENT_TZ || 'Europe/London';
+import * as db from '../test/database';
+import { Attendee, AppEvent } from '../models';
+import {
+  createAttendee,
+  createAuthUser,
+  createEvent,
+  createEvents,
+  createUser,
+  fillEvent,
+} from '../test/utils';
+import { eventGenerator } from '../test/dataGenerators';
+import { TIMEZONE } from '../config';
 
 describe('events', () => {
+  let auth;
+  let authAdmin;
+  let futureMatches;
+  let pastMatches;
+  let futureSocials;
+  let pastSocials;
+  let cancelledEvents;
+
   beforeAll(async () => {
     await db.connect();
   });
@@ -20,21 +34,29 @@ describe('events', () => {
     await db.close();
   });
 
+  beforeEach(async () => {
+    auth = await createAuthUser();
+    authAdmin = await createAuthUser({ role: 'admin' });
+    futureMatches = await createEvents(5);
+    pastMatches = await createEvents(5, { past: true });
+    futureSocials = await createEvents(5, {
+      overrides: { category: 'social' },
+    });
+    pastSocials = await createEvents(5, {
+      overrides: { category: 'social' },
+      past: true,
+    });
+    cancelledEvents = await createEvents(5, {
+      overrides: { isCancelled: true },
+    });
+  });
+
   afterEach(async () => {
     await db.clear();
   });
 
   describe('GET /api/events', () => {
     const path = '/api/events';
-    let authUser;
-    let token;
-    let events;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      token = pwUtils.issueJWT(authUser.id).token;
-      events = await Promise.all(data.events().map((event) => event.save()));
-    });
 
     it('should return 401 without authorization', async () => {
       const { statusCode } = await request(app).get(path);
@@ -44,7 +66,7 @@ describe('events', () => {
     it('should return 200 with authorization', async () => {
       const { statusCode } = await request(app)
         .get(path)
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
@@ -52,7 +74,7 @@ describe('events', () => {
     it('should return json', async () => {
       const { statusCode, headers } = await request(app)
         .get(path)
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
       expect(headers['content-type']).toMatch(/json/);
@@ -61,7 +83,7 @@ describe('events', () => {
     it('should return events paginated in pages of 4', async () => {
       const { statusCode, body } = await request(app)
         .get(path)
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -73,12 +95,14 @@ describe('events', () => {
     it('should default to returning page 1 of upcoming or in-progress events', async () => {
       const { statusCode, body } = await request(app)
         .get(path)
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
       // expected events on page
-      expect(body.totalDocs).toBe(5);
+      expect(body.totalDocs).toBe(
+        futureMatches.length + futureSocials.length + cancelledEvents.length
+      );
       expect(body.page).toBe(1);
 
       body.docs.forEach((event) => {
@@ -89,7 +113,7 @@ describe('events', () => {
     it('query: "?page=n" --> should return page n of events', async () => {
       const { statusCode, body } = await request(app)
         .get(path + '?page=2')
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -100,7 +124,7 @@ describe('events', () => {
     it('query: "?finished=true" --> should return only finished events', async () => {
       const { statusCode, body } = await request(app)
         .get(path + '?finished=true')
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -112,7 +136,7 @@ describe('events', () => {
     it('query: "?finished=false" --> should return only unfinished events', async () => {
       const { statusCode, body } = await request(app)
         .get(path + '?finished=false')
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -124,7 +148,7 @@ describe('events', () => {
     it('should return finished events in descending order of start time', async () => {
       const { statusCode, body } = await request(app)
         .get(path + '?finished=true')
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -142,7 +166,7 @@ describe('events', () => {
     it('should return unfinished events in ascending order of start time', async () => {
       const { statusCode, body } = await request(app)
         .get(path + '?finished=false')
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -160,9 +184,15 @@ describe('events', () => {
     it('should return correct event fields', async () => {
       const { statusCode, body } = await request(app)
         .get(path)
-        .set('Authorization', token);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
+
+      const events = futureMatches
+        .concat(pastMatches)
+        .concat(futureSocials)
+        .concat(pastSocials)
+        .concat(cancelledEvents);
 
       body.docs.forEach((returnedEvent) => {
         const expectedEvent = events.find(
@@ -194,18 +224,6 @@ describe('events', () => {
 
   describe('POST /api/events', () => {
     const path = '/api/events';
-    let authUser;
-    let adminUser;
-    let authToken;
-    let adminToken;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-    });
 
     it('should return 401 without authorization', async () => {
       const { statusCode } = await request(app).post(path);
@@ -216,28 +234,30 @@ describe('events', () => {
     it('should return 403 if the auth user is not an admin', async () => {
       const { statusCode } = await request(app)
         .post(path)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 if the auth user is an admin', async () => {
+      const input = eventGenerator();
       const { statusCode } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
-        .send(data.requiredEventInput());
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
+        .send(input);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 400 if provided time is not in the future', async () => {
-      const input = {
-        ...data.requiredEventInput(),
-        buildUpTime: sub(new Date(), { seconds: 1 }),
-      };
+      const input = eventGenerator({
+        overrides: {
+          buildUpTime: sub(new Date(), { seconds: 1 }),
+        },
+      });
       const { statusCode } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send(input);
 
       expect(statusCode).toBe(400);
@@ -246,43 +266,49 @@ describe('events', () => {
     it('should return 400 if provided times are not in sequence', async () => {
       const now = new Date();
 
-      const startBeforeBuildUp = {
-        ...data.requiredEventInput(),
-        buildUpTime: add(now, { days: 1, seconds: 1 }),
-        startTime: add(now, { days: 1 }),
-        endTime: add(now, { days: 1, seconds: 2 }),
-      };
+      const startBeforeBuildUp = eventGenerator({
+        overrides: {
+          buildUpTime: add(now, { days: 1, seconds: 1 }),
+          startTime: add(now, { days: 1 }),
+          endTime: add(now, { days: 1, seconds: 2 }),
+        },
+      });
 
-      const endBeforeStart = {
-        ...data.requiredEventInput(),
-        buildUpTime: add(now, { days: 1 }),
-        startTime: add(now, { days: 1, seconds: 2 }),
-        endTime: add(now, { days: 1, seconds: 1 }),
-      };
+      const endBeforeStart = eventGenerator({
+        overrides: {
+          buildUpTime: add(now, { days: 1 }),
+          startTime: add(now, { days: 1, seconds: 2 }),
+          endTime: add(now, { days: 1, seconds: 1 }),
+        },
+      });
 
       const { statusCode: statusCode1 } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send(startBeforeBuildUp);
       expect(statusCode1).toBe(400);
 
       const { statusCode: statusCode2 } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send(endBeforeStart);
       expect(statusCode2).toBe(400);
     });
 
     it('should return 400 if a required field is missing', async () => {
-      const fields = data.requiredEventInput();
-
-      const { buildUpTime, ...noBuildUpTime } = fields;
-      const { startTime, ...noStartTime } = fields;
-      const { endTime, ...noEndTime } = fields;
-      const { category, ...noCategory } = fields;
-      const { locationLine1, ...noLocationLine1 } = fields;
-      const { locationTown, ...noLocationTown } = fields;
-      const { locationPostcode, ...noLocationPostcode } = fields;
+      const noBuildUpTime = eventGenerator({ overrides: { buildUpTime: '' } });
+      const noStartTime = eventGenerator({ overrides: { startTime: '' } });
+      const noEndTime = eventGenerator({ overrides: { endTime: '' } });
+      const noCategory = eventGenerator({ overrides: { category: '' } });
+      const noLocationLine1 = eventGenerator({
+        overrides: { locationLine1: '' },
+      });
+      const noLocationTown = eventGenerator({
+        overrides: { locationTown: '' },
+      });
+      const noLocationPostcode = eventGenerator({
+        overrides: { locationPostcode: '' },
+      });
 
       await Promise.all(
         [
@@ -296,7 +322,7 @@ describe('events', () => {
         ].map(async (input) => {
           const { statusCode } = await request(app)
             .post(path)
-            .set('Authorization', adminToken)
+            .set('Authorization', `bearer ${authAdmin.accessToken}`)
             .send(input);
           expect(statusCode).toBe(400);
         })
@@ -304,21 +330,22 @@ describe('events', () => {
     });
 
     it('should return json', async () => {
+      const input = eventGenerator();
       const { statusCode, headers } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
-        .send(data.requiredEventInput());
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
+        .send(input);
 
       expect(statusCode).toBe(200);
       expect(headers['content-type']).toMatch(/json/);
     });
 
     it('should return created event with correct fields', async () => {
-      const input = data.fullEventInput();
+      const input = eventGenerator();
 
       const { statusCode, body } = await request(app)
         .post(path)
-        .set('Authorization', adminToken)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send(input);
 
       expect(statusCode).toBe(200);
@@ -326,7 +353,7 @@ describe('events', () => {
       expect(body).toEqual({
         __v: 0,
         _id: expect.any(String),
-        capacity: input.capacity,
+        capacity: Number(input.capacity),
         category: input.category,
         createdAt: expect.any(String),
         id: expect.any(String),
@@ -338,7 +365,7 @@ describe('events', () => {
           line1: input.locationLine1,
           line2: input.locationLine2,
           town: input.locationTown,
-          postcode: input.locationPostcode,
+          postcode: input.locationPostcode.toUpperCase(),
         },
         name: input.name,
         numAttendees: 0,
@@ -354,29 +381,19 @@ describe('events', () => {
 
   describe('GET /api/events/:id', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let events;
-    let event;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events[0];
-    });
 
     it('should return 401 without authorization', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app).get(path + event.id);
 
       expect(statusCode).toBe(401);
     });
 
     it('should return 200 with authorization', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
         .get(path + event.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
@@ -384,7 +401,7 @@ describe('events', () => {
     it('should return 400 with an invalid event id', async () => {
       const { statusCode } = await request(app)
         .get(path + 'notanid')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
@@ -392,24 +409,26 @@ describe('events', () => {
     it('should return 400 if the event is not found', async () => {
       const { statusCode } = await request(app)
         .get(path + new mongoose.Types.ObjectId().toString())
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(401);
     });
 
     it('should return json', async () => {
+      const event = futureMatches[0];
       const { statusCode, headers } = await request(app)
         .get(path + event.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
       expect(headers['content-type']).toMatch(/json/);
     });
 
     it('should return event with correct fields', async () => {
+      const event = futureMatches[0];
       const { statusCode, body } = await request(app)
         .get(path + event.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -430,7 +449,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 0,
@@ -446,18 +465,6 @@ describe('events', () => {
 
   describe('GET /api/events/next-match', () => {
     const path = '/api/events/next-match';
-    let authUser;
-    let authToken;
-    let events;
-    let event;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-    });
 
     it('should return 401 without authorization', async () => {
       const { statusCode } = await request(app).get(path);
@@ -468,30 +475,30 @@ describe('events', () => {
     it('should return 200 with authorization', async () => {
       const { statusCode } = await request(app)
         .get(path)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
-    it('should return null if no upcoming match is found', async () => {
+    it('should return an empty response if no upcoming match is found', async () => {
       // remove all upcoming matches
-      await Event.deleteMany({
+      await AppEvent.deleteMany({
         category: 'match',
         'time.end': { $gte: sub(new Date(), { hours: 1 }) },
       });
 
       const { statusCode, body } = await request(app)
         .get(path)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
-      expect(statusCode).toBe(200);
-      expect(body).toBe(null);
+      expect(statusCode).toBe(204);
+      expect(body).toMatchObject({});
     });
 
     it('should return json', async () => {
       const { statusCode, headers } = await request(app)
         .get(path)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
       expect(headers['content-type']).toMatch(/json/);
@@ -500,10 +507,13 @@ describe('events', () => {
     it('should return correct event with correct fields', async () => {
       const { statusCode, body } = await request(app)
         .get(path)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
+      const event = futureMatches.sort(
+        (prev, curr) => prev.time.end - curr.time.end
+      )[0];
       expect(body).toEqual({
         __v: 0,
         _id: event.id,
@@ -521,7 +531,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 0,
@@ -535,53 +545,40 @@ describe('events', () => {
     });
   });
 
-  describe('PUT /api/events/:eventId', () => {
+  describe('PATCH /api/events/:eventId', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let adminUser;
-    let adminToken;
-    let events;
-    let event;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-    });
 
     it('should return 401 without authentication', async () => {
-      const { statusCode } = await request(app).put(path + event.id);
+      const event = futureMatches[0];
+      const { statusCode } = await request(app).patch(path + event.id);
 
       expect(statusCode).toBe(401);
     });
 
     it('should return 403 without admin rights', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
-        .put(path + event.id)
-        .set('Authorization', authToken);
+        .patch(path + event.id)
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 with authentication and admin rights', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
-        .put(path + event.id)
-        .set('Authorization', adminToken)
+        .patch(path + event.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send({});
 
       expect(statusCode).toBe(200);
     });
 
     it('should return json', async () => {
+      const event = futureMatches[0];
       const { statusCode, headers } = await request(app)
-        .put(path + event.id)
-        .set('Authorization', adminToken)
+        .patch(path + event.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send({});
 
       expect(statusCode).toBe(200);
@@ -589,11 +586,12 @@ describe('events', () => {
     });
 
     it('should return updated event with correct fields', async () => {
-      const update = data.eventUpdate();
+      const event = futureMatches[0];
+      const update = eventGenerator();
 
       const { statusCode, body } = await request(app)
-        .put(path + event.id)
-        .set('Authorization', adminToken)
+        .patch(path + event.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send(update);
 
       expect(statusCode).toBe(200);
@@ -603,7 +601,7 @@ describe('events', () => {
         _id: event.id,
         attendees: [],
         authUserAttendee: null,
-        capacity: update.capacity,
+        capacity: Number(update.capacity),
         category: update.category,
         createdAt: expect.any(String),
         id: event.id,
@@ -615,7 +613,7 @@ describe('events', () => {
           line1: update.locationLine1,
           line2: update.locationLine2,
           town: update.locationTown,
-          postcode: update.locationPostcode,
+          postcode: update.locationPostcode.toUpperCase(),
         },
         name: update.name,
         numAttendees: 0,
@@ -631,71 +629,60 @@ describe('events', () => {
 
   describe('DELETE /api/events/:eventId', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let adminUser;
-    let adminToken;
-    let events;
-    let event;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-    });
 
     it('should return 401 without authentication', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app).delete(path + event.id);
 
       expect(statusCode).toBe(401);
     });
 
     it('should return 403 without admin rights', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
         .delete(path + event.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 with authentication and admin rights', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
         .delete(path + event.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should remove event from database', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
         .delete(path + event.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
-      const found = await Event.findById(event.id);
+      const found = await AppEvent.findById(event.id);
 
       expect(found).toBeFalsy();
     });
 
     it('should return json', async () => {
+      const event = futureMatches[0];
       const { statusCode, headers } = await request(app)
         .delete(path + event.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
       expect(headers['content-type']).toMatch(/json/);
     });
 
-    it('should return updated event with correct fields', async () => {
+    it('should return deleted event with correct fields', async () => {
+      const event = futureMatches[0];
       const { statusCode, body } = await request(app)
         .delete(path + event.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -716,7 +703,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 0,
@@ -732,20 +719,9 @@ describe('events', () => {
 
   describe('POST /api/events/:eventId/attendees/me', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let events;
-    let event;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-    });
 
     it('should return 401 without authorization', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app).post(
         path + event.id + '/attendees/me'
       );
@@ -754,9 +730,10 @@ describe('events', () => {
     });
 
     it('should return 200 with authorization', async () => {
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
@@ -766,87 +743,81 @@ describe('events', () => {
 
       const { statusCode } = await request(app)
         .post(path + notAnEventId + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if auth user already registered for event', async () => {
+      const event = futureMatches[0];
       await new Attendee({
         event: event.id,
-        user: authUser.id,
+        user: auth.user.id,
       }).save();
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
+      const finishedEvent = pastMatches[0];
 
       const { statusCode } = await request(app)
         .post(path + finishedEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
+      const event = cancelledEvents[0];
 
       const { statusCode } = await request(app)
-        .post(path + cancelledEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .post(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event is full', async () => {
-      // fill event
-      const users = await Promise.all(data.users().map((user) => user.save()));
-      await Promise.all(
-        users.map((u) =>
-          new Attendee({
-            user: u.id,
-            event: event.id,
-          }).save()
-        )
-      );
+      const event = fillEvent(futureMatches[0]);
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should add auth user to event', async () => {
+      const event = futureMatches[0];
       const attendeeBefore = await Attendee.find({
-        user: authUser.id,
+        user: auth.user.id,
         event: event.id,
       });
       expect(attendeeBefore.length).toBe(0);
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
       const attendeeAfter = await Attendee.find({
-        user: authUser.id,
+        user: auth.user.id,
         event: event.id,
       });
       expect(attendeeAfter.length).toBe(1);
     });
 
     it('should return updated event', async () => {
+      const event = futureMatches[0];
       const { statusCode, body } = await request(app)
         .post(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -863,12 +834,12 @@ describe('events', () => {
             id: expect.any(String),
             updatedAt: expect.any(String),
             user: {
-              _id: authUser.id,
-              firstName: authUser.firstName,
-              id: authUser.id,
-              isAdmin: authUser.isAdmin,
-              lastName: authUser.lastName,
-              name: authUser.name,
+              _id: auth.user.id,
+              firstName: auth.user.firstName,
+              id: auth.user.id,
+              isAdmin: auth.user.isAdmin,
+              lastName: auth.user.lastName,
+              name: auth.user.name,
             },
           },
         ],
@@ -881,12 +852,12 @@ describe('events', () => {
           id: expect.any(String),
           updatedAt: expect.any(String),
           user: {
-            _id: authUser.id,
-            firstName: authUser.firstName,
-            id: authUser.id,
-            isAdmin: authUser.isAdmin,
-            lastName: authUser.lastName,
-            name: authUser.name,
+            _id: auth.user.id,
+            firstName: auth.user.firstName,
+            id: auth.user.id,
+            isAdmin: auth.user.isAdmin,
+            lastName: auth.user.lastName,
+            name: auth.user.name,
           },
         },
         capacity: event.capacity,
@@ -901,7 +872,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 1,
@@ -915,30 +886,12 @@ describe('events', () => {
     });
   });
 
-  describe('PUT /api/events/:eventId/attendees/me', () => {
+  describe('PATCH /api/events/:eventId/attendees/me', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let events;
-    let event;
-    let attendee;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: event.id,
-        user: authUser.id,
-      }).save();
-    });
 
     it('should return 401 without authorization', async () => {
-      const { statusCode } = await request(app).put(
+      const event = futureMatches[0];
+      const { statusCode } = await request(app).patch(
         path + event.id + '/attendees/me'
       );
 
@@ -946,9 +899,12 @@ describe('events', () => {
     });
 
     it('should return 200 with authorization', async () => {
+      const event = futureMatches[0];
+      await createAttendee(event, auth.user);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
@@ -957,79 +913,61 @@ describe('events', () => {
       const notAnEventId = new mongoose.Types.ObjectId();
 
       const { statusCode } = await request(app)
-        .put(path + notAnEventId + '/attendees/me')
-        .set('Authorization', authToken);
+        .patch(path + notAnEventId + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if auth user not registered for event', async () => {
-      await Attendee.findByIdAndDelete(attendee.id);
-
+      const event = futureMatches[0];
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: finishedEvent.id,
-        user: authUser.id,
-      }).save();
+      const event = pastMatches[0];
+      await createAttendee(event, auth.user);
 
       const { statusCode } = await request(app)
-        .put(path + finishedEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: cancelledEvent.id,
-        user: authUser.id,
-      }).save();
+      const event = cancelledEvents[0];
+      await createAttendee(event, auth.user);
 
       const { statusCode } = await request(app)
-        .put(path + cancelledEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if update exceeds event capacity', async () => {
+      const event = fillEvent(futureMatches[0]);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/me')
-        .set('Authorization', authToken)
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`)
         .send({ guests: 3 });
 
       expect(statusCode).toBe(400);
     });
 
-    it('should update auth user attendee', async () => {
-      const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/me')
-        .set('Authorization', authToken)
-        .send({ guests: 2 });
-
-      expect(statusCode).toBe(200);
-
-      attendee = await Attendee.findById(attendee.id);
-      expect(attendee.guests).toBe(2);
-    });
-
     it('should return updated event', async () => {
+      const event = await createEvent({ overrides: { capacity: 10 } });
+      await createAttendee(event, auth.user);
+
       const { statusCode, body } = await request(app)
-        .put(path + event.id + '/attendees/me')
-        .set('Authorization', authToken)
+        .patch(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`)
         .send({ guests: 2 });
 
       expect(statusCode).toBe(200);
@@ -1047,12 +985,12 @@ describe('events', () => {
             id: expect.any(String),
             updatedAt: expect.any(String),
             user: {
-              _id: authUser.id,
-              firstName: authUser.firstName,
-              id: authUser.id,
-              isAdmin: authUser.isAdmin,
-              lastName: authUser.lastName,
-              name: authUser.name,
+              _id: auth.user.id,
+              firstName: auth.user.firstName,
+              id: auth.user.id,
+              isAdmin: auth.user.isAdmin,
+              lastName: auth.user.lastName,
+              name: auth.user.name,
             },
           },
         ],
@@ -1065,12 +1003,12 @@ describe('events', () => {
           id: expect.any(String),
           updatedAt: expect.any(String),
           user: {
-            _id: authUser.id,
-            firstName: authUser.firstName,
-            id: authUser.id,
-            isAdmin: authUser.isAdmin,
-            lastName: authUser.lastName,
-            name: authUser.name,
+            _id: auth.user.id,
+            firstName: auth.user.firstName,
+            id: auth.user.id,
+            isAdmin: auth.user.isAdmin,
+            lastName: auth.user.lastName,
+            name: auth.user.name,
           },
         },
         capacity: event.capacity,
@@ -1079,13 +1017,13 @@ describe('events', () => {
         id: event.id,
         isCancelled: false,
         isFinished: false,
-        isFull: true,
+        isFull: false,
         location: {
           name: event.location.name,
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 3,
@@ -1101,27 +1039,10 @@ describe('events', () => {
 
   describe('DELETE /api/events/:eventId/attendees/me', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let events;
-    let event;
-    let attendee;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: event.id,
-        user: authUser.id,
-      }).save();
-    });
 
     it('should return 401 without authorization', async () => {
+      const event = futureMatches[0];
+
       const { statusCode } = await request(app).delete(
         path + event.id + '/attendees/me'
       );
@@ -1130,9 +1051,12 @@ describe('events', () => {
     });
 
     it('should return 200 with authorization', async () => {
+      const event = futureMatches[0];
+      await createAttendee(event, auth.user);
+
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
@@ -1142,71 +1066,61 @@ describe('events', () => {
 
       const { statusCode } = await request(app)
         .delete(path + notAnEventId + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if auth user not registered for event', async () => {
-      await Attendee.findByIdAndDelete(attendee.id);
+      const event = futureMatches[0];
 
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: finishedEvent.id,
-        user: authUser.id,
-      }).save();
+      const event = pastMatches[0];
 
       const { statusCode } = await request(app)
-        .delete(path + finishedEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .delete(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 400 if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
-
-      // add auth user to event
-      attendee = await new Attendee({
-        event: cancelledEvent.id,
-        user: authUser.id,
-      }).save();
+      const event = cancelledEvents[0];
 
       const { statusCode } = await request(app)
-        .delete(path + cancelledEvent.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .delete(path + event.id + '/attendees/me')
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should remove auth user attendee record', async () => {
-      const attendeeBefore = await Attendee.findById(attendee.id);
-      expect(attendeeBefore).toBeTruthy();
+      const event = futureMatches[0];
+      const attendee = await createAttendee(event, auth.user);
 
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
-      const attendeeAfter = await Attendee.findById(attendee.id);
-      expect(attendeeAfter).toBeFalsy();
+      expect(await Attendee.findById(attendee.id)).toBeFalsy();
     });
 
     it('should return updated event', async () => {
+      const event = futureMatches[0];
+      await createAttendee(event, auth.user);
+
       const { statusCode, body } = await request(app)
         .delete(path + event.id + '/attendees/me')
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -1227,7 +1141,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 0,
@@ -1243,30 +1157,11 @@ describe('events', () => {
 
   describe('POST /api/events/:eventId/attendees/:userId', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let adminUser;
-    let adminToken;
-    let events;
-    let event;
-    let users;
-    let user;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-
-      users = await Promise.all(data.users().map((u) => u.save()));
-      user = users.find((u) => u.name === 'John Smith');
-    });
 
     it('should return 401 without authorization', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+
       const { statusCode } = await request(app).post(
         path + event.id + '/attendees/' + user.id
       );
@@ -1275,110 +1170,110 @@ describe('events', () => {
     });
 
     it('should return 403 without admin rights', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 with authorization and admin rights', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 404 if event does not exist', async () => {
       const notAnEventId = new mongoose.Types.ObjectId();
+      const user = await createUser();
 
       const { statusCode } = await request(app)
         .post(path + notAnEventId + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if attendee already exists', async () => {
-      await new Attendee({
-        event: event.id,
-        user: user.id,
-      }).save();
+      const event = futureMatches[0];
+      const user = await createUser();
+      await createAttendee(event, user);
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 200 even if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
+      const event = pastMatches[0];
+      const user = await createUser();
 
       const { statusCode } = await request(app)
-        .post(path + finishedEvent.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .post(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 200 even if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
+      const event = cancelledEvents[0];
+      const user = await createUser();
 
       const { statusCode } = await request(app)
-        .post(path + cancelledEvent.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .post(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 400 if event is full', async () => {
-      // fill event
-      await Promise.all(
-        users.map((u) =>
-          new Attendee({
-            user: u.id,
-            event: event.id,
-          }).save()
-        )
-      );
+      const event = fillEvent(futureMatches[0]);
+      const user = await createUser();
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should create attendee for given event and user', async () => {
-      const attendeeBefore = await Attendee.find({
-        user: user.id,
-        event: event.id,
-      });
-
-      expect(attendeeBefore.length).toBe(0);
+      const event = futureMatches[0];
+      const user = await createUser();
 
       const { statusCode } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
-      const attendeeAfter = await Attendee.find({
+      const attendeesFound = await Attendee.find({
         user: user.id,
         event: event.id,
       });
 
-      expect(attendeeAfter.length).toBe(1);
-      expect(attendeeAfter[0].user.toString()).toBe(user.id);
-      expect(attendeeAfter[0].event.toString()).toBe(event.id);
+      expect(attendeesFound.length).toBe(1);
+      expect(attendeesFound[0].user.toString()).toBe(user.id);
+      expect(attendeesFound[0].event.toString()).toBe(event.id);
     });
 
     it('should return updated event', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+
       const { statusCode, body } = await request(app)
         .post(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -1417,7 +1312,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 1,
@@ -1431,40 +1326,15 @@ describe('events', () => {
     });
   });
 
-  describe('PUT /api/events/:eventId/attendees/:userId', () => {
+  describe('PATCH /api/events/:eventId/attendees/:userId', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let adminUser;
-    let adminToken;
-    let events;
-    let event;
-    let users;
-    let user;
-    let attendee;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-
-      users = await Promise.all(data.users().map((u) => u.save()));
-      user = users.find((u) => u.name === 'John Smith');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: event.id,
-        user: user.id,
-      }).save();
-    });
 
     it('should return 401 without authorization', async () => {
-      const { statusCode } = await request(app).put(
+      const event = futureMatches[0];
+      const user = await createUser();
+      await createAttendee(event, user);
+
+      const { statusCode } = await request(app).patch(
         path + event.id + '/attendees/' + user.id
       );
 
@@ -1472,98 +1342,112 @@ describe('events', () => {
     });
 
     it('should return 403 without admin rights', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', authToken);
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 with authorization and admin rights', async () => {
+      const event = futureMatches[0];
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 404 if event does not exist', async () => {
       const notAnEventId = new mongoose.Types.ObjectId();
+      const user = await createUser();
 
       const { statusCode } = await request(app)
-        .put(path + notAnEventId + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .patch(path + notAnEventId + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if attendee record not found', async () => {
-      await Attendee.findByIdAndDelete(attendee.id);
+      const event = futureMatches[0];
+      const user = await createUser();
 
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 200 even if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: finishedEvent.id,
-        user: user.id,
-      }).save();
+      const event = pastMatches[0];
+      const user = await createUser();
+      await createAttendee(event, user);
 
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 200 even if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: cancelledEvent.id,
-        user: user.id,
-      }).save();
+      const event = cancelledEvents[0];
+      const user = await createUser();
+      await createAttendee(event, user);
 
       const { statusCode } = await request(app)
-        .put(path + cancelledEvent.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 400 if update exceeds event capacity', async () => {
+      const event = await createEvent({ overrides: { capacity: 5 } });
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken)
-        .send({ guests: 3 });
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
+        .send({ guests: 5 });
 
       expect(statusCode).toBe(400);
     });
 
     it('should update attendee record', async () => {
+      const event = await createEvent({ overrides: { capacity: 10 } });
+      const user = await createUser();
+      const attendee = await createAttendee(event, user);
+
       const { statusCode } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken)
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send({ guests: 2 });
 
       expect(statusCode).toBe(200);
 
-      attendee = await Attendee.findById(attendee.id);
-      expect(attendee.guests).toBe(2);
+      const updatedAttendee = await Attendee.findById(attendee.id);
+      expect(updatedAttendee.guests).toBe(2);
     });
 
     it('should return updated event', async () => {
+      const event = await createEvent({ overrides: { capacity: 10 } });
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode, body } = await request(app)
-        .put(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken)
+        .patch(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`)
         .send({ guests: 2 });
 
       expect(statusCode).toBe(200);
@@ -1597,13 +1481,13 @@ describe('events', () => {
         id: event.id,
         isCancelled: false,
         isFinished: false,
-        isFull: true,
+        isFull: false,
         location: {
           name: event.location.name,
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 3,
@@ -1619,37 +1503,12 @@ describe('events', () => {
 
   describe('DELETE /api/events/:eventId/attendees/:userId', () => {
     const path = '/api/events/';
-    let authUser;
-    let authToken;
-    let adminUser;
-    let adminToken;
-    let events;
-    let event;
-    let users;
-    let user;
-    let attendee;
-
-    beforeEach(async () => {
-      authUser = await data.standardUser().save();
-      authToken = pwUtils.issueJWT(authUser.id).token;
-
-      adminUser = await data.adminUser().save();
-      adminToken = pwUtils.issueJWT(adminUser.id).token;
-
-      events = await Promise.all(data.events().map((e) => e.save()));
-      event = events.find((e) => e.name === 'Future Event E');
-
-      users = await Promise.all(data.users().map((u) => u.save()));
-      user = users.find((u) => u.name === 'John Smith');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: event.id,
-        user: user.id,
-      }).save();
-    });
 
     it('should return 401 without authorization', async () => {
+      const event = await createEvent();
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app).delete(
         path + event.id + '/attendees/' + user.id
       );
@@ -1658,80 +1517,83 @@ describe('events', () => {
     });
 
     it('should return 403 without admin rights', async () => {
+      const event = await createEvent();
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', authToken);
+        .set('Authorization', `bearer ${auth.accessToken}`);
 
       expect(statusCode).toBe(403);
     });
 
     it('should return 200 with authorization and admin rights', async () => {
+      const event = await createEvent();
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 404 if event does not exist', async () => {
       const notAnEventId = new mongoose.Types.ObjectId();
+      const user = await createUser();
 
       const { statusCode } = await request(app)
         .delete(path + notAnEventId + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(404);
     });
 
     it('should return 400 if no attendee found', async () => {
-      await Attendee.findByIdAndDelete(attendee.id);
+      const event = await createEvent();
+      const user = await createUser();
 
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(400);
     });
 
     it('should return 200 even if event has finished', async () => {
-      const finishedEvent = events.find((e) => e.name === 'Past Event A');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: finishedEvent.id,
-        user: user.id,
-      }).save();
+      const event = await createEvent({ past: true });
+      const user = await createUser();
+      await createAttendee(event, user);
 
       const { statusCode } = await request(app)
-        .delete(path + finishedEvent.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .delete(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should return 200 even if event has been cancelled', async () => {
-      const cancelledEvent = events.find((e) => e.name === 'Future Event D');
-
-      // add user to event
-      attendee = await new Attendee({
-        event: cancelledEvent.id,
-        user: user.id,
-      }).save();
+      const event = await createEvent({ overrides: { isCancelled: true } });
+      const user = await createUser();
+      await createAttendee(event, user);
 
       const { statusCode } = await request(app)
-        .delete(path + cancelledEvent.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .delete(path + event.id + '/attendees/' + user.id)
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
     });
 
     it('should remove attendee record', async () => {
-      const attendeeBefore = await Attendee.findById(attendee.id);
-      expect(attendeeBefore).toBeTruthy();
+      const event = await createEvent();
+      const user = await createUser();
+      const attendee = await createAttendee(event, user);
 
       const { statusCode } = await request(app)
         .delete(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -1740,9 +1602,13 @@ describe('events', () => {
     });
 
     it('should return updated event', async () => {
+      const event = await createEvent();
+      const user = await createUser();
+      await createAttendee(event, user);
+
       const { statusCode, body } = await request(app)
         .delete(path + event.id + '/attendees/' + user.id)
-        .set('Authorization', adminToken);
+        .set('Authorization', `bearer ${authAdmin.accessToken}`);
 
       expect(statusCode).toBe(200);
 
@@ -1763,7 +1629,7 @@ describe('events', () => {
           line1: event.location.line1,
           line2: event.location.line2,
           town: event.location.town,
-          postcode: event.location.postcode,
+          postcode: event.location.postcode.toUpperCase(),
         },
         name: event.name,
         numAttendees: 0,

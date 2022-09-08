@@ -1,13 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
-import authReducer from '../features/auth/authSlice';
-import eventsReducer from '../features/events/eventsSlice';
-import usersReducer from '../features/users/usersSlice';
+import { authReducer } from '../features/auth';
+import { apiSlice } from '../features/api/apiSlice';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
-  events: eventsReducer,
-  users: usersReducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 const rootReducer = (state, action) => {
@@ -18,6 +16,11 @@ const rootReducer = (state, action) => {
   return combinedReducer(state, action);
 };
 
-export const store = configureStore({
-  reducer: rootReducer,
-});
+export const setupStore = (preloadedState) => {
+  return configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(apiSlice.middleware),
+    preloadedState,
+  });
+};

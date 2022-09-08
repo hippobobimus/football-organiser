@@ -42,6 +42,9 @@ const theme = {
   infoBarBgClr: colours.darkGreen,
   infoBarTextShadowClr: colours.pink,
 
+  eventContentBgClr: colours.darkGreen,
+  eventContentNavBgClr: colours.pink,
+
   playerListBgClr: colours.white,
   listItemBgClr: colours.pink,
 
