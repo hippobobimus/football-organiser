@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 
 import { AuthUserAttendanceDisplay } from '../components/AuthUserAttendanceDisplay';
+import { PageContainer } from '../../../components/Container';
 import {
   useUpdateAuthUserEventAttendeeMutation,
   useRemoveAuthUserFromEventMutation,
@@ -47,16 +48,18 @@ export const AuthUserAttendance = () => {
   };
 
   return (
-    <AuthUserAttendanceDisplay
-      isAttending={isAttending}
-      eventCategory={event.category}
-      isFull={event.isFull}
-      isFinished={event.isFinished}
-      guests={guests}
-      onJoin={handleJoin}
-      onLeave={handleLeave}
-      onAddGuest={handleAddGuest}
-      onRemoveGuest={handleRemoveGuest}
-    />
+    <PageContainer>
+      <AuthUserAttendanceDisplay
+        isAttending={isAttending}
+        eventCategory={event.category}
+        isFull={event.isFull}
+        isFinished={event.isFinished}
+        guests={guests}
+        onJoin={handleJoin}
+        onLeave={handleLeave}
+        onAddGuest={handleAddGuest}
+        onRemoveGuest={handleRemoveGuest}
+      />
+    </PageContainer>
   );
 };

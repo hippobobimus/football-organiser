@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { Protect } from '../../auth';
 import {
@@ -14,6 +14,21 @@ import { Attendance } from './Attendance';
 import { AddAttendee } from './AddAttendee';
 import { EditEvent } from './EditEvent';
 import { PageNotFound } from '../../../components/PageNotFound';
+import { AnimatePresence } from 'framer-motion';
+
+const EventTabRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.key}>
+        <Route path="me" element={<AuthUserAttendance />} />
+        <Route path="location" element={<EventLocation />} />
+        <Route path="lineup" element={<Attendance />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 export const EventsRoutes = () => {
   const eventNavItems = [
@@ -30,9 +45,7 @@ export const EventsRoutes = () => {
         <Route path=":eventId" element={<EventMainLayout />}>
           <Route element={<EventTabLayout navItems={eventNavItems} />}>
             <Route index element={<Navigate to="me" replace={true} />} />
-            <Route path="me" element={<AuthUserAttendance />} />
-            <Route path="location" element={<EventLocation />} />
-            <Route path="lineup" element={<Attendance />} />
+            <Route path="*" element={<EventTabRoutes />} />
           </Route>
 
           <Route element={<Protect allowedRoles={['admin']} />}>

@@ -1,7 +1,13 @@
 import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { Container } from '../../../components/styles';
+import { PageContainer } from '../../../components/Container';
 import { AttendanceList } from '../components/AttendanceList';
+
+const AttendanceContainer = styled(PageContainer)`
+  width: min(90%, 500px);
+  padding: 15px 0;
+`;
 
 export const Attendance = () => {
   const navigate = useNavigate();
@@ -12,8 +18,8 @@ export const Attendance = () => {
   };
 
   return (
-    <Container style={{ width: 'min(90%, 500px)', padding: '15px 0' }}>
+    <AttendanceContainer>
       <AttendanceList eventId={eventId} onAddUser={handleAddUser} />
-    </Container>
+    </AttendanceContainer>
   );
 };
