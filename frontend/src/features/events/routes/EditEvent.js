@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-import { Container, Subtitle } from '../../../components/styles';
+import { PageContainer } from '../../../components/Container';
 import { EditEventForm } from '../components/EventForm';
 
 export const EditEvent = () => {
@@ -18,13 +18,12 @@ export const EditEvent = () => {
   };
 
   return (
-    <Container style={{ width: '100%', padding: '20px 0 30px 0' }}>
-      <Subtitle>Edit Event</Subtitle>
+    <PageContainer style={{ width: '100%', padding: '20px 0 30px 0' }}>
       <EditEventForm
         eventId={eventId}
         onSuccess={handleSuccess}
         onCancel={handleCancel}
       />
-    </Container>
+    </PageContainer>
   );
 };

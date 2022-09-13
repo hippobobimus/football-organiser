@@ -1,11 +1,8 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
+import { useGetAuthUserQuery } from '../../auth/api/authApiSlice';
 import { Protect } from '../../auth';
-import {
-  EventMainLayout,
-  EventTabLayout,
-  EventEditLayout,
-} from '../components/Layout';
+import { EventMainLayout, EventTabLayout } from '../components/Layout';
 import { Calendar } from './Calendar';
 import { CreateEvent } from './CreateEvent';
 import { AuthUserAttendance } from './AuthUserAttendance';
@@ -25,17 +22,27 @@ const EventTabRoutes = () => {
         <Route path="me" element={<AuthUserAttendance />} />
         <Route path="location" element={<EventLocation />} />
         <Route path="lineup" element={<Attendance />} />
+        <Route element={<Protect allowedRoles={['admin']} />}>
+          <Route path="edit" element={<EditEvent />} />
+          <Route path="lineup/add-user" element={<AddAttendee />} />
+        </Route>
       </Routes>
     </AnimatePresence>
   );
 };
 
 export const EventsRoutes = () => {
+  const { data: authUser } = useGetAuthUserQuery();
+
   const eventNavItems = [
     { text: 'Me', path: 'me' },
     { text: 'Lineup', path: 'lineup' },
     { text: 'Location', path: 'location' },
   ];
+
+  if (authUser?.isAdmin) {
+    eventNavItems.push({ text: 'Edit', path: 'edit' });
+  }
 
   return (
     <Routes>
@@ -46,13 +53,6 @@ export const EventsRoutes = () => {
           <Route element={<EventTabLayout navItems={eventNavItems} />}>
             <Route index element={<Navigate to="me" replace={true} />} />
             <Route path="*" element={<EventTabRoutes />} />
-          </Route>
-
-          <Route element={<Protect allowedRoles={['admin']} />}>
-            <Route element={<EventEditLayout />}>
-              <Route path="lineup/add-user" element={<AddAttendee />} />
-              <Route path="edit" element={<EditEvent />} />
-            </Route>
           </Route>
         </Route>
       </Route>

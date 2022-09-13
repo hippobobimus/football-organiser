@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { Container } from '../../../../components/styles';
+import { AnimatedContainer } from '../../../../components/Container';
 
 export const EventContainer = styled(Container)`
   width: min(100%, 750px);
@@ -21,7 +22,7 @@ export const TabsNavContainer = styled(Container)`
   box-shadow: 3px 3px 2px ${(props) => props.theme.boxShadowClr};
 `;
 
-export const ContentCard = styled(Container)`
+export const ContentCard = styled(AnimatedContainer)`
   width: 100%;
   height: 100%;
   min-height: 350px;

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { SmallButton, ButtonRow } from '../../../../components/styles';
@@ -62,24 +62,21 @@ export const EventAdminPanel = () => {
 
   return (
     <ButtonRow>
-      <SmallButton as={Link} to="edit">
-        Edit
-      </SmallButton>
       {event.isCancelled ? (
         <SmallButton
           type="button"
           onClick={handleUncancel}
           disabled={isLoading}
         >
-          Uncancel
+          Uncancel Event
         </SmallButton>
       ) : (
         <SmallButton type="button" onClick={handleCancel} disabled={isLoading}>
-          Cancel
+          Cancel Event
         </SmallButton>
       )}
       <SmallButton type="button" onClick={handleDelete} disabled={isLoading}>
-        Delete
+        Delete Event
       </SmallButton>
     </ButtonRow>
   );
