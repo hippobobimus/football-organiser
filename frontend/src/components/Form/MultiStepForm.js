@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Formik } from 'formik';
+import { AnimatePresence } from 'framer-motion';
 
 import * as Styled from './MultiStepForm.styles';
 
@@ -47,7 +48,7 @@ export const MultiStepForm = ({
     >
       {(formik) => (
         <Styled.Form>
-          {step}
+          <AnimatePresence mode="wait">{step}</AnimatePresence>
           <Styled.FormButtonContainer>
             {stepNum === 0 ? (
               onCancel && (
