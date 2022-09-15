@@ -260,7 +260,7 @@ export const updateAttendee = async (
     throw createError(400, 'No attendance record found.');
   }
 
-  if (update?.guests) {
+  if (!(update?.guests === undefined)) {
     if (update.guests < 0) {
       throw createError(400, 'Invalid guests value.');
     }
