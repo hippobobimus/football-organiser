@@ -28,10 +28,10 @@ export const eventGenerator = (options) => {
   let times;
   if (options?.past) {
     const now = sub(new Date(), { minutes: 1 });
-    times = faker.date.betweens(faker.date.recent(0, now), now);
+    times = faker.date.betweens(faker.date.recent(0, now), now, 3);
   } else {
     const now = add(new Date(), { minutes: 1 });
-    times = faker.date.betweens(now, faker.date.soon(0, now));
+    times = faker.date.betweens(now, faker.date.soon(0, now), 3);
   }
 
   if (options?.formatTime) {

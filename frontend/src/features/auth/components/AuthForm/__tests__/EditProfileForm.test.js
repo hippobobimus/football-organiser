@@ -55,6 +55,9 @@ describe('EditProfileForm', () => {
     await waitFor(() => expect(mockOnSuccess).toHaveBeenCalledTimes(1));
     expect(mockErrorAlert).not.toHaveBeenCalled();
     expect(mockOnCancel).not.toHaveBeenCalled();
+
+    // form resets
+    await waitFor(() => expect(firstNameField).toHaveValue(testUser.firstName));
   });
 
   it('should show an error alert if an invalid password is provided', async () => {
@@ -92,8 +95,8 @@ describe('EditProfileForm', () => {
     expect(mockOnSuccess).not.toHaveBeenCalled();
 
     // fields should be reset.
-    expect(firstNameField.value).toBe(testUser.firstName);
-    expect(lastNameField.value).toBe(testUser.lastName);
+    await waitFor(() => expect(firstNameField).toHaveValue(testUser.firstName));
+    expect(lastNameField).toHaveValue(testUser.lastName);
     expect(emailField.value).toBe(testUser.email);
     expect(passwordField.value).toBe('');
   });
